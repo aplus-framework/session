@@ -7,6 +7,14 @@ class Session
 {
 	protected $options = [];
 
+	public function __construct(array $options = [], SaveHandler $handler = null)
+	{
+		$this->setOptions($options);
+		if ($handler) {
+			\session_set_save_handler($handler);
+		}
+	}
+
 	public function __destruct()
 	{
 		$this->close();
@@ -30,6 +38,40 @@ class Session
 	public function __unset($key)
 	{
 		unset($_SESSION[$key]);
+	}
+
+	/**
+	 * @see http://php.net/manual/en/session.security.ini.php
+	 *
+	 * @var array $custom
+	 */
+	protected function setOptions(array $custom)
+	{
+		$default = [
+			'name' => 'session_id',
+			'serialize_handler' => \ini_get('session.serialize_handler') === 'php'
+				? 'php_serialize'
+				: \ini_get('session.serialize_handler'),
+			'sid_bits_per_character' => 6,
+			'sid_length' => 48,
+			'cookie_domain' => '',
+			'cookie_httponly' => 1,
+			'cookie_lifetime' => 7200,
+			'cookie_path' => '/',
+			'cookie_samesite' => 'Strict',
+			'cookie_secure' => (\filter_input(\INPUT_SERVER, 'REQUEST_SCHEME') === 'https'
+				|| \filter_input(\INPUT_SERVER, 'HTTPS') === 'on')
+				? 1 : 0,
+			'referer_check' => '',
+			'use_cookies' => 1,
+			'use_only_cookies' => 1,
+			'use_strict_mode' => 1,
+			'use_trans_sid' => 0,
+		];
+		if ($custom) {
+			$default = \array_replace($default, $custom);
+		}
+		$this->options = $default;
 	}
 
 	public function start() : bool
