@@ -32,12 +32,12 @@ class Session
 
 	public function __isset($key)
 	{
-		return isset($_SESSION[$key]);
+		return $this->has($key);
 	}
 
 	public function __unset($key)
 	{
-		unset($_SESSION[$key]);
+		return $this->remove($key);
 	}
 
 	/**
@@ -77,7 +77,7 @@ class Session
 	public function start() : bool
 	{
 		if ($this->isStarted()) {
-			throw new \RuntimeException('Session was already started');
+			throw new \LogicException('Session was already started');
 		}
 		if ( ! \session_start($this->options)) {
 			throw new \RuntimeException('Session could not be started.');
@@ -99,14 +99,20 @@ class Session
 		return $destroyed ?? true;
 	}
 
-	public function close() : void
+	public function close() : bool
 	{
 		if ($this->isStarted()) {
-			@\session_write_close();
+			$closed = \session_write_close();
 		}
+		return $closed ?? true;
 	}
 
-	public function get($key)
+	public function has(string $key) : bool
+	{
+		return isset($_SESSION[$key]);
+	}
+
+	public function get(string $key)
 	{
 		return $_SESSION[$key] ?? null;
 	}
@@ -125,7 +131,7 @@ class Session
 		return $items;
 	}
 
-	public function set($key, $value)
+	public function set(string $key, $value)
 	{
 		$_SESSION[$key] = $value;
 		return $this;
@@ -139,7 +145,7 @@ class Session
 		return $this;
 	}
 
-	public function remove($key)
+	public function remove(string $key)
 	{
 		unset($_SESSION[$key]);
 		return $this;

@@ -17,7 +17,19 @@ class SessionTest extends TestCase
 
 	public function setup()
 	{
-		$this->session = new Session();
+		$this->session = new Session(['name' => 'SessionName']);
+		$this->session->start();
+	}
+
+	protected function tearDown()
+	{
+		$this->session->destroy();
+		$this->session = null;
+	}
+
+	public function testCustomOptions()
+	{
+		$this->assertEquals('SessionName', \session_name());
 	}
 
 	public function testSetAndGet()
@@ -25,6 +37,24 @@ class SessionTest extends TestCase
 		$this->assertNull($this->session->get('foo'));
 		$this->session->set('foo', 123);
 		$this->assertEquals(123, $this->session->get('foo'));
+	}
+
+	public function testMultiAndAll()
+	{
+		$this->assertEquals(
+			['foo' => null, 'bar' => null, 'baz' => null],
+			$this->session->getMulti(['foo', 'bar', 'baz'])
+		);
+		$this->assertEquals([], $this->session->getAll());
+		$this->session->setMulti(['foo' => 123, 'bar' => 456]);
+		$this->assertEquals(
+			['foo' => 123, 'bar' => 456, 'baz' => null],
+			$this->session->getMulti(['foo', 'bar', 'baz'])
+		);
+		$this->assertEquals(
+			['foo' => 123, 'bar' => 456],
+			$this->session->getAll()
+		);
 	}
 
 	public function testMagicSetAndGet()
@@ -41,5 +71,37 @@ class SessionTest extends TestCase
 		$this->assertTrue(isset($this->session->foo));
 		unset($this->session->foo);
 		$this->assertFalse(isset($this->session->foo));
+	}
+
+	public function testClose()
+	{
+		$this->assertTrue($this->session->isStarted());
+		$this->session->close();
+		$this->assertFalse($this->session->isStarted());
+	}
+
+	public function testRemove()
+	{
+		$this->session->foo = 'foo';
+		$this->session->bar = 'bar';
+		$this->session->baz = 'baz';
+		$this->assertEquals(
+			['foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz'],
+			$this->session->getAll()
+		);
+		$this->session->removeMulti(['foo', 'baz']);
+		$this->assertEquals(
+			['bar' => 'bar'],
+			$this->session->getAll()
+		);
+		$this->session->removeAll();
+		$this->assertEquals([], $this->session->getAll());
+	}
+
+	public function testAlreadyStarted()
+	{
+		$this->expectException(\LogicException::class);
+		$this->expectExceptionMessage('Session was already started');
+		$this->session->start();
 	}
 }
