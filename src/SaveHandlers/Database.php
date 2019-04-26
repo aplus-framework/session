@@ -7,9 +7,9 @@ use Framework\Session\SaveHandler;
  *
  * CREATE TABLE IF NOT EXISTS `Sessions` (
  * `id` varchar(128) NOT NULL,
- * `ip` varchar(45) NOT NULL,
- * `ua` varchar(255) NOT NULL,
- * `timestamp` int(10) unsigned DEFAULT 0 NOT NULL,
+ * `ip` varchar(45),
+ * `ua` varchar(255),
+ * `timestamp` int(10) unsigned NOT NULL,
  * `data` blob NOT NULL,
  * PRIMARY KEY (`id`),
  * KEY `ip` (`ip`),
@@ -44,7 +44,7 @@ class Database extends SaveHandler
 
 	protected function getProtectedTable(string $connection_type) : string
 	{
-		return $this->getDatabase($connection_type)->protectIdentifier('Session');
+		return $this->getDatabase($connection_type)->protectIdentifier('Sessions');
 	}
 
 	public function updateTimestamp($session_id, $session_data) : bool
@@ -64,7 +64,8 @@ class Database extends SaveHandler
 			$ua = $this->getDatabase('write')->quote($this->getUA());
 			$sql .= ' AND `ua` = ' . $ua;
 		}
-		return (bool) $this->getDatabase('write')->exec($sql);
+		$this->getDatabase('write')->exec($sql);
+		return true;
 	}
 
 	public function close() : bool
@@ -85,7 +86,8 @@ class Database extends SaveHandler
 			$sql .= ' AND `ua` = ' . $ua;
 		}
 		$sql .= ' LIMIT 1';
-		return (bool) $this->getDatabase('write')->exec($sql);
+		$this->getDatabase('write')->exec($sql);
+		return true;
 	}
 
 	public function gc($maxlifetime) : bool
@@ -94,7 +96,8 @@ class Database extends SaveHandler
 		$maxlifetime = $this->getDatabase('write')->quote($maxlifetime);
 		$sql = 'DELETE FROM ' . $this->getProtectedTable('write')
 			. ' WHERE `timestamp` < ' . $maxlifetime;
-		return (bool) $this->getDatabase('write')->exec($sql);
+		$this->getDatabase('write')->exec($sql);
+		return true;
 	}
 
 	public function open($save_path, $session_name) : bool
@@ -146,6 +149,7 @@ class Database extends SaveHandler
 			$sql .= ', `ua` = :ua';
 			$binds['ua'] = $this->row->ua ?? $this->getUA();
 		}
-		return (bool) $this->getDatabase('write')->exec($sql);
+		$this->getDatabase('write')->exec($sql);
+		return true;
 	}
 }

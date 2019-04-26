@@ -1,4 +1,4 @@
-<?php namespace Tests\Sample;
+<?php namespace Tests\Session;
 
 use Framework\Session\Session;
 use PHPUnit\Framework\TestCase;
@@ -14,10 +14,14 @@ class SessionTest extends TestCase
 	 * @var Session
 	 */
 	protected $session;
+	/**
+	 * @var \Framework\Session\SaveHandler|null
+	 */
+	protected $handler;
 
-	public function setup()
+	public function setUp()
 	{
-		$this->session = new Session(['name' => 'SessionName']);
+		$this->session = new Session(['name' => 'SessionName'], $this->handler);
 		$this->session->start();
 	}
 

@@ -67,7 +67,6 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 * @param string $session_id
 	 *
 	 * @return bool
-	 * @codeCoverageIgnore
 	 */
 	public function validateId($session_id) : bool
 	{
