@@ -2,14 +2,13 @@
 
 use Framework\Cache\Files;
 use Framework\Session\SaveHandlers\Cache;
-use Tests\Session\SessionTest;
 
 /**
  * Class CacheTest.
  *
  * @runTestsInSeparateProcesses
  */
-class CacheTest extends SessionTest
+class CacheTest extends AbstractHandler
 {
 	public function setUp()
 	{
@@ -19,7 +18,7 @@ class CacheTest extends SessionTest
 		$instance = new Files([
 			'directory' => $directory,
 		]);
-		$this->handler = new Cache($instance);
+		$this->handler = new Cache($instance, true, true);
 		parent::setUp();
 	}
 }

@@ -64,6 +64,7 @@ class Database extends SaveHandler
 			$ua = $this->getDatabase('write')->quote($this->getUA());
 			$sql .= ' AND `ua` = ' . $ua;
 		}
+		$sql .= ' LIMIT 1';
 		$this->getDatabase('write')->exec($sql);
 		return true;
 	}
@@ -142,12 +143,16 @@ class Database extends SaveHandler
 			. ', `data`= ' . $data
 			. ', `timestamp` = ' . $timestamp;
 		if ($this->matchIP) {
-			$sql .= ', `ip` = :ip';
-			$binds['ip'] = $this->row->ip ?? $this->getIP();
+			$ip = $this->getDatabase('write')->quote(
+				$this->row->ip ?? $this->getIP()
+			);
+			$sql .= ', `ip` = ' . $ip;
 		}
 		if ($this->matchUA) {
-			$sql .= ', `ua` = :ua';
-			$binds['ua'] = $this->row->ua ?? $this->getUA();
+			$ua = $this->getDatabase('write')->quote(
+				$this->row->ua ?? $this->getUA()
+			);
+			$sql .= ', `ua` = ' . $ua;
 		}
 		$this->getDatabase('write')->exec($sql);
 		return true;

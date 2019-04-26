@@ -17,7 +17,7 @@ class Session
 
 	public function __destruct()
 	{
-		$this->close();
+		$this->stop();
 	}
 
 	public function __get($key)
@@ -74,12 +74,16 @@ class Session
 		$this->options = $default;
 	}
 
-	public function start() : bool
+	public function start(array $custom_options = []) : bool
 	{
 		if ($this->isStarted()) {
 			throw new \LogicException('Session was already started');
 		}
-		if ( ! \session_start($this->options)) {
+		$options = $this->options;
+		if ($custom_options) {
+			$options = \array_replace($this->options, $custom_options);
+		}
+		if ( ! \session_start($options)) {
 			throw new \RuntimeException('Session could not be started.');
 		}
 		return true;
@@ -99,7 +103,7 @@ class Session
 		return $destroyed ?? true;
 	}
 
-	public function close() : bool
+	public function stop() : bool
 	{
 		if ($this->isStarted()) {
 			$closed = \session_write_close();

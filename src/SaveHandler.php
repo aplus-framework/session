@@ -34,11 +34,6 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 		$this->matchUA = $match_ua;
 	}
 
-	/**
-	 * @return int
-	 *
-	 * @codeCoverageIgnore
-	 */
 	protected function getLifetime() : int
 	{
 		return \ini_get('session.cookie_lifetime');
@@ -48,19 +43,30 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	{
 		static $server;
 		if ($server === null) {
-			$server = \filter_input_array(\INPUT_SERVER);
+			$server = [
+				'REMOTE_ADDR' => \filter_input(
+					\INPUT_SERVER,
+					'REMOTE_ADDR',
+					\FILTER_SANITIZE_STRING
+				),
+				'HTTP_USER_AGENT' => \filter_input(
+					\INPUT_SERVER,
+					'HTTP_USER_AGENT',
+					\FILTER_SANITIZE_STRING
+				),
+			];
 		}
 		return $server[$var] ?? null;
 	}
 
-	protected function getIP() : string
+	public function getIP() : ?string
 	{
 		return $this->getServerVar('REMOTE_ADDR');
 	}
 
-	protected function getUA() : string
+	public function getUA() : ?string
 	{
-		return $this->getServerVar('HTTP_USER_AGENT') ?? '';
+		return $this->getServerVar('HTTP_USER_AGENT');
 	}
 
 	/**
@@ -70,7 +76,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 */
 	public function validateId($session_id) : bool
 	{
-		$bits_per_character = \ini_get('session.sid_bits_per_character') ?: 4;
+		$bits_per_character = \ini_get('session.sid_bits_per_character') ?: 5;
 		$length = \ini_get('session.sid_length') ?: 40;
 		switch ($bits_per_character) {
 			case 4:

@@ -77,10 +77,10 @@ class SessionTest extends TestCase
 		$this->assertFalse(isset($this->session->foo));
 	}
 
-	public function testClose()
+	public function testStop()
 	{
 		$this->assertTrue($this->session->isStarted());
-		$this->session->close();
+		$this->session->stop();
 		$this->assertFalse($this->session->isStarted());
 	}
 

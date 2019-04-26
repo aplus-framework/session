@@ -1,14 +1,13 @@
 <?php namespace Tests\Session\SaveHandlers;
 
 use Framework\Database\Database;
-use Tests\Session\SessionTest;
 
 /**
  * Class DatabaseTest.
  *
  * @runTestsInSeparateProcesses
  */
-class DatabaseTest extends SessionTest
+class DatabaseTest extends AbstractHandler
 {
 	/**
 	 * @var Database
@@ -23,7 +22,11 @@ class DatabaseTest extends SessionTest
 
 	public function setUp()
 	{
-		$this->handler = new \Framework\Session\SaveHandlers\Database(static::$database);
+		$this->handler = new \Framework\Session\SaveHandlers\Database(
+			static::$database,
+			true,
+			true
+		);
 		parent::setUp();
 	}
 
