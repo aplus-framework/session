@@ -2,6 +2,11 @@
 
 use Tests\Session\SessionTest;
 
+/**
+ * Class AbstractHandler.
+ *
+ * @runTestsInSeparateProcesses
+ */
 class AbstractHandler extends SessionTest
 {
 	public function testValidateId()
@@ -38,18 +43,6 @@ class AbstractHandler extends SessionTest
 		$this->assertTrue($this->handler->gc(0));
 		$this->session->start();
 		$this->assertNull($this->session->foo);
-	}
-
-	public function testUpdateTimestamp()
-	{
-		$this->session->stop();
-		$this->session->start([
-			'lazy_write' => true,
-			'read_and_close' => true,
-		]);
-		$this->session->foo = 'bar';
-		$this->assertEquals($this->session->foo, 'bar');
-		$this->session->stop();
 	}
 
 	public function testIP()

@@ -63,9 +63,6 @@ class Cache extends SaveHandler
 
 	public function gc($maxlifetime) : bool
 	{
-		if (\method_exists($this->handler, 'gc')) {
-			return $this->handler->gc();
-		}
-		return true;
+		return \method_exists($this->handler, 'gc') ? $this->handler->gc() : true;
 	}
 }

@@ -47,11 +47,13 @@ class Session
 	 */
 	protected function setOptions(array $custom)
 	{
+		$serializer = \ini_get('session.serialize_handler');
+		$serializer = $serializer === 'php' ? 'php_serialize' : $serializer;
+		$secure = \filter_input(\INPUT_SERVER, 'REQUEST_SCHEME') === 'https'
+			|| \filter_input(\INPUT_SERVER, 'HTTPS') === 'on';
 		$default = [
 			'name' => 'session_id',
-			'serialize_handler' => \ini_get('session.serialize_handler') === 'php'
-				? 'php_serialize'
-				: \ini_get('session.serialize_handler'),
+			'serialize_handler' => $serializer,
 			'sid_bits_per_character' => 6,
 			'sid_length' => 48,
 			'cookie_domain' => '',
@@ -59,10 +61,9 @@ class Session
 			'cookie_lifetime' => 7200,
 			'cookie_path' => '/',
 			'cookie_samesite' => 'Strict',
-			'cookie_secure' => (\filter_input(\INPUT_SERVER, 'REQUEST_SCHEME') === 'https'
-				|| \filter_input(\INPUT_SERVER, 'HTTPS') === 'on')
-				? 1 : 0,
+			'cookie_secure' => $secure,
 			'referer_check' => '',
+			'regenerate_id' => 64800,
 			'use_cookies' => 1,
 			'use_only_cookies' => 1,
 			'use_strict_mode' => 1,
@@ -74,19 +75,66 @@ class Session
 		$this->options = $default;
 	}
 
+	protected function getOptions(array $custom = []) : array
+	{
+		$options = $this->options;
+		if ($custom) {
+			$options = \array_replace($this->options, $custom);
+		}
+		unset($options['regenerate_id']);
+		return $options;
+	}
+
 	public function start(array $custom_options = []) : bool
 	{
 		if ($this->isStarted()) {
 			throw new \LogicException('Session was already started');
 		}
-		$options = $this->options;
-		if ($custom_options) {
-			$options = \array_replace($this->options, $custom_options);
-		}
-		if ( ! \session_start($options)) {
+		if ( ! \session_start($this->getOptions($custom_options))) {
 			throw new \RuntimeException('Session could not be started.');
 		}
+		$time = \time();
+		$this->autoRegenerate($time);
+		$this->clearTemp($time);
+		$this->clearFlash();
 		return true;
+	}
+
+	protected function autoRegenerate(int $time)
+	{
+		if (empty($_SESSION['$']['regenerated_at'])
+			|| $_SESSION['$']['regenerated_at'] < $time - $this->options['regenerate_id']
+		) {
+			$this->regenerate(true);
+		}
+	}
+
+	protected function clearFlash()
+	{
+		unset($_SESSION['$']['flash']['old']);
+		if (isset($_SESSION['$']['flash']['new'])) {
+			foreach ($_SESSION['$']['flash']['new'] as $key => $value) {
+				$_SESSION['$']['flash']['old'][$key] = $value;
+			}
+		}
+		unset($_SESSION['$']['flash']['new']);
+		if (empty($_SESSION['$']['flash'])) {
+			unset($_SESSION['$']['flash']);
+		}
+	}
+
+	protected function clearTemp(int $time)
+	{
+		if (isset($_SESSION['$']['temp'])) {
+			foreach ($_SESSION['$']['temp'] as $key => $value) {
+				if ($value['ttl'] < $time) {
+					unset($_SESSION['$']['temp'][$key]);
+				}
+			}
+		}
+		if (empty($_SESSION['$']['temp'])) {
+			unset($_SESSION['$']['temp']);
+		}
 	}
 
 	public function isStarted() : bool
@@ -167,6 +215,61 @@ class Session
 	{
 		@\session_unset();
 		$_SESSION = [];
+		return $this;
+	}
+
+	public function regenerate(bool $delete_old_session = false) : bool
+	{
+		$regenerated = \session_regenerate_id($delete_old_session);
+		$_SESSION['$']['regenerated_at'] = \time();
+		return $regenerated;
+	}
+
+	public function getFlash(string $key)
+	{
+		return $_SESSION['$']['flash']['new'][$key]
+			?? $_SESSION['$']['flash']['old'][$key]
+			?? null;
+	}
+
+	public function setFlash(string $key, $value)
+	{
+		$_SESSION['$']['flash']['new'][$key] = $value;
+		return $this;
+	}
+
+	public function removeFlash(string $key)
+	{
+		unset(
+			$_SESSION['$']['flash']['old'][$key],
+			$_SESSION['$']['flash']['new'][$key]
+		);
+		return $this;
+	}
+
+	public function getTemp(string $key)
+	{
+		if (isset($_SESSION['$']['temp'][$key])) {
+			if ($_SESSION['$']['temp'][$key]['ttl'] > \time()) {
+				return $_SESSION['$']['temp'][$key]['data'];
+			}
+			unset($_SESSION['$']['temp'][$key]);
+		}
+		return null;
+	}
+
+	public function setTemp(string $key, $value, int $ttl = 60)
+	{
+		$_SESSION['$']['temp'][$key] = [
+			'ttl' => \time() + $ttl,
+			'data' => $value,
+		];
+		return $this;
+	}
+
+	public function removeTemp(string $key)
+	{
+		unset($_SESSION['$']['temp'][$key]);
 		return $this;
 	}
 }

@@ -49,14 +49,14 @@ class SessionTest extends TestCase
 			['foo' => null, 'bar' => null, 'baz' => null],
 			$this->session->getMulti(['foo', 'bar', 'baz'])
 		);
-		$this->assertEquals([], $this->session->getAll());
+		$this->assertEquals(['$' => $this->session->get('$')], $this->session->getAll());
 		$this->session->setMulti(['foo' => 123, 'bar' => 456]);
 		$this->assertEquals(
 			['foo' => 123, 'bar' => 456, 'baz' => null],
 			$this->session->getMulti(['foo', 'bar', 'baz'])
 		);
 		$this->assertEquals(
-			['foo' => 123, 'bar' => 456],
+			['foo' => 123, 'bar' => 456, '$' => $this->session->get('$')],
 			$this->session->getAll()
 		);
 	}
@@ -90,12 +90,12 @@ class SessionTest extends TestCase
 		$this->session->bar = 'bar';
 		$this->session->baz = 'baz';
 		$this->assertEquals(
-			['foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz'],
+			['foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz', '$' => $this->session->get('$')],
 			$this->session->getAll()
 		);
 		$this->session->removeMulti(['foo', 'baz']);
 		$this->assertEquals(
-			['bar' => 'bar'],
+			['bar' => 'bar', '$' => $this->session->get('$')],
 			$this->session->getAll()
 		);
 		$this->session->removeAll();
@@ -107,5 +107,55 @@ class SessionTest extends TestCase
 		$this->expectException(\LogicException::class);
 		$this->expectExceptionMessage('Session was already started');
 		$this->session->start();
+	}
+
+	public function testFlash()
+	{
+		$this->session->setFlash('foo', 'Foo');
+		$this->session->setFlash('bar', 'Bar');
+		$this->assertEquals('Foo', $this->session->getFlash('foo'));
+		$this->assertEquals('Bar', $this->session->getFlash('bar'));
+		$this->session->removeFlash('foo');
+		$this->assertNull($this->session->getFlash('foo'));
+		$this->assertEquals('Bar', $this->session->getFlash('bar'));
+		$this->session->stop();
+		$this->session->start();
+		$this->assertEquals('Bar', $this->session->getFlash('bar'));
+		$this->session->stop();
+		$this->session->start();
+		$this->assertNull($this->session->getFlash('bar'));
+	}
+
+	public function testSetAndGetTemp()
+	{
+		$this->session->setTemp('foo', 'Foo', 1);
+		$this->session->setTemp('bar', 'Bar', 2);
+		$this->assertEquals('Foo', $this->session->getTemp('foo'));
+		$this->assertEquals('Bar', $this->session->getTemp('bar'));
+		\sleep(1);
+		$this->assertNull($this->session->getTemp('foo'));
+		$this->assertEquals('Bar', $this->session->getTemp('bar'));
+		\sleep(1);
+		$this->assertNull($this->session->getTemp('bar'));
+	}
+
+	public function testRemoveTemp()
+	{
+		$this->session->setTemp('foo', 'Foo');
+		$this->assertEquals('Foo', $this->session->getTemp('foo'));
+		$this->session->removeTemp('foo');
+		$this->assertNull($this->session->getTemp('foo'));
+	}
+
+	public function testAutoClearTemp()
+	{
+		$this->session->setTemp('foo', 'Foo', 1);
+		$this->session->stop();
+		$this->session->start();
+		$this->assertEquals('Foo', $this->session->getTemp('foo'));
+		$this->session->stop();
+		\sleep(2);
+		$this->session->start();
+		$this->assertNull($this->session->getTemp('foo'));
 	}
 }
