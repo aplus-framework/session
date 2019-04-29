@@ -58,11 +58,15 @@ class Database extends SaveHandler
 			. ' WHERE `id` = ' . $id;
 		if ($this->matchIP) {
 			$ip = $this->getDatabase('write')->quote($this->getIP());
-			$sql .= ' AND `ip` = ' . $ip;
+			$sql .= $ip === 'NULL'
+				? ' AND `ip` IS NULL'
+				: ' AND `ip` = ' . $ip;
 		}
 		if ($this->matchUA) {
 			$ua = $this->getDatabase('write')->quote($this->getUA());
-			$sql .= ' AND `ua` = ' . $ua;
+			$sql .= $ua === 'NULL'
+				? ' AND `ua` IS NULL'
+				: ' AND `ua` = ' . $ua;
 		}
 		$sql .= ' LIMIT 1';
 		$this->getDatabase('write')->exec($sql);
@@ -80,11 +84,15 @@ class Database extends SaveHandler
 		$sql = 'DELETE FROM ' . $this->getProtectedTable('write') . ' WHERE `id` = ' . $id;
 		if ($this->matchIP) {
 			$ip = $this->getDatabase('write')->quote($this->getIP());
-			$sql .= ' AND `ip` = ' . $ip;
+			$sql .= $ip === 'NULL'
+				? ' AND `ip` IS NULL'
+				: ' AND `ip` = ' . $ip;
 		}
 		if ($this->matchUA) {
 			$ua = $this->getDatabase('write')->quote($this->getUA());
-			$sql .= ' AND `ua` = ' . $ua;
+			$sql .= $ua === 'NULL'
+				? ' AND `ua` IS NULL'
+				: ' AND `ua` = ' . $ua;
 		}
 		$sql .= ' LIMIT 1';
 		$this->getDatabase('write')->exec($sql);
@@ -112,11 +120,15 @@ class Database extends SaveHandler
 		$sql = 'SELECT * FROM ' . $this->getProtectedTable('read') . ' WHERE `id` = ' . $id;
 		if ($this->matchIP) {
 			$ip = $this->getDatabase('read')->quote($this->getIP());
-			$sql .= ' AND `ip` = ' . $ip;
+			$sql .= $ip === 'NULL'
+				? ' AND `ip` IS NULL'
+				: ' AND `ip` = ' . $ip;
 		}
 		if ($this->matchUA) {
 			$ua = $this->getDatabase('read')->quote($this->getUA());
-			$sql .= ' AND `ua` = ' . $ua;
+			$sql .= $ua === 'NULL'
+				? ' AND `ua` IS NULL'
+				: ' AND `ua` = ' . $ua;
 		}
 		$lifetime = $this->getLifetime();
 		if ($lifetime > 0) {
