@@ -76,23 +76,16 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 */
 	public function validateId($session_id) : bool
 	{
-		$bits_per_character = \ini_get('session.sid_bits_per_character') ?: 5;
+		$bits = \ini_get('session.sid_bits_per_character') ?: 5;
 		$length = \ini_get('session.sid_length') ?: 40;
-		switch ($bits_per_character) {
-			case 4:
-				$regex = '[0-9a-f]';
-				break;
-			case 5:
-				$regex = '[0-9a-v]';
-				break;
-			case 6:
-				$regex = '[0-9a-zA-Z,-]';
-				break;
-			default:
-				return false;
-		}
-		$regex .= '{' . $length . '}';
-		return (bool) \preg_match('#\A' . $regex . '\z#', $session_id);
+		$bits_regex = [
+			4 => '[0-9a-f]',
+			5 => '[0-9a-v]',
+			6 => '[0-9a-zA-Z,-]',
+		];
+		return isset($bits_regex[$bits])
+			? (bool) \preg_match('#\A' . $bits_regex[$bits] . '{' . $length . '}\z#', $session_id)
+			: false;
 	}
 
 	abstract public function open($save_path, $name) : bool;
