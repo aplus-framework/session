@@ -20,7 +20,7 @@ class DatabaseTest extends AbstractHandler
 		parent::__construct(...$params);
 	}
 
-	public function setUp()
+	public function setUp() : void
 	{
 		$this->handler = new \Framework\Session\SaveHandlers\Database(
 			static::$database,

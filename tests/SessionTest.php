@@ -19,13 +19,13 @@ class SessionTest extends TestCase
 	 */
 	protected $handler;
 
-	public function setUp()
+	public function setUp() : void
 	{
 		$this->session = new Session(['name' => 'SessionName'], $this->handler);
 		$this->session->start();
 	}
 
-	protected function tearDown()
+	protected function tearDown() : void
 	{
 		$this->session->destroy();
 		$this->session = null;

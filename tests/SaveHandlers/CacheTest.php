@@ -10,7 +10,7 @@ use Framework\Session\SaveHandlers\Cache;
  */
 class CacheTest extends AbstractHandler
 {
-	public function setUp()
+	public function setUp() : void
 	{
 		$directory = \getenv('CACHE_DIR');
 		\exec('rm -rf ' . $directory);
