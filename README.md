@@ -1,4 +1,7 @@
-# Framework Session
+# Framework Session Library
 
-[![Build](https://gitlab.com/the-framework/packages/session/badges/master/build.svg)](https://gitlab.com/the-framework/packages/session/-/jobs)
-[![Coverage](https://gitlab.com/the-framework/packages/session/badges/master/coverage.svg?job=test:php7.3)](https://the-framework.gitlab.io/packages/session/coverage)
+- [Homepage](https://the-framework.gitlab.io/libraries/session.html)
+- [API Documentation](https://the-framework.gitlab.io/libraries/session/docs/)
+
+[![Build](https://gitlab.com/the-framework/libraries/session/badges/master/build.svg)](https://gitlab.com/the-framework/libraries/session/-/jobs)
+[![Coverage](https://gitlab.com/the-framework/libraries/session/badges/master/coverage.svg?job=test:php7.3)](https://the-framework.gitlab.io/libraries/session/coverage/)

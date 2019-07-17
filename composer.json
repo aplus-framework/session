@@ -1,11 +1,11 @@
 {
 	"name": "framework/session",
 	"type": "library",
-	"description": "The Session package",
+	"description": "The Framework Session Library",
 	"keywords": [
 		"session"
 	],
-	"homepage": "https://gitlab.com/the-framework/session",
+	"homepage": "https://the-framework.gitlab.io/libraries/session.html",
 	"license": "proprietary",
 	"authors": [
 		{
@@ -54,9 +54,9 @@
 	},
 	"support": {
 		"email": "natanfelles@gmail.com",
-		"issues": "https://gitlab.com/the-framework/session/issues",
-		"wiki": "https://gitlab.com/the-framework/packages/session",
-		"source": "https://gitlab.com/the-framework/session",
-		"docs": "https://the-framework.gitlab.io/packages/session/api"
+		"issues": "https://gitlab.com/the-framework/libraries/session/issues",
+		"wiki": "https://gitlab.com/the-framework/libraries/session/wikis/home",
+		"source": "https://gitlab.com/the-framework/libraries/session",
+		"docs": "https://the-framework.gitlab.io/libraries/session/docs/"
 	}
 }
