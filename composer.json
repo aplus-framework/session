@@ -6,7 +6,7 @@
 		"session"
 	],
 	"homepage": "https://the-framework.gitlab.io/libraries/session.html",
-	"license": "proprietary",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Natan Felles",
