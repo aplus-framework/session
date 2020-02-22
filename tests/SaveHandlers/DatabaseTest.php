@@ -9,10 +9,7 @@ use Framework\Database\Database;
  */
 class DatabaseTest extends AbstractHandler
 {
-	/**
-	 * @var Database
-	 */
-	protected static $database;
+	protected static ?Database $database = null;
 
 	public function __construct(...$params)
 	{

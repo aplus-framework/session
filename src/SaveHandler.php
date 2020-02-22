@@ -11,14 +11,8 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 * @var mixed
 	 */
 	protected $handler;
-	/**
-	 * @var bool
-	 */
-	protected $matchIP = false;
-	/**
-	 * @var bool
-	 */
-	protected $matchUA = false;
+	protected bool $matchIP = false;
+	protected bool $matchUA = false;
 
 	/**
 	 * SessionSaveHandler constructor.

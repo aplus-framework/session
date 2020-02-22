@@ -1,5 +1,6 @@
 <?php namespace Tests\Session;
 
+use Framework\Session\SaveHandler;
 use Framework\Session\Session;
 use PHPUnit\Framework\TestCase;
 
@@ -10,14 +11,8 @@ use PHPUnit\Framework\TestCase;
  */
 class SessionTest extends TestCase
 {
-	/**
-	 * @var Session
-	 */
-	protected $session;
-	/**
-	 * @var \Framework\Session\SaveHandler|null
-	 */
-	protected $handler;
+	protected ?Session $session = null;
+	protected ?SaveHandler $handler = null;
 
 	public function setUp() : void
 	{

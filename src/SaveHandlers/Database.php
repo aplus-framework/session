@@ -21,10 +21,7 @@ use Framework\Session\SaveHandler;
  */
 class Database extends SaveHandler
 {
-	/**
-	 * @var \stdClass
-	 */
-	protected $row;
+	protected \stdClass $row;
 
 	public function __construct($handler, bool $match_ip = false, bool $match_ua = false)
 	{

@@ -5,7 +5,7 @@
  */
 class Session
 {
-	protected $options = [];
+	protected array $options = [];
 
 	public function __construct(array $options = [], SaveHandler $handler = null)
 	{
