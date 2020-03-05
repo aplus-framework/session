@@ -105,7 +105,7 @@ class Session
 		if (empty($_SESSION['$']['regenerated_at'])
 			|| $_SESSION['$']['regenerated_at'] < $time - $this->options['regenerate_id']
 		) {
-			$this->regenerate(true);
+			$this->regenerate(false);
 		}
 	}
 
