@@ -20,6 +20,7 @@
 	<rule ref="rulesets/controversial.xml">
 		<exclude name="CamelCaseParameterName"/>
 		<exclude name="CamelCaseVariableName"/>
+		<exclude name="Superglobals"/>
 	</rule>
 
 	<rule ref="rulesets/design.xml"/>

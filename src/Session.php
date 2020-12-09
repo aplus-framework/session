@@ -1,12 +1,24 @@
 <?php namespace Framework\Session;
 
+use LogicException;
+use RuntimeException;
+
 /**
  * Class Session.
  */
 class Session
 {
+	/**
+	 * @var array|mixed[]
+	 */
 	protected array $options = [];
 
+	/**
+	 * Session constructor.
+	 *
+	 * @param array|mixed[]    $options
+	 * @param SaveHandler|null $handler
+	 */
 	public function __construct(array $options = [], SaveHandler $handler = null)
 	{
 		$this->setOptions($options);
@@ -43,9 +55,9 @@ class Session
 	/**
 	 * @see http://php.net/manual/en/session.security.ini.php
 	 *
-	 * @var array $custom
+	 * @param array|mixed[] $custom
 	 */
-	protected function setOptions(array $custom)
+	protected function setOptions(array $custom) : void
 	{
 		$serializer = \ini_get('session.serialize_handler');
 		$serializer = $serializer === 'php' ? 'php_serialize' : $serializer;
@@ -75,6 +87,11 @@ class Session
 		$this->options = $default;
 	}
 
+	/**
+	 * @param array|mixed[] $custom
+	 *
+	 * @return array|mixed[]
+	 */
 	protected function getOptions(array $custom = []) : array
 	{
 		$options = $this->options;
@@ -85,13 +102,18 @@ class Session
 		return $options;
 	}
 
+	/**
+	 * @param array|mixed[] $custom_options
+	 *
+	 * @return bool
+	 */
 	public function start(array $custom_options = []) : bool
 	{
 		if ($this->isStarted()) {
-			throw new \LogicException('Session was already started');
+			throw new LogicException('Session was already started');
 		}
 		if ( ! \session_start($this->getOptions($custom_options))) {
-			throw new \RuntimeException('Session could not be started.');
+			throw new RuntimeException('Session could not be started.');
 		}
 		$time = \time();
 		$this->autoRegenerate($time);
@@ -100,7 +122,7 @@ class Session
 		return true;
 	}
 
-	protected function autoRegenerate(int $time)
+	protected function autoRegenerate(int $time) : void
 	{
 		if (empty($_SESSION['$']['regenerated_at'])
 			|| $_SESSION['$']['regenerated_at'] < $time - $this->options['regenerate_id']
@@ -109,7 +131,7 @@ class Session
 		}
 	}
 
-	protected function clearFlash()
+	protected function clearFlash() : void
 	{
 		unset($_SESSION['$']['flash']['old']);
 		if (isset($_SESSION['$']['flash']['new'])) {
@@ -123,7 +145,7 @@ class Session
 		}
 	}
 
-	protected function clearTemp(int $time)
+	protected function clearTemp(int $time) : void
 	{
 		if (isset($_SESSION['$']['temp'])) {
 			foreach ($_SESSION['$']['temp'] as $key => $value) {
@@ -142,6 +164,11 @@ class Session
 		return \session_status() === \PHP_SESSION_ACTIVE;
 	}
 
+	/**
+	 * Destroys all data registered to a session.
+	 *
+	 * @return bool true on success or false on failure
+	 */
 	public function destroy() : bool
 	{
 		if ($this->isStarted()) {
@@ -151,6 +178,11 @@ class Session
 		return $destroyed ?? true;
 	}
 
+	/**
+	 * Write session data and end session.
+	 *
+	 * @return bool returns true on success or false on failure
+	 */
 	public function stop() : bool
 	{
 		if ($this->isStarted()) {
@@ -164,16 +196,29 @@ class Session
 		return isset($_SESSION[$key]);
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return mixed|null
+	 */
 	public function get(string $key)
 	{
 		return $_SESSION[$key] ?? null;
 	}
 
+	/**
+	 * @return array|mixed[]
+	 */
 	public function getAll() : array
 	{
 		return $_SESSION;
 	}
 
+	/**
+	 * @param array|string[] $keys
+	 *
+	 * @return array|mixed[]
+	 */
 	public function getMulti(array $keys) : array
 	{
 		$items = [];
@@ -183,12 +228,23 @@ class Session
 		return $items;
 	}
 
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 *
+	 * @return $this
+	 */
 	public function set(string $key, $value)
 	{
 		$_SESSION[$key] = $value;
 		return $this;
 	}
 
+	/**
+	 * @param array|mixed[] $items
+	 *
+	 * @return $this
+	 */
 	public function setMulti(array $items)
 	{
 		foreach ($items as $key => $value) {
@@ -197,12 +253,22 @@ class Session
 		return $this;
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return $this
+	 */
 	public function remove(string $key)
 	{
 		unset($_SESSION[$key]);
 		return $this;
 	}
 
+	/**
+	 * @param array|string[] $keys
+	 *
+	 * @return $this
+	 */
 	public function removeMulti(array $keys)
 	{
 		foreach ($keys as $key) {
@@ -211,6 +277,9 @@ class Session
 		return $this;
 	}
 
+	/**
+	 * @return $this
+	 */
 	public function removeAll()
 	{
 		@\session_unset();
@@ -218,6 +287,13 @@ class Session
 		return $this;
 	}
 
+	/**
+	 * Update the current session id with a newly generated one.
+	 *
+	 * @param bool $delete_old_session Whether to delete the old associated session file or not
+	 *
+	 * @return bool
+	 */
 	public function regenerate(bool $delete_old_session = false) : bool
 	{
 		$regenerated = \session_regenerate_id($delete_old_session);
@@ -225,6 +301,11 @@ class Session
 		return $regenerated;
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return mixed|null
+	 */
 	public function getFlash(string $key)
 	{
 		return $_SESSION['$']['flash']['new'][$key]
@@ -232,12 +313,23 @@ class Session
 			?? null;
 	}
 
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 *
+	 * @return $this
+	 */
 	public function setFlash(string $key, $value)
 	{
 		$_SESSION['$']['flash']['new'][$key] = $value;
 		return $this;
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return $this
+	 */
 	public function removeFlash(string $key)
 	{
 		unset(
@@ -247,6 +339,11 @@ class Session
 		return $this;
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return mixed|null
+	 */
 	public function getTemp(string $key)
 	{
 		if (isset($_SESSION['$']['temp'][$key])) {
@@ -258,6 +355,13 @@ class Session
 		return null;
 	}
 
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 * @param int    $ttl
+	 *
+	 * @return $this
+	 */
 	public function setTemp(string $key, $value, int $ttl = 60)
 	{
 		$_SESSION['$']['temp'][$key] = [
@@ -267,6 +371,11 @@ class Session
 		return $this;
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @return $this
+	 */
 	public function removeTemp(string $key)
 	{
 		unset($_SESSION['$']['temp'][$key]);
