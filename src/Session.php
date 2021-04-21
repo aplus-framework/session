@@ -234,7 +234,7 @@ class Session
 	 *
 	 * @return $this
 	 */
-	public function set(string $key, $value)
+	public function set(string $key, mixed $value)
 	{
 		$_SESSION[$key] = $value;
 		return $this;
@@ -319,7 +319,7 @@ class Session
 	 *
 	 * @return $this
 	 */
-	public function setFlash(string $key, $value)
+	public function setFlash(string $key, mixed $value)
 	{
 		$_SESSION['$']['flash']['new'][$key] = $value;
 		return $this;
@@ -362,7 +362,7 @@ class Session
 	 *
 	 * @return $this
 	 */
-	public function setTemp(string $key, $value, int $ttl = 60)
+	public function setTemp(string $key, mixed $value, int $ttl = 60)
 	{
 		$_SESSION['$']['temp'][$key] = [
 			'ttl' => \time() + $ttl,
