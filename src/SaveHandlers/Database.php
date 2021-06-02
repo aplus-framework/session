@@ -44,10 +44,10 @@ class Database extends SaveHandler
 		return $this->getDatabase($connection_type)->protectIdentifier('Sessions');
 	}
 
-	public function updateTimestamp($session_id, $session_data) : bool
+	public function updateTimestamp($id, $data) : bool
 	{
-		$id = $this->getDatabase('write')->quote($session_id);
-		$data = $this->getDatabase('write')->quote($session_data);
+		$id = $this->getDatabase('write')->quote($id);
+		$data = $this->getDatabase('write')->quote($data);
 		$timestamp = \time();
 		$sql = 'UPDATE ' . $this->getProtectedTable('write')
 			. ' SET `timestamp` = ' . $timestamp
@@ -75,9 +75,9 @@ class Database extends SaveHandler
 		return true;
 	}
 
-	public function destroy($session_id) : bool
+	public function destroy($id) : bool
 	{
-		$id = $this->getDatabase('write')->quote($session_id);
+		$id = $this->getDatabase('write')->quote($id);
 		$sql = 'DELETE FROM ' . $this->getProtectedTable('write') . ' WHERE `id` = ' . $id;
 		if ($this->matchIP) {
 			$ip = $this->getDatabase('write')->quote($this->getIP());
@@ -96,24 +96,24 @@ class Database extends SaveHandler
 		return true;
 	}
 
-	public function gc($maxlifetime) : bool
+	public function gc($max_lifetime) : bool
 	{
-		$maxlifetime = \time() - $maxlifetime;
-		$maxlifetime = $this->getDatabase('write')->quote($maxlifetime);
+		$max_lifetime = \time() - $max_lifetime;
+		$max_lifetime = $this->getDatabase('write')->quote($max_lifetime);
 		$sql = 'DELETE FROM ' . $this->getProtectedTable('write')
-			. ' WHERE `timestamp` < ' . $maxlifetime;
+			. ' WHERE `timestamp` < ' . $max_lifetime;
 		$this->getDatabase('write')->exec($sql);
 		return true;
 	}
 
-	public function open($save_path, $session_name) : bool
+	public function open($path, $session_name) : bool
 	{
 		return $this->getDatabase('read') && $this->getDatabase('write');
 	}
 
-	public function read($session_id) : string
+	public function read($id) : string
 	{
-		$id = $this->getDatabase('read')->quote($session_id);
+		$id = $this->getDatabase('read')->quote($id);
 		$sql = 'SELECT * FROM ' . $this->getProtectedTable('read') . ' WHERE `id` = ' . $id;
 		if ($this->matchIP) {
 			$ip = $this->getDatabase('read')->quote($this->getIP());
@@ -142,10 +142,10 @@ class Database extends SaveHandler
 		return '';
 	}
 
-	public function write($session_id, $session_data) : bool
+	public function write($id, $data) : bool
 	{
-		$id = $this->getDatabase('write')->quote($session_id);
-		$data = $this->getDatabase('write')->quote($session_data);
+		$id = $this->getDatabase('write')->quote($id);
+		$data = $this->getDatabase('write')->quote($data);
 		$timestamp = \time();
 		$sql = 'REPLACE INTO ' . $this->getProtectedTable('write')
 			. ' SET `id` = ' . $id

@@ -64,11 +64,11 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	}
 
 	/**
-	 * @param string $session_id
+	 * @param string $id
 	 *
 	 * @return bool
 	 */
-	public function validateId($session_id) : bool
+	public function validateId($id) : bool
 	{
 		$bits = \ini_get('session.sid_bits_per_character') ?: 5;
 		$length = \ini_get('session.sid_length') ?: 40;
@@ -78,21 +78,21 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 			6 => '[0-9a-zA-Z,-]',
 		];
 		return isset($bits_regex[$bits])
-			? (bool) \preg_match('#\A' . $bits_regex[$bits] . '{' . $length . '}\z#', $session_id)
+			? (bool) \preg_match('#\A' . $bits_regex[$bits] . '{' . $length . '}\z#', $id)
 			: false;
 	}
 
-	abstract public function open($save_path, $name) : bool;
+	abstract public function open($path, $name) : bool;
 
-	abstract public function read($session_id) : string;
+	abstract public function read($id) : string;
 
-	abstract public function write($session_id, $session_data) : bool;
+	abstract public function write($id, $data) : bool;
 
-	abstract public function updateTimestamp($session_id, $session_data) : bool;
+	abstract public function updateTimestamp($id, $data) : bool;
 
 	abstract public function close() : bool;
 
-	abstract public function destroy($session_id) : bool;
+	abstract public function destroy($id) : bool;
 
-	abstract public function gc($maxlifetime) : bool;
+	abstract public function gc($max_lifetime) : bool;
 }

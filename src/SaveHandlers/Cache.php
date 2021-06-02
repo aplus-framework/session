@@ -9,44 +9,44 @@ use Framework\Session\SaveHandler;
  */
 class Cache extends SaveHandler
 {
-	protected function getKey($session_id)
+	protected function getKey($id) : string
 	{
 		if ($this->matchIP) {
-			$session_id .= '-' . $this->getIP();
+			$id .= '-' . $this->getIP();
 		}
 		if ($this->matchUA) {
-			$session_id .= '-' . $this->getUA();
+			$id .= '-' . $this->getUA();
 		}
 		if ($this->matchIP || $this->matchUA) {
-			$session_id = \md5($session_id);
+			$id = \md5($id);
 		}
-		return $session_id;
+		return $id;
 	}
 
-	public function open($save_path, $name) : bool
+	public function open($path, $name) : bool
 	{
 		return true;
 	}
 
-	public function read($session_id) : string
+	public function read($id) : string
 	{
-		return (string) $this->handler->get($this->getKey($session_id));
+		return (string) $this->handler->get($this->getKey($id));
 	}
 
-	public function write($session_id, $session_data) : bool
+	public function write($id, $data) : bool
 	{
 		return $this->handler->set(
-			$this->getKey($session_id),
-			$session_data,
+			$this->getKey($id),
+			$data,
 			$this->getLifetime()
 		);
 	}
 
-	public function updateTimestamp($session_id, $session_data) : bool
+	public function updateTimestamp($id, $data) : bool
 	{
 		return $this->handler->set(
-			$this->getKey($session_id),
-			$session_data,
+			$this->getKey($id),
+			$data,
 			$this->getLifetime()
 		);
 	}
@@ -56,12 +56,12 @@ class Cache extends SaveHandler
 		return true;
 	}
 
-	public function destroy($session_id) : bool
+	public function destroy($id) : bool
 	{
-		return $this->handler->delete($this->getKey($session_id));
+		return $this->handler->delete($this->getKey($id));
 	}
 
-	public function gc($maxlifetime) : bool
+	public function gc($max_lifetime) : bool
 	{
 		return \method_exists($this->handler, 'gc') ? $this->handler->gc() : true;
 	}
