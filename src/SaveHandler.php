@@ -78,8 +78,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 			6 => '[0-9a-zA-Z,-]',
 		];
 		return isset($bits_regex[$bits])
-			? (bool) \preg_match('#\A' . $bits_regex[$bits] . '{' . $length . '}\z#', $id)
-			: false;
+			&& \preg_match('#\A' . $bits_regex[$bits] . '{' . $length . '}\z#', $id);
 	}
 
 	abstract public function open($path, $name) : bool;
