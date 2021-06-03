@@ -9,6 +9,13 @@ use Tests\Session\SessionTest;
  */
 class AbstractHandler extends SessionTest
 {
+	public function setUp() : void
+	{
+		$_SERVER['REMOTE_ADDR'] = '192.168.0.100';
+		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0';
+		parent::setUp();
+	}
+
 	public function testValidateId()
 	{
 		$id6 = '62my7tSXcbIrOZ-WHsEXhpwUoG,afmBQNGaSBkFN';
@@ -47,11 +54,14 @@ class AbstractHandler extends SessionTest
 
 	public function testIP()
 	{
-		$this->assertNull($this->handler->getIP());
+		$this->assertEquals('192.168.0.100', $this->handler->getIP());
 	}
 
 	public function testUA()
 	{
-		$this->assertNull($this->handler->getUA());
+		$this->assertEquals(
+			'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0',
+			$this->handler->getUA()
+		);
 	}
 }

@@ -13,6 +13,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	protected $handler;
 	protected bool $matchIP = false;
 	protected bool $matchUA = false;
+	protected static ?array $server = null;
 
 	/**
 	 * SessionSaveHandler constructor.
@@ -37,27 +38,39 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	{
 		static $server;
 		if ($server === null) {
-			$server = [
-				'REMOTE_ADDR' => \filter_input(
-					\INPUT_SERVER,
-					'REMOTE_ADDR',
-					\FILTER_SANITIZE_STRING
-				),
-				'HTTP_USER_AGENT' => \filter_input(
-					\INPUT_SERVER,
-					'HTTP_USER_AGENT',
-					\FILTER_SANITIZE_STRING
-				),
-			];
+			$server['REMOTE_ADDR'] = null;
+			if (isset($_SERVER['REMOTE_ADDR'])) {
+				$data = \filter_var($_SERVER['REMOTE_ADDR'], \FILTER_SANITIZE_STRING);
+				if ($data !== false) {
+					$server['REMOTE_ADDR'] = $data;
+				}
+			}
+			$server['HTTP_USER_AGENT'] = null;
+			if (isset($_SERVER['HTTP_USER_AGENT'])) {
+				$data = \filter_var($_SERVER['HTTP_USER_AGENT'], \FILTER_SANITIZE_STRING);
+				if ($data !== false) {
+					$server['HTTP_USER_AGENT'] = $data;
+				}
+			}
 		}
-		return $server[$var] ?? null;
+		return $server[$var];
 	}
 
+	/**
+	 * Get the Internet Protocol.
+	 *
+	 * @return string|null
+	 */
 	public function getIP() : ?string
 	{
 		return $this->getServerVar('REMOTE_ADDR');
 	}
 
+	/**
+	 * Get the HTTP User-Agent Header.
+	 *
+	 * @return string|null
+	 */
 	public function getUA() : ?string
 	{
 		return $this->getServerVar('HTTP_USER_AGENT');
