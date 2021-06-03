@@ -127,7 +127,7 @@ class Session
 		if (empty($_SESSION['$']['regenerated_at'])
 			|| $_SESSION['$']['regenerated_at'] < $time - $this->options['regenerate_id']
 		) {
-			$this->regenerate(false);
+			$this->regenerate();
 		}
 	}
 
@@ -297,7 +297,9 @@ class Session
 	public function regenerate(bool $delete_old_session = false) : bool
 	{
 		$regenerated = \session_regenerate_id($delete_old_session);
-		$_SESSION['$']['regenerated_at'] = \time();
+		if ($regenerated) {
+			$_SESSION['$']['regenerated_at'] = \time();
+		}
 		return $regenerated;
 	}
 
