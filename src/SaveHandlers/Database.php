@@ -22,7 +22,7 @@ use Framework\Session\SaveHandler;
 class Database extends SaveHandler
 {
 	protected \stdClass $row;
-	protected string $table = 'Sessions';
+	protected string $table;
 
 	public function __construct($handler, bool $match_ip = false, bool $match_ua = false)
 	{
@@ -32,6 +32,8 @@ class Database extends SaveHandler
 				'write' => $handler,
 			];
 		}
+		$this->table = $handler['table'] ?? 'Sessions';
+		unset($handler['table']);
 		parent::__construct($handler, $match_ip, $match_ua);
 	}
 
