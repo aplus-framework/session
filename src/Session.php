@@ -304,9 +304,9 @@ class Session
 	/**
 	 * @param string $key
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function getFlash(string $key)
+	public function getFlash(string $key) : mixed
 	{
 		return $_SESSION['$']['flash']['new'][$key]
 			?? $_SESSION['$']['flash']['old'][$key]
@@ -342,9 +342,9 @@ class Session
 	/**
 	 * @param string $key
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
-	public function getTemp(string $key)
+	public function getTemp(string $key) : mixed
 	{
 		if (isset($_SESSION['$']['temp'][$key])) {
 			if ($_SESSION['$']['temp'][$key]['ttl'] > \time()) {
