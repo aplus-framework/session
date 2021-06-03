@@ -22,6 +22,7 @@ use Framework\Session\SaveHandler;
 class Database extends SaveHandler
 {
 	protected \stdClass $row;
+	protected string $table = 'Sessions';
 
 	public function __construct($handler, bool $match_ip = false, bool $match_ua = false)
 	{
@@ -39,34 +40,29 @@ class Database extends SaveHandler
 		return $this->handler[$connection_type];
 	}
 
-	protected function getProtectedTable(string $connection_type) : string
-	{
-		return $this->getDatabase($connection_type)->protectIdentifier('Sessions');
-	}
-
 	public function updateTimestamp($id, $data) : bool
 	{
-		$id = $this->getDatabase('write')->quote($id);
-		$data = $this->getDatabase('write')->quote($data);
-		$timestamp = \time();
-		$sql = 'UPDATE ' . $this->getProtectedTable('write')
-			. ' SET `timestamp` = ' . $timestamp
-			. ', `data` = ' . $data
-			. ' WHERE `id` = ' . $id;
+		$query = $this->getDatabase('write')
+			->update()
+			->table($this->table)
+			->set([
+				'timestamp' => \time(),
+				'data' => $data,
+			])
+			->whereEqual('id', $id);
 		if ($this->matchIP) {
-			$ip = $this->getDatabase('write')->quote($this->getIP());
-			$sql .= $ip === 'NULL'
-				? ' AND `ip` IS NULL'
-				: ' AND `ip` = ' . $ip;
+			$ip = $this->getIP();
+			$ip === null
+				? $query->whereIsNull('ip')
+				: $query->whereEqual('ip', $ip);
 		}
 		if ($this->matchUA) {
-			$ua = $this->getDatabase('write')->quote($this->getUA());
-			$sql .= $ua === 'NULL'
-				? ' AND `ua` IS NULL'
-				: ' AND `ua` = ' . $ua;
+			$ua = $this->getUA();
+			$ua === null
+				? $query->whereIsNull('ua')
+				: $query->whereEqual('ua', $ua);
 		}
-		$sql .= ' LIMIT 1';
-		$this->getDatabase('write')->exec($sql);
+		$query->limit(1)->run();
 		return true;
 	}
 
@@ -77,32 +73,34 @@ class Database extends SaveHandler
 
 	public function destroy($id) : bool
 	{
-		$id = $this->getDatabase('write')->quote($id);
-		$sql = 'DELETE FROM ' . $this->getProtectedTable('write') . ' WHERE `id` = ' . $id;
+		$query = $this->getDatabase('write')
+			->delete()
+			->from($this->table)
+			->whereEqual('id', $id);
 		if ($this->matchIP) {
-			$ip = $this->getDatabase('write')->quote($this->getIP());
-			$sql .= $ip === 'NULL'
-				? ' AND `ip` IS NULL'
-				: ' AND `ip` = ' . $ip;
+			$ip = $this->getIP();
+			$ip === null
+				? $query->whereIsNull('ip')
+				: $query->whereEqual('ip', $ip);
 		}
 		if ($this->matchUA) {
-			$ua = $this->getDatabase('write')->quote($this->getUA());
-			$sql .= $ua === 'NULL'
-				? ' AND `ua` IS NULL'
-				: ' AND `ua` = ' . $ua;
+			$ua = $this->getUA();
+			$ua === null
+				? $query->whereIsNull('ua')
+				: $query->whereEqual('ua', $ua);
 		}
-		$sql .= ' LIMIT 1';
-		$this->getDatabase('write')->exec($sql);
+		$query->limit(1)->run();
 		return true;
 	}
 
 	public function gc($max_lifetime) : bool
 	{
 		$max_lifetime = \time() - $max_lifetime;
-		$max_lifetime = $this->getDatabase('write')->quote($max_lifetime);
-		$sql = 'DELETE FROM ' . $this->getProtectedTable('write')
-			. ' WHERE `timestamp` < ' . $max_lifetime;
-		$this->getDatabase('write')->exec($sql);
+		$this->getDatabase('write')
+			->delete()
+			->from($this->table)
+			->whereLessThan('timestamp', $max_lifetime)
+			->run();
 		return true;
 	}
 
@@ -113,29 +111,30 @@ class Database extends SaveHandler
 
 	public function read($id) : string
 	{
-		$id = $this->getDatabase('read')->quote($id);
-		$sql = 'SELECT * FROM ' . $this->getProtectedTable('read') . ' WHERE `id` = ' . $id;
+		$query = $this->getDatabase('read')
+			->select()
+			->from($this->table)
+			->whereEqual('id', $id);
 		if ($this->matchIP) {
-			$ip = $this->getDatabase('read')->quote($this->getIP());
-			$sql .= $ip === 'NULL'
-				? ' AND `ip` IS NULL'
-				: ' AND `ip` = ' . $ip;
+			$ip = $this->getIP();
+			$ip === null
+				? $query->whereIsNull('ip')
+				: $query->whereEqual('ip', $ip);
 		}
 		if ($this->matchUA) {
-			$ua = $this->getDatabase('read')->quote($this->getUA());
-			$sql .= $ua === 'NULL'
-				? ' AND `ua` IS NULL'
-				: ' AND `ua` = ' . $ua;
+			$ua = $this->getUA();
+			$ua === null
+				? $query->whereIsNull('ua')
+				: $query->whereEqual('ua', $ua);
 		}
 		$lifetime = $this->getLifetime();
 		if ($lifetime > 0) {
 			$lifetime = \time() - $lifetime;
-			$lifetime = $this->getDatabase('read')->quote($lifetime);
-			$sql .= ' AND `timestamp` > ' . $lifetime;
+			$query->whereGreaterThan('timestamp', $lifetime);
 		}
-		$sql .= ' LIMIT 1';
-		$result = $this->getDatabase('read')->query($sql);
-		if ($result && $result = $result->fetch()) {
+		$query->limit(1);
+		$result = $query->run()->fetch();
+		if ($result) {
 			$this->row = $result;
 			return $this->row->data;
 		}
@@ -144,26 +143,21 @@ class Database extends SaveHandler
 
 	public function write($id, $data) : bool
 	{
-		$id = $this->getDatabase('write')->quote($id);
-		$data = $this->getDatabase('write')->quote($data);
-		$timestamp = \time();
-		$sql = 'REPLACE INTO ' . $this->getProtectedTable('write')
-			. ' SET `id` = ' . $id
-			. ', `data`= ' . $data
-			. ', `timestamp` = ' . $timestamp;
+		$query = $this->getDatabase('write')
+			->replace()
+			->into($this->table);
+		$set = [
+			'id' => $id,
+			'data' => $data,
+			'timestamp' => \time(),
+		];
 		if ($this->matchIP) {
-			$ip = $this->getDatabase('write')->quote(
-				$this->row->ip ?? $this->getIP()
-			);
-			$sql .= ', `ip` = ' . $ip;
+			$set['ip'] = $this->row->ip ?? $this->getIP();
 		}
 		if ($this->matchUA) {
-			$ua = $this->getDatabase('write')->quote(
-				$this->row->ua ?? $this->getUA()
-			);
-			$sql .= ', `ua` = ' . $ua;
+			$set['ua'] = $this->row->ua ?? $this->getUA();
 		}
-		$this->getDatabase('write')->exec($sql);
+		$query->set($set)->run();
 		return true;
 	}
 }

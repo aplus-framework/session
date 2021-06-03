@@ -1,6 +1,7 @@
 <?php namespace Tests\Session\SaveHandlers;
 
 use Framework\Database\Database;
+use Framework\Database\Definition\Table\TableDefinition;
 
 /**
  * Class DatabaseTest.
@@ -44,21 +45,17 @@ class DatabaseTest extends AbstractHandler
 
 	protected function createDummyData()
 	{
-		static::$database->exec('DROP TABLE IF EXISTS `Sessions`');
-		static::$database->exec(
-			<<<SQL
-			CREATE TABLE IF NOT EXISTS `Sessions` (
-			`id` varchar(128) NOT NULL,
-			`ip` varchar(45),
-			`ua` varchar(255),
-			`timestamp` int(10) unsigned NOT NULL,
-			`data` blob NOT NULL,
-			PRIMARY KEY (`id`),
-			KEY `ip` (`ip`),
-			KEY `ua` (`ua`),
-			KEY `timestamp` (`timestamp`)
-			);
-		SQL
-		);
+		static::$database->dropTable('Sessions')->ifExists()->run();
+		static::$database->createTable('Sessions')
+			->definition(static function (TableDefinition $definition) {
+				$definition->column('id')->varchar(128)->primaryKey();
+				$definition->column('ip')->varchar(45)->null();
+				$definition->column('ua')->varchar(255)->null();
+				$definition->column('timestamp')->int(10)->unsigned();
+				$definition->column('data')->blob();
+				$definition->index('ip')->key('ip');
+				$definition->index('ua')->key('ua');
+				$definition->index('timestamp')->key('timestamp');
+			})->run();
 	}
 }
