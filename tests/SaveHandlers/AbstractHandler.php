@@ -9,6 +9,8 @@ use Tests\Session\SessionTest;
  */
 class AbstractHandler extends SessionTest
 {
+	protected array $config = [];
+
 	public function setUp() : void
 	{
 		$_SERVER['REMOTE_ADDR'] = '192.168.0.100';

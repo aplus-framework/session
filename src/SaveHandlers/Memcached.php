@@ -25,7 +25,7 @@ class Memcached extends SaveHandler
 		foreach ($this->config['servers'] as $index => $server) {
 			if ( ! isset($server['host'])) {
 				throw new OutOfBoundsException(
-					'Memcached host not set on server config ' . $index
+					"Memcached host not set on server config '{$index}'"
 				);
 			}
 		}
@@ -92,7 +92,13 @@ class Memcached extends SaveHandler
 
 	public function destroy($id) : bool
 	{
-		return $this->memcached->delete($id);
+		$destroyed = $this->memcached->delete($id);
+		if ($destroyed === false
+			&& $this->memcached->getResultCode() !== $this->memcached::RES_NOTFOUND
+		) {
+			return false;
+		}
+		return true;
 	}
 
 	public function gc($max_lifetime) : bool

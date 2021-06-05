@@ -11,9 +11,6 @@ use Framework\Session\SaveHandlers\Database as DatabaseSaveHandler;
  */
 class DatabaseTest extends AbstractHandler
 {
-	protected static ?Database $database = null;
-	protected array $config;
-
 	public function setUp() : void
 	{
 		$this->config = [
