@@ -1,5 +1,6 @@
 <?php namespace Framework\Session\SaveHandlers;
 
+use Framework\Database\Database as DB;
 use Framework\Session\SaveHandler;
 
 /**
@@ -21,33 +22,22 @@ use Framework\Session\SaveHandler;
  */
 class Database extends SaveHandler
 {
+	protected DB $database;
 	protected \stdClass $row;
-	protected string $table;
 	protected string | false $lock = false;
 
-	public function __construct($handler, bool $match_ip = false, bool $match_ua = false)
+	protected function prepareConfig(array $config) : void
 	{
-		if ( ! \is_array($handler)) {
-			$handler = [
-				'read' => $handler,
-				'write' => $handler,
-			];
-		}
-		$this->table = $handler['table'] ?? 'Sessions';
-		unset($handler['table']);
-		parent::__construct($handler, $match_ip, $match_ua);
-	}
-
-	protected function getDatabase(string $connection_type) : \Framework\Database\Database
-	{
-		return $this->handler[$connection_type];
+		$this->config = \array_replace([
+			'table' => 'Sessions',
+		], $config);
 	}
 
 	public function updateTimestamp($id, $data) : bool
 	{
-		$query = $this->getDatabase('write')
+		$query = $this->database
 			->update()
-			->table($this->table)
+			->table($this->config['table'])
 			->set([
 				'timestamp' => \time(),
 				'data' => $data,
@@ -76,9 +66,9 @@ class Database extends SaveHandler
 
 	public function destroy($id) : bool
 	{
-		$query = $this->getDatabase('write')
+		$query = $this->database
 			->delete()
-			->from($this->table)
+			->from($this->config['table'])
 			->whereEqual('id', $id);
 		if ($this->matchIP) {
 			$ip = $this->getIP();
@@ -99,9 +89,9 @@ class Database extends SaveHandler
 	public function gc($max_lifetime) : bool
 	{
 		$max_lifetime = \time() - $max_lifetime;
-		$this->getDatabase('write')
+		$this->database
 			->delete()
-			->from($this->table)
+			->from($this->config['table'])
 			->whereLessThan('timestamp', $max_lifetime)
 			->run();
 		return true;
@@ -109,7 +99,8 @@ class Database extends SaveHandler
 
 	public function open($path, $session_name) : bool
 	{
-		return $this->getDatabase('read') && $this->getDatabase('write');
+		$this->database = new DB($this->config);
+		return true;
 	}
 
 	public function read($id) : string
@@ -117,9 +108,9 @@ class Database extends SaveHandler
 		if ($this->getLock($id) === false) {
 			return '';
 		}
-		$query = $this->getDatabase('read')
+		$query = $this->database
 			->select()
-			->from($this->table)
+			->from($this->config['table'])
 			->whereEqual('id', $id);
 		if ($this->matchIP) {
 			$ip = $this->getIP();
@@ -149,9 +140,9 @@ class Database extends SaveHandler
 
 	public function write($id, $data) : bool
 	{
-		$query = $this->getDatabase('write')
+		$query = $this->database
 			->replace()
-			->into($this->table);
+			->into($this->config['table']);
 		$set = [
 			'id' => $id,
 			'data' => $data,
@@ -169,17 +160,14 @@ class Database extends SaveHandler
 
 	protected function getLock(string $session_id) : bool
 	{
-		if ($this->getDatabase('read') !== $this->getDatabase('write')) {
-			return true;
-		}
 		$lock_id = $session_id;
 		$lock_id .= $this->matchIP ? '-' . $this->getIP() : '';
 		$lock_id .= $this->matchUA ? '-' . $this->getUA() : '';
 		$lock_id = \md5($lock_id);
-		$locked = $this->getDatabase('read')
+		$locked = $this->database
 			->select()
 			->expressions([
-				'locked' => static function (\Framework\Database\Database $db) use ($lock_id) {
+				'locked' => static function (DB $db) use ($lock_id) {
 					$lock_id = $db->quote($lock_id);
 					return "GET_LOCK({$lock_id}, 300)";
 				},
@@ -199,10 +187,10 @@ class Database extends SaveHandler
 			return true;
 		}
 		$lock_id = $this->lock;
-		$unlocked = $this->getDatabase('read')
+		$unlocked = $this->database
 			->select()
 			->expressions([
-				'unlocked' => static function (\Framework\Database\Database $db) use ($lock_id) {
+				'unlocked' => static function (DB $db) use ($lock_id) {
 					$lock_id = $db->quote($lock_id);
 					return "RELEASE_LOCK({$lock_id})";
 				},
