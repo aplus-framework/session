@@ -8,6 +8,8 @@ test:php:
       - vendor/
   services:
     - mariadb
+    - memcached
+    - redis
   variables:
     MYSQL_HOST: mariadb
     MYSQL_DATABASE: framework-tests
