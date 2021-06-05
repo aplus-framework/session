@@ -23,6 +23,7 @@ class Database extends SaveHandler
 {
 	protected \stdClass $row;
 	protected string $table;
+	protected string | false $lock = false;
 
 	public function __construct($handler, bool $match_ip = false, bool $match_ua = false)
 	{
@@ -70,7 +71,7 @@ class Database extends SaveHandler
 
 	public function close() : bool
 	{
-		return true;
+		return ! ($this->lock && ! $this->releaseLock());
 	}
 
 	public function destroy($id) : bool
@@ -113,6 +114,9 @@ class Database extends SaveHandler
 
 	public function read($id) : string
 	{
+		if ($this->getLock($id) === false) {
+			return '';
+		}
 		$query = $this->getDatabase('read')
 			->select()
 			->from($this->table)
@@ -161,5 +165,54 @@ class Database extends SaveHandler
 		}
 		$query->set($set)->run();
 		return true;
+	}
+
+	protected function getLock(string $session_id) : bool
+	{
+		if ($this->getDatabase('read') !== $this->getDatabase('write')) {
+			return true;
+		}
+		$lock_id = $session_id;
+		$lock_id .= $this->matchIP ? '-' . $this->getIP() : '';
+		$lock_id .= $this->matchUA ? '-' . $this->getUA() : '';
+		$lock_id = \md5($lock_id);
+		$locked = $this->getDatabase('read')
+			->select()
+			->expressions([
+				'locked' => static function (\Framework\Database\Database $db) use ($lock_id) {
+					$lock_id = $db->quote($lock_id);
+					return "GET_LOCK({$lock_id}, 300)";
+				},
+			])->run()
+			->fetch()
+			->locked;
+		if ($locked) {
+			$this->lock = $lock_id;
+			return true;
+		}
+		return false;
+	}
+
+	protected function releaseLock() : bool
+	{
+		if ($this->lock === false) {
+			return true;
+		}
+		$lock_id = $this->lock;
+		$unlocked = $this->getDatabase('read')
+			->select()
+			->expressions([
+				'unlocked' => static function (\Framework\Database\Database $db) use ($lock_id) {
+					$lock_id = $db->quote($lock_id);
+					return "RELEASE_LOCK({$lock_id})";
+				},
+			])->run()
+			->fetch()
+			->unlocked;
+		if ($unlocked) {
+			$this->lock = false;
+			return true;
+		}
+		return false;
 	}
 }
