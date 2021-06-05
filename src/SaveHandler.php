@@ -3,14 +3,12 @@
 /**
  * Class SessionSaveHandler.
  *
- * @todo    Allow enable/disable locks?
+ * @see https://www.php.net/manual/en/class.sessionhandler.php
+ * @see https://gist.github.com/mindplay-dk/623bdd50c1b4c0553cd3
  */
 abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTimestampHandlerInterface
 {
-	/**
-	 * @var mixed
-	 */
-	protected $handler;
+	protected array $config;
 	protected bool $matchIP = false;
 	protected bool $matchUA = false;
 	protected static ?array $server = null;
@@ -18,15 +16,20 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	/**
 	 * SessionSaveHandler constructor.
 	 *
-	 * @param mixed $handler
+	 * @param array $config
 	 * @param bool  $match_ip
 	 * @param bool  $match_ua
 	 */
-	public function __construct($handler, bool $match_ip = false, bool $match_ua = false)
+	public function __construct(array $config, bool $match_ip = false, bool $match_ua = false)
 	{
-		$this->handler = $handler;
+		$this->prepareConfig($config);
 		$this->matchIP = $match_ip;
 		$this->matchUA = $match_ua;
+	}
+
+	protected function prepareConfig(array $config) : void
+	{
+		$this->config = $config;
 	}
 
 	protected function getLifetime() : int
@@ -61,7 +64,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 *
 	 * @return string|null
 	 */
-	public function getIP() : ?string
+	protected function getIP() : ?string
 	{
 		return $this->getServerVar('REMOTE_ADDR');
 	}
@@ -71,7 +74,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 *
 	 * @return string|null
 	 */
-	public function getUA() : ?string
+	protected function getUA() : ?string
 	{
 		return $this->getServerVar('HTTP_USER_AGENT');
 	}
