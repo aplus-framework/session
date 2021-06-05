@@ -8,6 +8,8 @@ services:
       - .:/package
     depends_on:
       - mariadb
+      - memcached
+      - redis
     tty: true
   mariadb:
     image: mariadb
@@ -18,3 +20,9 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: password
     container_name: session-mariadb
+  memcached:
+    image: memcached:alpine
+    container_name: session-memcached
+  redis:
+    image: redis:alpine
+    container_name: session-redis

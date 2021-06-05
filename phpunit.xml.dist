@@ -19,7 +19,9 @@
 	</testsuite>
 	<logging/>
 	<php>
-		<env name="CACHE_DIR" value="/tmp/cache-tests"/>
+		<env name="FILES_DIR" value="/tmp/session-tests"/>
+		<env name="MEMCACHED_HOST" value="memcached"/>
+		<env name="REDIS_HOST" value="redis"/>
 		<env name="DB_HOST" value="mariadb"/>
 		<env name="DB_PORT" value="3306"/>
 		<env name="DB_USERNAME" value="root"/>
