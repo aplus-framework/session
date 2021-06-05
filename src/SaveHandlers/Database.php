@@ -6,19 +6,19 @@ use Framework\Session\SaveHandler;
 /**
  * Class Database.
  *
- * CREATE TABLE IF NOT EXISTS `Sessions` (
- * `id` varchar(128) NOT NULL,
- * `ip` varchar(45),
- * `ua` varchar(255),
- * `timestamp` int(10) unsigned NOT NULL,
- * `data` blob NOT NULL,
- * PRIMARY KEY (`id`),
- * KEY `ip` (`ip`),
- * KEY `ua` (`ua`),
- * KEY `timestamp` (`timestamp`)
+ * ```sql
+ * CREATE TABLE `Sessions` (
+ *     `id` varchar(128) NOT NULL,
+ *     `ip` varchar(45),
+ *     `ua` varchar(255),
+ *     `timestamp` int(10) unsigned NOT NULL,
+ *     `data` blob NOT NULL,
+ *     PRIMARY KEY (`id`),
+ *     KEY `ip` (`ip`),
+ *     KEY `ua` (`ua`),
+ *     KEY `timestamp` (`timestamp`)
  * );
- *
- * @property \Framework\Database\Database[] $handler
+ * ```
  */
 class Database extends SaveHandler
 {
@@ -164,17 +164,18 @@ class Database extends SaveHandler
 		$lock_id .= $this->matchIP ? '-' . $this->getIP() : '';
 		$lock_id .= $this->matchUA ? '-' . $this->getUA() : '';
 		$lock_id = \md5($lock_id);
-		$locked = $this->database
+		$lifetime = $this->getLifetime();
+		$row = $this->database
 			->select()
 			->expressions([
-				'locked' => static function (DB $db) use ($lock_id) {
+				'locked' => static function (DB $db) use ($lock_id, $lifetime) {
 					$lock_id = $db->quote($lock_id);
-					return "GET_LOCK({$lock_id}, 300)";
+					$lifetime = $db->quote($lifetime);
+					return "GET_LOCK({$lock_id}, {$lifetime})";
 				},
 			])->run()
-			->fetch()
-			->locked;
-		if ($locked) {
+			->fetch();
+		if ($row && $row->locked) {
 			$this->lock = $lock_id;
 			return true;
 		}
@@ -187,7 +188,7 @@ class Database extends SaveHandler
 			return true;
 		}
 		$lock_id = $this->lock;
-		$unlocked = $this->database
+		$row = $this->database
 			->select()
 			->expressions([
 				'unlocked' => static function (DB $db) use ($lock_id) {
@@ -195,9 +196,8 @@ class Database extends SaveHandler
 					return "RELEASE_LOCK({$lock_id})";
 				},
 			])->run()
-			->fetch()
-			->unlocked;
-		if ($unlocked) {
+			->fetch();
+		if ($row && $row->unlocked) {
 			$this->lock = false;
 			return true;
 		}
