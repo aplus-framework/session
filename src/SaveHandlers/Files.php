@@ -146,6 +146,9 @@ class Files extends SaveHandler
 	public function gc($max_lifetime) : bool
 	{
 		$dir_handle = \opendir($this->config['directory']);
+		if ($dir_handle === false) {
+			return false;
+		}
 		while (($filename = \readdir($dir_handle)) !== false) {
 			if ($filename !== '.'
 				&& $filename !== '..'
@@ -158,9 +161,12 @@ class Files extends SaveHandler
 		return true;
 	}
 
-	protected function gcSubdir(string $directory, int $max_lifetime)
+	protected function gcSubdir(string $directory, int $max_lifetime) : void
 	{
 		$dir_handle = \opendir($directory);
+		if ($dir_handle === false) {
+			return;
+		}
 		$dir_count = 0;
 		while (($filename = \readdir($dir_handle)) !== false) {
 			$filename = $directory . \DIRECTORY_SEPARATOR . $filename;
