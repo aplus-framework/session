@@ -153,4 +153,23 @@ class SessionTest extends TestCase
 		$this->session->start();
 		$this->assertNull($this->session->getTemp('foo'));
 	}
+
+	public function testResetFlash()
+	{
+		$this->session->setFlash('foo', 'bar');
+		$this->assertEquals('bar', $this->session->getFlash('foo'));
+		$this->session->stop();
+		$this->session->start();
+		$this->assertEquals('bar', $this->session->getFlash('foo'));
+		$this->session->setFlash('foo', 'bazz');
+		$this->assertEquals('bazz', $this->session->getFlash('foo'));
+		$this->session->reset();
+		$this->assertEquals('bar', $this->session->getFlash('foo'));
+		$this->session->stop();
+		$this->session->start();
+		$this->assertEquals('bar', $this->session->getFlash('foo'));
+		$this->session->stop();
+		$this->session->start();
+		$this->assertNull($this->session->getFlash('foo'));
+	}
 }
