@@ -6,6 +6,9 @@ use OutOfBoundsException;
 class Memcached extends SaveHandler
 {
 	protected ?\Memcached $memcached;
+	protected string $sessionId;
+	protected string | false $lockId = false;
+	protected string $fingerprint;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -66,16 +69,41 @@ class Memcached extends SaveHandler
 
 	public function read($id) : string
 	{
-		return (string) $this->memcached->get($this->getKey($id));
+		if (isset($this->memcached) && $this->getLock($id)) {
+			if ( ! isset($this->sessionId)) {
+				$this->sessionId = $id;
+			}
+			$data = (string) $this->memcached->get($this->getKey($id));
+			$this->fingerprint = \md5($data);
+			return $data;
+		}
+		return '';
 	}
 
 	public function write($id, $data) : bool
 	{
-		return $this->memcached->set(
-			$this->getKey($id),
-			$data,
-			$this->getLifetime()
-		);
+		if ($id !== $this->sessionId) {
+			if ( ! ($r = $this->releaseLock()) || ! ($g = $this->getLock($id))) {
+				\var_dump($r, $g);
+				return false;
+			}
+			$this->fingerprint = \md5('');
+			$this->sessionId = $id;
+		}
+		if ($this->lockId === false) {
+			return false;
+		}
+		$lifetime = $this->getLifetime();
+		$this->memcached->replace($this->lockId, \time(), $lifetime);
+		$fingerprint = \md5($data);
+		if ($this->fingerprint !== $fingerprint) {
+			if ($this->memcached->set($this->getKey($id), $data, $lifetime)) {
+				$this->fingerprint = $fingerprint;
+				return true;
+			}
+			return false;
+		}
+		return $this->memcached->touch($this->getKey($id), $lifetime);
 	}
 
 	public function updateTimestamp($id, $data) : bool
@@ -88,24 +116,76 @@ class Memcached extends SaveHandler
 
 	public function close() : bool
 	{
-		$this->memcached->quit();
+		if ($this->lockId) {
+			$this->memcached->delete($this->lockId);
+		}
+		if ( ! $this->memcached->quit()) {
+			return false;
+		}
 		$this->memcached = null;
 		return true;
 	}
 
 	public function destroy($id) : bool
 	{
-		$destroyed = $this->memcached->delete($id);
-		if ($destroyed === false
-			&& $this->memcached->getResultCode() !== $this->memcached::RES_NOTFOUND
-		) {
+		if ( ! $this->lockId) {
 			return false;
 		}
-		return true;
+		$destroyed = $this->memcached->delete($this->getKey($id));
+		return ! ($destroyed === false
+			&& $this->memcached->getResultCode() !== $this->memcached::RES_NOTFOUND);
 	}
 
 	public function gc($max_lifetime) : bool
 	{
+		return true;
+	}
+
+	/**
+	 * @param string $session_id
+	 *
+	 * @see https://www.php.net/manual/en/memcached.expiration.php
+	 *
+	 * @return bool
+	 */
+	protected function getLock(string $session_id) : bool
+	{
+		$max = 60 * 60 * 24 * 30;
+		$expiration = $this->getLifetime() + 30;
+		if ($expiration > $max) {
+			$expiration = $max;
+		}
+		if ($this->memcached->get($this->lockId)) {
+			return $this->memcached->replace($this->lockId, \time(), $expiration);
+		}
+		$lock_id = $this->getKey($session_id) . ':lock';
+		$attempt = 0;
+		while ($attempt < $expiration) {
+			$attempt++;
+			if ($this->memcached->get($lock_id)) {
+				\sleep(1);
+				continue;
+			}
+			if ( ! $this->memcached->set($lock_id, \time(), $expiration)) {
+				return false;
+			}
+			$this->lockId = $lock_id;
+			break;
+		}
+		return $attempt !== $expiration;
+	}
+
+	protected function releaseLock() : bool
+	{
+		if ($this->lockId === false) {
+			return true;
+		}
+		if ( ! $this->memcached->delete($this->lockId) &&
+			$this->memcached->getResultCode() !== \Memcached::RES_NOTFOUND
+		) {
+			return false;
+		}
+		$this->lockId = false;
 		return true;
 	}
 }
