@@ -46,4 +46,15 @@ class AbstractHandler extends SessionTest
 		$this->session->start();
 		$this->assertNull($this->session->foo);
 	}
+
+	public function testRegenerate()
+	{
+		$this->assertTrue($this->session->regenerate());
+		$this->assertTrue($this->session->regenerate(true));
+	}
+
+	public function testReset()
+	{
+		$this->assertTrue($this->session->reset());
+	}
 }

@@ -303,6 +303,11 @@ class Session
 		return $regenerated;
 	}
 
+	public function reset() : bool
+	{
+		return \session_reset();
+	}
+
 	/**
 	 * @param string $key
 	 *
