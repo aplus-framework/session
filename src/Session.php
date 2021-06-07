@@ -112,7 +112,7 @@ class Session
 		if ($this->isStarted()) {
 			throw new LogicException('Session was already started');
 		}
-		if ( ! \session_start($this->getOptions($custom_options))) {
+		if ( ! @\session_start($this->getOptions($custom_options))) {
 			throw new RuntimeException('Session could not be started.');
 		}
 		$time = \time();

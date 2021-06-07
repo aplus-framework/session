@@ -58,6 +58,9 @@ class Memcached extends SaveHandler
 			// TODO: Log
 			return false;
 		}
+		if ($this->memcached->getStats() === false) {
+			throw new \RuntimeException('Memcached could not connect to any server');
+		}
 		return true;
 	}
 
