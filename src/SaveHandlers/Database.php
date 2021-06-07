@@ -19,8 +19,10 @@ use Framework\Session\SaveHandler;
 class Database extends SaveHandler
 {
 	protected DB $database;
-	protected \stdClass $row;
+	protected string $sessionId;
 	protected string | false $lockId = false;
+	protected string $fingerprint;
+	protected bool $rowExists;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -38,7 +40,6 @@ class Database extends SaveHandler
 				'timestamp' => static function () {
 					return 'NOW()';
 				},
-				'data' => $data,
 			])
 			->whereEqual('id', $id)
 			->limit(1)
@@ -83,40 +84,66 @@ class Database extends SaveHandler
 	public function read($id) : string
 	{
 		if ($this->getLock($id) === false) {
+			$this->fingerprint = \md5('');
 			return '';
 		}
-		$query = $this->database
+		if ( ! isset($this->sessionId)) {
+			$this->sessionId = $id;
+		}
+		$row = $this->database
 			->select()
 			->from($this->config['table'])
-			->whereEqual('id', $id);
-		$lifetime = $this->getLifetime();
-		if ($lifetime > 0) {
-			$query->whereGreaterThan('timestamp', static function () use ($lifetime) {
-				return 'NOW() - INTERVAL ' . $lifetime . ' second';
-			});
-		}
-		$query->limit(1);
-		$result = $query->run()->fetch();
-		if ($result) {
-			$this->row = $result;
-			return $this->row->data;
-		}
-		return '';
+			->whereEqual('id', $id)
+			->limit(1)
+			->run()
+			->fetch();
+		$this->rowExists = (bool) $row;
+		$data = $row->data ?? '';
+		$this->fingerprint = \md5($data);
+		return $data;
 	}
 
 	public function write($id, $data) : bool
 	{
-		$query = $this->database
-			->replace()
-			->into($this->config['table']);
-		$set = [
-			'id' => $id,
-			'data' => $data,
+		if ($this->lockId === false) {
+			return false;
+		}
+		if ($id !== $this->sessionId) {
+			$this->rowExists = false;
+			$this->sessionId = $id;
+		}
+		if ($this->rowExists === false) {
+			$inserted = $this->database
+				->insert($this->config['table'])
+				->set([
+					'id' => $id,
+					'timestamp' => static function () {
+						return 'NOW()';
+					},
+					'data' => $data,
+				])->run();
+			if ($inserted === 0) {
+				return false;
+			}
+			$this->fingerprint = \md5($data);
+			$this->rowExists = true;
+			return true;
+		}
+		$columns = [
 			'timestamp' => static function () {
 				return 'NOW()';
 			},
 		];
-		$query->set($set)->run();
+		if ($this->fingerprint !== \md5($data)) {
+			$columns['data'] = $data;
+		}
+		$this->database
+			->update()
+			->table($this->config['table'])
+			->set($columns)
+			->whereEqual('id', $id)
+			->limit(1)
+			->run();
 		return true;
 	}
 
