@@ -14,7 +14,7 @@ class RedisTest extends AbstractHandler
 		$this->config = [
 			'host' => \getenv('REDIS_HOST'),
 		];
-		$this->handler = new Redis($this->config, true, true);
+		$this->handler = new Redis($this->config);
 		parent::setUp();
 	}
 }

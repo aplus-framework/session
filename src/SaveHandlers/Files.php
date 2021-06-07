@@ -45,9 +45,6 @@ class Files extends SaveHandler
 
 	protected function getFilename(string $id) : string
 	{
-		$id .= $this->matchIP ? ':' . $this->getIP() : '';
-		$id .= $this->matchUA ? ':' . $this->getUA() : '';
-		$id = \md5($id);
 		return $this->config['directory'] . $id[0] . $id[1] . \DIRECTORY_SEPARATOR . $id;
 	}
 

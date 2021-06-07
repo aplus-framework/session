@@ -11,13 +11,6 @@ class AbstractHandler extends SessionTest
 {
 	protected array $config = [];
 
-	public function setUp() : void
-	{
-		$_SERVER['REMOTE_ADDR'] = '192.168.0.100';
-		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0';
-		parent::setUp();
-	}
-
 	public function testValidateId()
 	{
 		$id6 = '62my7tSXcbIrOZ-WHsEXhpwUoG,afmBQNGaSBkFN';

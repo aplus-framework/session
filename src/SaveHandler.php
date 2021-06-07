@@ -5,26 +5,20 @@
  *
  * @see https://www.php.net/manual/en/class.sessionhandler.php
  * @see https://gist.github.com/mindplay-dk/623bdd50c1b4c0553cd3
+ * @see https://www.cloudways.com/blog/setup-redis-as-session-handler-php/#sessionlifecycle
  */
 abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTimestampHandlerInterface
 {
 	protected array $config;
-	protected bool $matchIP = false;
-	protected bool $matchUA = false;
-	protected static ?array $server = null;
 
 	/**
 	 * SessionSaveHandler constructor.
 	 *
 	 * @param array $config
-	 * @param bool  $match_ip
-	 * @param bool  $match_ua
 	 */
-	public function __construct(array $config, bool $match_ip = false, bool $match_ua = false)
+	public function __construct(array $config)
 	{
 		$this->prepareConfig($config);
-		$this->matchIP = $match_ip;
-		$this->matchUA = $match_ua;
 	}
 
 	protected function prepareConfig(array $config) : void
@@ -35,48 +29,6 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	protected function getLifetime() : int
 	{
 		return \ini_get('session.cookie_lifetime');
-	}
-
-	protected function getServerVar(string $var) : ?string
-	{
-		static $server;
-		if ($server === null) {
-			$server['REMOTE_ADDR'] = null;
-			if (isset($_SERVER['REMOTE_ADDR'])) {
-				$data = \filter_var($_SERVER['REMOTE_ADDR'], \FILTER_SANITIZE_STRING);
-				if ($data !== false) {
-					$server['REMOTE_ADDR'] = $data;
-				}
-			}
-			$server['HTTP_USER_AGENT'] = null;
-			if (isset($_SERVER['HTTP_USER_AGENT'])) {
-				$data = \filter_var($_SERVER['HTTP_USER_AGENT'], \FILTER_SANITIZE_STRING);
-				if ($data !== false) {
-					$server['HTTP_USER_AGENT'] = $data;
-				}
-			}
-		}
-		return $server[$var];
-	}
-
-	/**
-	 * Get the Internet Protocol.
-	 *
-	 * @return string|null
-	 */
-	protected function getIP() : ?string
-	{
-		return $this->getServerVar('REMOTE_ADDR');
-	}
-
-	/**
-	 * Get the HTTP User-Agent Header.
-	 *
-	 * @return string|null
-	 */
-	protected function getUA() : ?string
-	{
-		return $this->getServerVar('HTTP_USER_AGENT');
 	}
 
 	/**

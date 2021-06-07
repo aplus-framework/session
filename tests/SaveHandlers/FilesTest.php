@@ -18,7 +18,7 @@ class FilesTest extends AbstractHandler
 		$this->config = [
 			'directory' => $directory,
 		];
-		$this->handler = new Files($this->config, true, true);
+		$this->handler = new Files($this->config);
 		parent::setUp();
 	}
 }

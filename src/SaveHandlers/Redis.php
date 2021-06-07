@@ -9,7 +9,7 @@ class Redis extends SaveHandler
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = \array_replace([
-			'prefix' => 'session',
+			'prefix' => '',
 			'host' => '127.0.0.1',
 			'port' => 6379,
 			'timeout' => 0.0,
@@ -18,7 +18,7 @@ class Redis extends SaveHandler
 
 	protected function getKey(string $id) : string
 	{
-		return $this->config['prefix'] . ':' . $id;
+		return $this->config['prefix'] . $id;
 	}
 
 	public function open($path, $name) : bool

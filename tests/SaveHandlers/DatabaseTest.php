@@ -21,7 +21,7 @@ class DatabaseTest extends AbstractHandler
 			'port' => \getenv('DB_PORT'),
 			'table' => \getenv('DB_TABLE'),
 		];
-		$this->handler = new DatabaseSaveHandler($this->config, true, true);
+		$this->handler = new DatabaseSaveHandler($this->config);
 		$this->createDummyData();
 		parent::setUp();
 	}

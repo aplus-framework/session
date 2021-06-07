@@ -18,7 +18,7 @@ class MemcachedTest extends AbstractHandler
 				],
 			],
 		];
-		$this->handler = new Memcached($this->config, true, true);
+		$this->handler = new Memcached($this->config);
 		parent::setUp();
 	}
 }

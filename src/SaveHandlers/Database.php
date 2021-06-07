@@ -9,13 +9,9 @@ use Framework\Session\SaveHandler;
  * ```sql
  * CREATE TABLE `Sessions` (
  *     `id` varchar(128) NOT NULL,
- *     `ip` varchar(45),
- *     `ua` varchar(255),
  *     `timestamp` int(10) unsigned NOT NULL,
  *     `data` blob NOT NULL,
  *     PRIMARY KEY (`id`),
- *     KEY `ip` (`ip`),
- *     KEY `ua` (`ua`),
  *     KEY `timestamp` (`timestamp`)
  * );
  * ```
@@ -24,7 +20,7 @@ class Database extends SaveHandler
 {
 	protected DB $database;
 	protected \stdClass $row;
-	protected string | false $lock = false;
+	protected string | false $lockId = false;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -42,47 +38,25 @@ class Database extends SaveHandler
 				'timestamp' => \time(),
 				'data' => $data,
 			])
-			->whereEqual('id', $id);
-		if ($this->matchIP) {
-			$ip = $this->getIP();
-			$ip === null
-				? $query->whereIsNull('ip')
-				: $query->whereEqual('ip', $ip);
-		}
-		if ($this->matchUA) {
-			$ua = $this->getUA();
-			$ua === null
-				? $query->whereIsNull('ua')
-				: $query->whereEqual('ua', $ua);
-		}
-		$query->limit(1)->run();
+			->whereEqual('id', $id)
+			->limit(1)
+			->run();
 		return true;
 	}
 
 	public function close() : bool
 	{
-		return ! ($this->lock && ! $this->releaseLock());
+		return ! ($this->lockId && ! $this->releaseLock());
 	}
 
 	public function destroy($id) : bool
 	{
-		$query = $this->database
+		$this->database
 			->delete()
 			->from($this->config['table'])
-			->whereEqual('id', $id);
-		if ($this->matchIP) {
-			$ip = $this->getIP();
-			$ip === null
-				? $query->whereIsNull('ip')
-				: $query->whereEqual('ip', $ip);
-		}
-		if ($this->matchUA) {
-			$ua = $this->getUA();
-			$ua === null
-				? $query->whereIsNull('ua')
-				: $query->whereEqual('ua', $ua);
-		}
-		$query->limit(1)->run();
+			->whereEqual('id', $id)
+			->limit(1)
+			->run();
 		return true;
 	}
 
@@ -112,18 +86,6 @@ class Database extends SaveHandler
 			->select()
 			->from($this->config['table'])
 			->whereEqual('id', $id);
-		if ($this->matchIP) {
-			$ip = $this->getIP();
-			$ip === null
-				? $query->whereIsNull('ip')
-				: $query->whereEqual('ip', $ip);
-		}
-		if ($this->matchUA) {
-			$ua = $this->getUA();
-			$ua === null
-				? $query->whereIsNull('ua')
-				: $query->whereEqual('ua', $ua);
-		}
 		$lifetime = $this->getLifetime();
 		if ($lifetime > 0) {
 			$lifetime = \time() - $lifetime;
@@ -148,35 +110,24 @@ class Database extends SaveHandler
 			'data' => $data,
 			'timestamp' => \time(),
 		];
-		if ($this->matchIP) {
-			$set['ip'] = $this->row->ip ?? $this->getIP();
-		}
-		if ($this->matchUA) {
-			$set['ua'] = $this->row->ua ?? $this->getUA();
-		}
 		$query->set($set)->run();
 		return true;
 	}
 
 	protected function getLock(string $session_id) : bool
 	{
-		$lock_id = $session_id;
-		$lock_id .= $this->matchIP ? '-' . $this->getIP() : '';
-		$lock_id .= $this->matchUA ? '-' . $this->getUA() : '';
-		$lock_id = \md5($lock_id);
-		$lifetime = $this->getLifetime();
 		$row = $this->database
 			->select()
 			->expressions([
-				'locked' => static function (DB $db) use ($lock_id, $lifetime) {
-					$lock_id = $db->quote($lock_id);
-					$lifetime = $db->quote($lifetime);
-					return "GET_LOCK({$lock_id}, {$lifetime})";
+				'locked' => function (DB $db) use ($session_id) {
+					$session_id = $db->quote($session_id);
+					$lifetime = $db->quote($this->getLifetime());
+					return "GET_LOCK({$session_id}, {$lifetime})";
 				},
 			])->run()
 			->fetch();
 		if ($row && $row->locked) {
-			$this->lock = $lock_id;
+			$this->lockId = $session_id;
 			return true;
 		}
 		return false;
@@ -184,21 +135,20 @@ class Database extends SaveHandler
 
 	protected function releaseLock() : bool
 	{
-		if ($this->lock === false) {
+		if ($this->lockId === false) {
 			return true;
 		}
-		$lock_id = $this->lock;
 		$row = $this->database
 			->select()
 			->expressions([
-				'unlocked' => static function (DB $db) use ($lock_id) {
-					$lock_id = $db->quote($lock_id);
+				'unlocked' => function (DB $db) {
+					$lock_id = $db->quote($this->lockId);
 					return "RELEASE_LOCK({$lock_id})";
 				},
 			])->run()
 			->fetch();
 		if ($row && $row->unlocked) {
-			$this->lock = false;
+			$this->lockId = false;
 			return true;
 		}
 		return false;

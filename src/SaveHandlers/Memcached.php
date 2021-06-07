@@ -10,7 +10,7 @@ class Memcached extends SaveHandler
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = \array_replace_recursive([
-			'prefix' => 'session',
+			'prefix' => '',
 			'servers' => [
 				[
 					'host' => '127.0.0.1',
@@ -33,7 +33,7 @@ class Memcached extends SaveHandler
 
 	protected function getKey(string $id) : string
 	{
-		return $this->config['prefix'] . ':' . $id;
+		return $this->config['prefix'] . $id;
 	}
 
 	public function open($path, $name) : bool
