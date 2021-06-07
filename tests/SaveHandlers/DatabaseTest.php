@@ -33,12 +33,8 @@ class DatabaseTest extends AbstractHandler
 		$database->createTable($this->config['table'])
 			->definition(static function (TableDefinition $definition) {
 				$definition->column('id')->varchar(128)->primaryKey();
-				$definition->column('ip')->varchar(45)->null();
-				$definition->column('ua')->varchar(255)->null();
-				$definition->column('timestamp')->int(10)->unsigned();
+				$definition->column('timestamp')->timestamp();
 				$definition->column('data')->blob();
-				$definition->index('ip')->key('ip');
-				$definition->index('ua')->key('ua');
 				$definition->index('timestamp')->key('timestamp');
 			})->run();
 	}

@@ -9,7 +9,7 @@ use Framework\Session\SaveHandler;
  * ```sql
  * CREATE TABLE `Sessions` (
  *     `id` varchar(128) NOT NULL,
- *     `timestamp` int(10) unsigned NOT NULL,
+ *     `timestamp` timestamp NOT NULL,
  *     `data` blob NOT NULL,
  *     PRIMARY KEY (`id`),
  *     KEY `timestamp` (`timestamp`)
@@ -31,11 +31,13 @@ class Database extends SaveHandler
 
 	public function updateTimestamp($id, $data) : bool
 	{
-		$query = $this->database
+		$this->database
 			->update()
 			->table($this->config['table'])
 			->set([
-				'timestamp' => \time(),
+				'timestamp' => static function () {
+					return 'NOW()';
+				},
 				'data' => $data,
 			])
 			->whereEqual('id', $id)
@@ -62,11 +64,12 @@ class Database extends SaveHandler
 
 	public function gc($max_lifetime) : bool
 	{
-		$max_lifetime = \time() - $max_lifetime;
 		$this->database
 			->delete()
 			->from($this->config['table'])
-			->whereLessThan('timestamp', $max_lifetime)
+			->whereLessThan('timestamp', static function () use ($max_lifetime) {
+				return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
+			})
 			->run();
 		return true;
 	}
@@ -88,8 +91,9 @@ class Database extends SaveHandler
 			->whereEqual('id', $id);
 		$lifetime = $this->getLifetime();
 		if ($lifetime > 0) {
-			$lifetime = \time() - $lifetime;
-			$query->whereGreaterThan('timestamp', $lifetime);
+			$query->whereGreaterThan('timestamp', static function () use ($lifetime) {
+				return 'NOW() - INTERVAL ' . $lifetime . ' second';
+			});
 		}
 		$query->limit(1);
 		$result = $query->run()->fetch();
@@ -108,7 +112,9 @@ class Database extends SaveHandler
 		$set = [
 			'id' => $id,
 			'data' => $data,
-			'timestamp' => \time(),
+			'timestamp' => static function () {
+				return 'NOW()';
+			},
 		];
 		$query->set($set)->run();
 		return true;
