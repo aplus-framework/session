@@ -10,9 +10,6 @@ class Files extends SaveHandler
 	 * @var resource|null
 	 */
 	protected $stream;
-	protected ?string $sessionId;
-	protected bool $newFile;
-	protected string $fingerprint;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -65,14 +62,14 @@ class Files extends SaveHandler
 					"Session subdirectory '{$dirname}' was not created",
 				);
 			}
-			$this->newFile = ! \is_file($filename);
+			$this->sessionExists = \is_file($filename);
 			if ( ! $this->getLock($filename)) {
 				return '';
 			}
 			if ( ! isset($this->sessionId)) {
 				$this->sessionId = $id;
 			}
-			if ($this->newFile) {
+			if ( ! $this->sessionExists) {
 				\chmod($filename, 0600);
 				$this->fingerprint = \md5('');
 				return '';
@@ -88,16 +85,16 @@ class Files extends SaveHandler
 
 	public function write($id, $data) : bool
 	{
+		if ( ! isset($this->stream)) {
+			return false;
+		}
 		if ($id !== $this->sessionId) {
 			$this->sessionId = $id;
 		}
-		if ( ! \is_resource($this->stream)) {
-			return false;
-		}
 		if ($this->fingerprint === \md5($data)) {
-			return $this->newFile || \touch($this->getFilename($id));
+			return ! $this->sessionExists || \touch($this->getFilename($id));
 		}
-		if ($this->newFile === false) {
+		if ($this->sessionExists) {
 			\ftruncate($this->stream, 0);
 			\rewind($this->stream);
 		}
@@ -119,7 +116,7 @@ class Files extends SaveHandler
 			return true;
 		}
 		$this->releaseLock();
-		$this->newFile = false;
+		$this->sessionExists = false;
 		return true;
 	}
 

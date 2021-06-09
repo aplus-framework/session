@@ -6,9 +6,6 @@ use OutOfBoundsException;
 class Memcached extends SaveHandler
 {
 	protected ?\Memcached $memcached;
-	protected string $sessionId;
-	protected string | false $lockId = false;
-	protected string $fingerprint;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -69,22 +66,24 @@ class Memcached extends SaveHandler
 
 	public function read($id) : string
 	{
-		if (isset($this->memcached) && $this->getLock($id)) {
-			if ( ! isset($this->sessionId)) {
-				$this->sessionId = $id;
-			}
-			$data = (string) $this->memcached->get($this->getKey($id));
-			$this->fingerprint = \md5($data);
-			return $data;
+		if ( ! isset($this->memcached) || ! $this->getLock($id)) {
+			return '';
 		}
-		return '';
+		if ( ! isset($this->sessionId)) {
+			$this->sessionId = $id;
+		}
+		$data = (string) $this->memcached->get($this->getKey($id));
+		$this->fingerprint = \md5($data);
+		return $data;
 	}
 
 	public function write($id, $data) : bool
 	{
+		if ( ! isset($this->memcached)) {
+			return false;
+		}
 		if ($id !== $this->sessionId) {
-			if ( ! ($r = $this->releaseLock()) || ! ($g = $this->getLock($id))) {
-				\var_dump($r, $g);
+			if ( ! $this->releaseLock() || ! $this->getLock($id)) {
 				return false;
 			}
 			$this->fingerprint = \md5('');

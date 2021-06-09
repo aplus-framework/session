@@ -10,6 +10,10 @@
 abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTimestampHandlerInterface
 {
 	protected array $config;
+	protected string $fingerprint;
+	protected string | false $lockId = false;
+	protected bool $sessionExists = false;
+	protected ?string $sessionId;
 
 	/**
 	 * SessionSaveHandler constructor.

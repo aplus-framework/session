@@ -5,9 +5,6 @@ use Framework\Session\SaveHandler;
 class Redis extends SaveHandler
 {
 	protected ?\Redis $redis;
-	protected string $sessionId;
-	protected string | false $lockId = false;
-	protected string $fingerprint;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -39,16 +36,16 @@ class Redis extends SaveHandler
 
 	public function read($id) : string
 	{
-		if (isset($this->redis) && $this->getLock($id)) {
-			if ( ! isset($this->sessionId)) {
-				$this->sessionId = $id;
-			}
-			$data = $this->redis->get($this->getKey($id));
-			\is_string($data) ? $this->keyExists = true : $data = '';
-			$this->fingerprint = \md5($data);
-			return $data;
+		if ( ! isset($this->redis) || ! $this->getLock($id)) {
+			return '';
 		}
-		return '';
+		if ( ! isset($this->sessionId)) {
+			$this->sessionId = $id;
+		}
+		$data = $this->redis->get($this->getKey($id));
+		\is_string($data) ? $this->sessionExists = true : $data = '';
+		$this->fingerprint = \md5($data);
+		return $data;
 	}
 
 	public function write($id, $data) : bool
@@ -60,7 +57,7 @@ class Redis extends SaveHandler
 			if ( ! $this->releaseLock() || ! $this->getLock($id)) {
 				return false;
 			}
-			$this->keyExists = false;
+			$this->sessionExists = false;
 			$this->sessionId = $id;
 		}
 		if ($this->lockId === false) {
@@ -69,10 +66,10 @@ class Redis extends SaveHandler
 		$lifetime = $this->getLifetime();
 		$this->redis->expire($this->lockId, $lifetime);
 		$fingerprint = \md5($data);
-		if ($this->fingerprint !== $fingerprint || $this->keyExists === false) {
+		if ($this->fingerprint !== $fingerprint || $this->sessionExists === false) {
 			if ($this->redis->set($this->getKey($id), $data, $lifetime)) {
 				$this->fingerprint = $fingerprint;
-				$this->keyExists = true;
+				$this->sessionExists = true;
 				return true;
 			}
 			return false;

@@ -18,11 +18,7 @@ use Framework\Session\SaveHandler;
  */
 class Database extends SaveHandler
 {
-	protected DB $database;
-	protected string $sessionId;
-	protected string | false $lockId = false;
-	protected string $fingerprint;
-	protected bool $rowExists;
+	protected ?DB $database;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -83,7 +79,7 @@ class Database extends SaveHandler
 
 	public function read($id) : string
 	{
-		if ($this->getLock($id) === false) {
+		if ( ! isset($this->database) || $this->getLock($id) === false) {
 			$this->fingerprint = \md5('');
 			return '';
 		}
@@ -97,7 +93,7 @@ class Database extends SaveHandler
 			->limit(1)
 			->run()
 			->fetch();
-		$this->rowExists = (bool) $row;
+		$this->sessionExists = (bool) $row;
 		$data = $row->data ?? '';
 		$this->fingerprint = \md5($data);
 		return $data;
@@ -105,14 +101,17 @@ class Database extends SaveHandler
 
 	public function write($id, $data) : bool
 	{
+		if ( ! isset($this->database)) {
+			return false;
+		}
 		if ($this->lockId === false) {
 			return false;
 		}
 		if ($id !== $this->sessionId) {
-			$this->rowExists = false;
+			$this->sessionExists = false;
 			$this->sessionId = $id;
 		}
-		if ($this->rowExists === false) {
+		if ($this->sessionExists === false) {
 			$inserted = $this->database
 				->insert($this->config['table'])
 				->set([
@@ -126,7 +125,7 @@ class Database extends SaveHandler
 				return false;
 			}
 			$this->fingerprint = \md5($data);
-			$this->rowExists = true;
+			$this->sessionExists = true;
 			return true;
 		}
 		$columns = [
