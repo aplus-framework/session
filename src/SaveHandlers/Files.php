@@ -66,16 +66,9 @@ class Files extends SaveHandler
 				);
 			}
 			$this->newFile = ! \is_file($filename);
-			$stream = \fopen($filename, 'c+b');
-			if ($stream === false) {
+			if ( ! $this->getLock($filename)) {
 				return '';
 			}
-			if (\flock($stream, \LOCK_EX) === false) {
-				\fclose($stream);
-				return '';
-			}
-			$this->stream = $stream;
-			unset($stream);
 			if ( ! isset($this->sessionId)) {
 				$this->sessionId = $id;
 			}
@@ -125,9 +118,7 @@ class Files extends SaveHandler
 		if ( ! \is_resource($this->stream)) {
 			return true;
 		}
-		\flock($this->stream, \LOCK_UN);
-		\fclose($this->stream);
-		$this->stream = null;
+		$this->releaseLock();
 		$this->newFile = false;
 		return true;
 	}
@@ -180,5 +171,30 @@ class Files extends SaveHandler
 		if ($dir_count === 2) {
 			\rmdir($directory);
 		}
+	}
+
+	protected function getLock(string $id) : bool
+	{
+		$stream = \fopen($id, 'c+b');
+		if ($stream === false) {
+			return false;
+		}
+		if (\flock($stream, \LOCK_EX) === false) {
+			\fclose($stream);
+			return false;
+		}
+		$this->stream = $stream;
+		return true;
+	}
+
+	protected function releaseLock() : bool
+	{
+		if ($this->stream === null) {
+			return true;
+		}
+		\flock($this->stream, \LOCK_UN);
+		\fclose($this->stream);
+		$this->stream = null;
+		return true;
 	}
 }

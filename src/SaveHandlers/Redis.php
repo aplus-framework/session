@@ -121,13 +121,13 @@ class Redis extends SaveHandler
 		return true;
 	}
 
-	protected function getLock(string $session_id) : bool
+	protected function getLock(string $id) : bool
 	{
 		$expiration = $this->getLifetime() + 30;
 		if ($this->lockId && $this->redis->get($this->lockId)) {
 			return $this->redis->expire($this->lockId, $expiration);
 		}
-		$lock_id = $this->getKey($session_id) . ':lock';
+		$lock_id = $this->getKey($id) . ':lock';
 		$attempt = 0;
 		while ($attempt < $expiration) {
 			$attempt++;

@@ -147,20 +147,20 @@ class Database extends SaveHandler
 		return true;
 	}
 
-	protected function getLock(string $session_id) : bool
+	protected function getLock(string $id) : bool
 	{
 		$row = $this->database
 			->select()
 			->expressions([
-				'locked' => function (DB $db) use ($session_id) {
-					$session_id = $db->quote($session_id);
+				'locked' => function (DB $db) use ($id) {
+					$id = $db->quote($id);
 					$lifetime = $db->quote($this->getLifetime());
-					return "GET_LOCK({$session_id}, {$lifetime})";
+					return "GET_LOCK({$id}, {$lifetime})";
 				},
 			])->run()
 			->fetch();
 		if ($row && $row->locked) {
-			$this->lockId = $session_id;
+			$this->lockId = $id;
 			return true;
 		}
 		return false;

@@ -142,13 +142,13 @@ class Memcached extends SaveHandler
 	}
 
 	/**
-	 * @param string $session_id
+	 * @param string $id
 	 *
 	 * @see https://www.php.net/manual/en/memcached.expiration.php
 	 *
 	 * @return bool
 	 */
-	protected function getLock(string $session_id) : bool
+	protected function getLock(string $id) : bool
 	{
 		$max = 60 * 60 * 24 * 30;
 		$expiration = $this->getLifetime() + 30;
@@ -158,7 +158,7 @@ class Memcached extends SaveHandler
 		if ($this->lockId && $this->memcached->get($this->lockId)) {
 			return $this->memcached->replace($this->lockId, \time(), $expiration);
 		}
-		$lock_id = $this->getKey($session_id) . ':lock';
+		$lock_id = $this->getKey($id) . ':lock';
 		$attempt = 0;
 		while ($attempt < $expiration) {
 			$attempt++;
