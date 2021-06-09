@@ -155,7 +155,7 @@ class Memcached extends SaveHandler
 		if ($expiration > $max) {
 			$expiration = $max;
 		}
-		if ($this->memcached->get($this->lockId)) {
+		if ($this->lockId && $this->memcached->get($this->lockId)) {
 			return $this->memcached->replace($this->lockId, \time(), $expiration);
 		}
 		$lock_id = $this->getKey($session_id) . ':lock';
