@@ -27,50 +27,6 @@ class Database extends SaveHandler
 		], $config);
 	}
 
-	public function updateTimestamp($id, $data) : bool
-	{
-		$this->database
-			->update()
-			->table($this->config['table'])
-			->set([
-				'timestamp' => static function () {
-					return 'NOW()';
-				},
-			])
-			->whereEqual('id', $id)
-			->limit(1)
-			->run();
-		return true;
-	}
-
-	public function close() : bool
-	{
-		return ! ($this->lockId && ! $this->releaseLock());
-	}
-
-	public function destroy($id) : bool
-	{
-		$this->database
-			->delete()
-			->from($this->config['table'])
-			->whereEqual('id', $id)
-			->limit(1)
-			->run();
-		return true;
-	}
-
-	public function gc($max_lifetime) : bool
-	{
-		$this->database
-			->delete()
-			->from($this->config['table'])
-			->whereLessThan('timestamp', static function () use ($max_lifetime) {
-				return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
-			})
-			->run();
-		return true;
-	}
-
 	public function open($path, $session_name) : bool
 	{
 		$this->database = new DB($this->config);
@@ -142,6 +98,50 @@ class Database extends SaveHandler
 			->set($columns)
 			->whereEqual('id', $id)
 			->limit(1)
+			->run();
+		return true;
+	}
+
+	public function updateTimestamp($id, $data) : bool
+	{
+		$this->database
+			->update()
+			->table($this->config['table'])
+			->set([
+				'timestamp' => static function () {
+					return 'NOW()';
+				},
+			])
+			->whereEqual('id', $id)
+			->limit(1)
+			->run();
+		return true;
+	}
+
+	public function close() : bool
+	{
+		return ! ($this->lockId && ! $this->releaseLock());
+	}
+
+	public function destroy($id) : bool
+	{
+		$this->database
+			->delete()
+			->from($this->config['table'])
+			->whereEqual('id', $id)
+			->limit(1)
+			->run();
+		return true;
+	}
+
+	public function gc($max_lifetime) : bool
+	{
+		$this->database
+			->delete()
+			->from($this->config['table'])
+			->whereLessThan('timestamp', static function () use ($max_lifetime) {
+				return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
+			})
 			->run();
 		return true;
 	}
