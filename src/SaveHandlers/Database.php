@@ -24,6 +24,7 @@ class Database extends SaveHandler
 	{
 		$this->config = \array_replace([
 			'table' => 'Sessions',
+			'maxlifetime' => null,
 		], $config);
 	}
 
@@ -153,8 +154,8 @@ class Database extends SaveHandler
 			->expressions([
 				'locked' => function (DB $db) use ($id) {
 					$id = $db->quote($id);
-					$lifetime = $db->quote($this->getLifetime());
-					return "GET_LOCK({$id}, {$lifetime})";
+					$maxlifetime = $db->quote($this->getMaxlifetime());
+					return "GET_LOCK({$id}, {$maxlifetime})";
 				},
 			])->run()
 			->fetch();

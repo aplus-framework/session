@@ -13,6 +13,9 @@ class Redis extends SaveHandler
 			'host' => '127.0.0.1',
 			'port' => 6379,
 			'timeout' => 0.0,
+			'lock_attempts' => 60,
+			'lock_ttl' => 600,
+			'maxlifetime' => null,
 		], $config);
 	}
 
@@ -36,7 +39,8 @@ class Redis extends SaveHandler
 
 	public function read($id) : string
 	{
-		if ( ! isset($this->redis) || ! $this->getLock($id)) {
+		if ( ! isset($this->redis) || ! ($l = $this->getLock($id))) {
+			\var_dump($l);
 			return '';
 		}
 		if ( ! isset($this->sessionId)) {
@@ -63,23 +67,23 @@ class Redis extends SaveHandler
 		if ($this->lockId === false) {
 			return false;
 		}
-		$lifetime = $this->getLifetime();
-		$this->redis->expire($this->lockId, $lifetime);
+		$maxlifetime = $this->getMaxlifetime();
+		$this->redis->expire($this->lockId, $this->config['lock_ttl']);
 		$fingerprint = \md5($data);
 		if ($this->fingerprint !== $fingerprint || $this->sessionExists === false) {
-			if ($this->redis->set($this->getKey($id), $data, $lifetime)) {
+			if ($this->redis->set($this->getKey($id), $data, $maxlifetime)) {
 				$this->fingerprint = $fingerprint;
 				$this->sessionExists = true;
 				return true;
 			}
 			return false;
 		}
-		return $this->redis->expire($this->getKey($id), $lifetime);
+		return $this->redis->expire($this->getKey($id), $maxlifetime);
 	}
 
 	public function updateTimestamp($id, $data) : bool
 	{
-		return $this->redis->setex($this->getKey($id), $this->getLifetime(), $data);
+		return $this->redis->setex($this->getKey($id), $this->getMaxlifetime(), $data);
 	}
 
 	public function close() : bool
@@ -120,26 +124,26 @@ class Redis extends SaveHandler
 
 	protected function getLock(string $id) : bool
 	{
-		$expiration = $this->getLifetime() + 30;
+		$ttl = $this->config['lock_ttl'];
 		if ($this->lockId && $this->redis->get($this->lockId)) {
-			return $this->redis->expire($this->lockId, $expiration);
+			return $this->redis->expire($this->lockId, $ttl);
 		}
 		$lock_id = $this->getKey($id) . ':lock';
 		$attempt = 0;
-		while ($attempt < $expiration) {
+		while ($attempt < $this->config['lock_attempts']) {
 			$attempt++;
-			$ttl = $this->redis->ttl($lock_id);
-			if ($ttl > 0) {
+			$old_ttl = $this->redis->ttl($lock_id);
+			if ($old_ttl > 0) {
 				\sleep(1);
 				continue;
 			}
-			if ( ! $this->redis->setex($lock_id, $expiration, (string) \time())) {
+			if ( ! $this->redis->setex($lock_id, $ttl, (string) \time())) {
 				return false;
 			}
 			$this->lockId = $lock_id;
 			break;
 		}
-		return $attempt !== $expiration;
+		return $attempt !== $this->config['lock_attempts'];
 	}
 
 	protected function releaseLock() : bool

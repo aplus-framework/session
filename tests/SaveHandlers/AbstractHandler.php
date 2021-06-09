@@ -36,12 +36,12 @@ class AbstractHandler extends SessionTest
 	{
 		$this->session->stop();
 		$this->session->start([
-			'cookie_lifetime' => 1,
+			'gc_maxlifetime' => 1,
 		]);
 		$this->session->foo = 'bar';
 		$this->assertEquals($this->session->foo, 'bar');
 		$this->session->stop();
-		\sleep(1);
+		\sleep(2);
 		$this->assertTrue($this->handler->gc(0));
 		$this->session->start();
 		$this->assertNull($this->session->foo);

@@ -30,9 +30,9 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 		$this->config = $config;
 	}
 
-	protected function getLifetime() : int
+	protected function getMaxlifetime() : int
 	{
-		return \ini_get('session.cookie_lifetime');
+		return $this->config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime');
 	}
 
 	/**

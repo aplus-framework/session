@@ -21,6 +21,9 @@ class Memcached extends SaveHandler
 			'options' => [
 				\Memcached::OPT_BINARY_PROTOCOL => true,
 			],
+			'lock_attempts' => 60,
+			'lock_ttl' => 600,
+			'maxlifetime' => null,
 		], $config);
 		foreach ($this->config['servers'] as $index => $server) {
 			if ( ! isset($server['host'])) {
@@ -29,6 +32,22 @@ class Memcached extends SaveHandler
 				);
 			}
 		}
+	}
+
+	/**
+	 * Get expiration as a timestamp.
+	 *
+	 * Useful for Time To Lives greater than a month (`60*60*24*30`).
+	 *
+	 * @param int $seconds
+	 *
+	 * @see https://www.php.net/manual/en/memcached.expiration.php
+	 *
+	 * @return int
+	 */
+	protected function getExpiration(int $seconds) : int
+	{
+		return \time() + $seconds;
 	}
 
 	protected function getKey(string $id) : string
@@ -92,24 +111,28 @@ class Memcached extends SaveHandler
 		if ($this->lockId === false) {
 			return false;
 		}
-		$lifetime = $this->getLifetime();
-		$this->memcached->replace($this->lockId, \time(), $lifetime);
+		$this->memcached->replace(
+			$this->lockId,
+			\time(),
+			$this->getExpiration($this->config['lock_ttl'])
+		);
+		$maxlifetime = $this->getExpiration($this->getMaxlifetime());
 		$fingerprint = \md5($data);
-		if ($this->fingerprint !== $fingerprint) {
-			if ($this->memcached->set($this->getKey($id), $data, $lifetime)) {
-				$this->fingerprint = $fingerprint;
-				return true;
-			}
-			return false;
+		if ($this->fingerprint === $fingerprint) {
+			return $this->memcached->touch($this->getKey($id), $maxlifetime);
 		}
-		return $this->memcached->touch($this->getKey($id), $lifetime);
+		if ($this->memcached->set($this->getKey($id), $data, $maxlifetime)) {
+			$this->fingerprint = $fingerprint;
+			return true;
+		}
+		return false;
 	}
 
 	public function updateTimestamp($id, $data) : bool
 	{
 		return $this->memcached->touch(
 			$this->getKey($id),
-			$this->getLifetime()
+			$this->getExpiration($this->getMaxlifetime())
 		);
 	}
 
@@ -140,26 +163,15 @@ class Memcached extends SaveHandler
 		return true;
 	}
 
-	/**
-	 * @param string $id
-	 *
-	 * @see https://www.php.net/manual/en/memcached.expiration.php
-	 *
-	 * @return bool
-	 */
 	protected function getLock(string $id) : bool
 	{
-		$max = 60 * 60 * 24 * 30;
-		$expiration = $this->getLifetime() + 30;
-		if ($expiration > $max) {
-			$expiration = $max;
-		}
+		$expiration = $this->getExpiration($this->config['lock_ttl']);
 		if ($this->lockId && $this->memcached->get($this->lockId)) {
 			return $this->memcached->replace($this->lockId, \time(), $expiration);
 		}
 		$lock_id = $this->getKey($id) . ':lock';
 		$attempt = 0;
-		while ($attempt < $expiration) {
+		while ($attempt < $this->config['lock_attempts']) {
 			$attempt++;
 			if ($this->memcached->get($lock_id)) {
 				\sleep(1);
@@ -171,7 +183,7 @@ class Memcached extends SaveHandler
 			$this->lockId = $lock_id;
 			break;
 		}
-		return $attempt !== $expiration;
+		return $attempt !== $this->config['lock_attempts'];
 	}
 
 	protected function releaseLock() : bool
