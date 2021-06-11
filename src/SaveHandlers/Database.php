@@ -36,7 +36,7 @@ class Database extends SaveHandler
 
 	public function read($id) : string
 	{
-		if ( ! isset($this->database) || $this->getLock($id) === false) {
+		if ( ! isset($this->database) || $this->lock($id) === false) {
 			$this->fingerprint = \md5('');
 			return '';
 		}
@@ -121,7 +121,7 @@ class Database extends SaveHandler
 
 	public function close() : bool
 	{
-		return ! ($this->lockId && ! $this->releaseLock());
+		return ! ($this->lockId && ! $this->unlock());
 	}
 
 	public function destroy($id) : bool
@@ -147,7 +147,7 @@ class Database extends SaveHandler
 		return true;
 	}
 
-	protected function getLock(string $id) : bool
+	protected function lock(string $id) : bool
 	{
 		$row = $this->database
 			->select()
@@ -167,7 +167,7 @@ class Database extends SaveHandler
 		return false;
 	}
 
-	protected function releaseLock() : bool
+	protected function unlock() : bool
 	{
 		if ($this->lockId === false) {
 			return true;

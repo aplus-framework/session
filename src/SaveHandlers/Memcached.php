@@ -92,7 +92,7 @@ class Memcached extends SaveHandler
 
 	public function read($id) : string
 	{
-		if ( ! isset($this->memcached) || ! $this->getLock($id)) {
+		if ( ! isset($this->memcached) || ! $this->lock($id)) {
 			return '';
 		}
 		if ( ! isset($this->sessionId)) {
@@ -109,7 +109,7 @@ class Memcached extends SaveHandler
 			return false;
 		}
 		if ($id !== $this->sessionId) {
-			if ( ! $this->releaseLock() || ! $this->getLock($id)) {
+			if ( ! $this->unlock() || ! $this->lock($id)) {
 				return false;
 			}
 			$this->fingerprint = \md5('');
@@ -170,7 +170,7 @@ class Memcached extends SaveHandler
 		return true;
 	}
 
-	protected function getLock(string $id) : bool
+	protected function lock(string $id) : bool
 	{
 		$expiration = $this->getExpiration($this->config['lock_ttl']);
 		if ($this->lockId && $this->memcached->get($this->lockId)) {
@@ -200,7 +200,7 @@ class Memcached extends SaveHandler
 		return true;
 	}
 
-	protected function releaseLock() : bool
+	protected function unlock() : bool
 	{
 		if ($this->lockId === false) {
 			return true;

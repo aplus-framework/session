@@ -64,7 +64,7 @@ class Files extends SaveHandler
 				);
 			}
 			$this->sessionExists = \is_file($filename);
-			if ( ! $this->getLock($filename)) {
+			if ( ! $this->lock($filename)) {
 				return '';
 			}
 			if ( ! isset($this->sessionId)) {
@@ -120,7 +120,7 @@ class Files extends SaveHandler
 		if ( ! \is_resource($this->stream)) {
 			return true;
 		}
-		$this->releaseLock();
+		$this->unlock();
 		$this->sessionExists = false;
 		return true;
 	}
@@ -179,7 +179,7 @@ class Files extends SaveHandler
 		}
 	}
 
-	protected function getLock(string $id) : bool
+	protected function lock(string $id) : bool
 	{
 		$stream = \fopen($id, 'c+b');
 		if ($stream === false) {
@@ -194,7 +194,7 @@ class Files extends SaveHandler
 		return true;
 	}
 
-	protected function releaseLock() : bool
+	protected function unlock() : bool
 	{
 		if ($this->stream === null) {
 			return true;

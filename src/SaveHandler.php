@@ -79,7 +79,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 
 	abstract public function gc($max_lifetime) : bool;
 
-	abstract protected function getLock(string $id) : bool;
+	abstract protected function lock(string $id) : bool;
 
-	abstract protected function releaseLock() : bool;
+	abstract protected function unlock() : bool;
 }
