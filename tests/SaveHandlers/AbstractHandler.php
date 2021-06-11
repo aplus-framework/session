@@ -9,6 +9,9 @@ use Tests\Session\SessionTest;
  */
 abstract class AbstractHandler extends SessionTest
 {
+	/**
+	 * @var array<string, mixed>
+	 */
 	protected array $config = [];
 
 	public function testValidateId() : void
@@ -17,16 +20,16 @@ abstract class AbstractHandler extends SessionTest
 		$id5 = 'iimuf8lvdectatt5jtkve15831funl8rg5cg6okp';
 		$id4 = '96aa2c863140e0e714a603cf44b0afc9a0632592';
 		$this->session->stop();
-		\ini_set('session.sid_bits_per_character', 6);
-		\ini_set('session.sid_length', 40);
+		\ini_set('session.sid_bits_per_character', '6');
+		\ini_set('session.sid_length', '40');
 		$this->assertTrue($this->handler->validateId($id6));
 		$this->assertTrue($this->handler->validateId($id5));
 		$this->assertTrue($this->handler->validateId($id4));
-		\ini_set('session.sid_bits_per_character', 5);
+		\ini_set('session.sid_bits_per_character', '5');
 		$this->assertFalse($this->handler->validateId($id6));
 		$this->assertTrue($this->handler->validateId($id5));
 		$this->assertTrue($this->handler->validateId($id4));
-		\ini_set('session.sid_bits_per_character', 4);
+		\ini_set('session.sid_bits_per_character', '4');
 		$this->assertFalse($this->handler->validateId($id6));
 		$this->assertFalse($this->handler->validateId($id5));
 		$this->assertTrue($this->handler->validateId($id4));
