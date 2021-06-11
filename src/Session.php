@@ -32,24 +32,28 @@ class Session
 		$this->stop();
 	}
 
-	public function __get($key)
+	public function __get(string $key) : mixed
 	{
 		return $this->get($key);
 	}
 
-	public function __set($key, $value)
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 */
+	public function __set(string $key, mixed $value)
 	{
 		$this->set($key, $value);
 	}
 
-	public function __isset($key)
+	public function __isset(string $key) : bool
 	{
 		return $this->has($key);
 	}
 
-	public function __unset($key)
+	public function __unset(string $key)
 	{
-		return $this->remove($key);
+		$this->remove($key);
 	}
 
 	/**

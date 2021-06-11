@@ -11,6 +11,9 @@ use Framework\Log\Logger;
  */
 abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTimestampHandlerInterface
 {
+	/**
+	 * @var array<string,mixed>
+	 */
 	protected array $config;
 	protected string $fingerprint;
 	protected string | false $lockId = false;
@@ -21,8 +24,8 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	/**
 	 * SessionSaveHandler constructor.
 	 *
-	 * @param array       $config
-	 * @param Logger|null $logger
+	 * @param array<string,mixed> $config
+	 * @param Logger|null         $logger
 	 */
 	public function __construct(array $config = [], Logger $logger = null)
 	{
@@ -30,6 +33,9 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 		$this->logger = $logger;
 	}
 
+	/**
+	 * @param array<string,mixed> $config
+	 */
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = $config;
