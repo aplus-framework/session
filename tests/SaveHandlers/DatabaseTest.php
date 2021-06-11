@@ -9,7 +9,7 @@ use Framework\Session\SaveHandlers\Database as DatabaseSaveHandler;
  *
  * @runTestsInSeparateProcesses
  */
-class DatabaseTest extends AbstractHandler
+final class DatabaseTest extends AbstractHandler
 {
 	public function setUp() : void
 	{
@@ -26,7 +26,7 @@ class DatabaseTest extends AbstractHandler
 		parent::setUp();
 	}
 
-	protected function createDummyData()
+	protected function createDummyData() : void
 	{
 		$database = new Database($this->config);
 		$database->dropTable($this->config['table'])->ifExists()->run();

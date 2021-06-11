@@ -26,19 +26,19 @@ class SessionTest extends TestCase
 		$this->session = null;
 	}
 
-	public function testCustomOptions()
+	public function testCustomOptions() : void
 	{
 		$this->assertEquals('SessionName', \session_name());
 	}
 
-	public function testSetAndGet()
+	public function testSetAndGet() : void
 	{
 		$this->assertNull($this->session->get('foo'));
 		$this->session->set('foo', 123);
 		$this->assertEquals(123, $this->session->get('foo'));
 	}
 
-	public function testMultiAndAll()
+	public function testMultiAndAll() : void
 	{
 		$this->assertEquals(
 			['foo' => null, 'bar' => null, 'baz' => null],
@@ -56,14 +56,14 @@ class SessionTest extends TestCase
 		);
 	}
 
-	public function testMagicSetAndGet()
+	public function testMagicSetAndGet() : void
 	{
 		$this->assertNull($this->session->foo);
 		$this->session->foo = 123;
 		$this->assertEquals(123, $this->session->foo);
 	}
 
-	public function testMagicIssetAndUnset()
+	public function testMagicIssetAndUnset() : void
 	{
 		$this->assertFalse(isset($this->session->foo));
 		$this->session->foo = 123;
@@ -72,14 +72,14 @@ class SessionTest extends TestCase
 		$this->assertFalse(isset($this->session->foo));
 	}
 
-	public function testStop()
+	public function testStop() : void
 	{
 		$this->assertTrue($this->session->isStarted());
 		$this->session->stop();
 		$this->assertFalse($this->session->isStarted());
 	}
 
-	public function testRemove()
+	public function testRemove() : void
 	{
 		$this->session->foo = 'foo';
 		$this->session->bar = 'bar';
@@ -97,14 +97,14 @@ class SessionTest extends TestCase
 		$this->assertEquals([], $this->session->getAll());
 	}
 
-	public function testAlreadyStarted()
+	public function testAlreadyStarted() : void
 	{
 		$this->expectException(\LogicException::class);
 		$this->expectExceptionMessage('Session was already started');
 		$this->session->start();
 	}
 
-	public function testFlash()
+	public function testFlash() : void
 	{
 		$this->session->setFlash('foo', 'Foo');
 		$this->session->setFlash('bar', 'Bar');
@@ -121,7 +121,7 @@ class SessionTest extends TestCase
 		$this->assertNull($this->session->getFlash('bar'));
 	}
 
-	public function testSetAndGetTemp()
+	public function testSetAndGetTemp() : void
 	{
 		$this->session->setTemp('foo', 'Foo', 1);
 		$this->session->setTemp('bar', 'Bar', 2);
@@ -134,7 +134,7 @@ class SessionTest extends TestCase
 		$this->assertNull($this->session->getTemp('bar'));
 	}
 
-	public function testRemoveTemp()
+	public function testRemoveTemp() : void
 	{
 		$this->session->setTemp('foo', 'Foo');
 		$this->assertEquals('Foo', $this->session->getTemp('foo'));
@@ -142,7 +142,7 @@ class SessionTest extends TestCase
 		$this->assertNull($this->session->getTemp('foo'));
 	}
 
-	public function testAutoClearTemp()
+	public function testAutoClearTemp() : void
 	{
 		$this->session->setTemp('foo', 'Foo', 1);
 		$this->session->stop();
@@ -154,7 +154,7 @@ class SessionTest extends TestCase
 		$this->assertNull($this->session->getTemp('foo'));
 	}
 
-	public function testResetFlash()
+	public function testResetFlash() : void
 	{
 		$this->session->setFlash('foo', 'bar');
 		$this->assertEquals('bar', $this->session->getFlash('foo'));

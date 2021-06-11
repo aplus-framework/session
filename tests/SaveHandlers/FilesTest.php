@@ -7,7 +7,7 @@ use Framework\Session\SaveHandlers\Files;
  *
  * @runTestsInSeparateProcesses
  */
-class FilesTest extends AbstractHandler
+final class FilesTest extends AbstractHandler
 {
 	public function setUp() : void
 	{

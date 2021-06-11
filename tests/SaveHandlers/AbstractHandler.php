@@ -7,11 +7,11 @@ use Tests\Session\SessionTest;
  *
  * @runTestsInSeparateProcesses
  */
-class AbstractHandler extends SessionTest
+abstract class AbstractHandler extends SessionTest
 {
 	protected array $config = [];
 
-	public function testValidateId()
+	public function testValidateId() : void
 	{
 		$id6 = '62my7tSXcbIrOZ-WHsEXhpwUoG,afmBQNGaSBkFN';
 		$id5 = 'iimuf8lvdectatt5jtkve15831funl8rg5cg6okp';
@@ -32,7 +32,7 @@ class AbstractHandler extends SessionTest
 		$this->assertTrue($this->handler->validateId($id4));
 	}
 
-	public function testGC()
+	public function testGC() : void
 	{
 		$this->session->stop();
 		$this->session->start([
@@ -47,13 +47,13 @@ class AbstractHandler extends SessionTest
 		$this->assertNull($this->session->foo);
 	}
 
-	public function testRegenerate()
+	public function testRegenerate() : void
 	{
 		$this->assertTrue($this->session->regenerate());
 		$this->assertTrue($this->session->regenerate(true));
 	}
 
-	public function testReset()
+	public function testReset() : void
 	{
 		$this->assertTrue($this->session->reset());
 	}

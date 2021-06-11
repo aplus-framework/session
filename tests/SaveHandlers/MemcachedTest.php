@@ -8,7 +8,7 @@ use Framework\Session\Session;
  *
  * @runTestsInSeparateProcesses
  */
-class MemcachedTest extends AbstractHandler
+final class MemcachedTest extends AbstractHandler
 {
 	public function setUp() : void
 	{
@@ -26,7 +26,7 @@ class MemcachedTest extends AbstractHandler
 	/**
 	 * @runInSeparateProcess
 	 */
-	public function testNoServers()
+	public function testNoServers() : void
 	{
 		$this->session->stop();
 		$handler = new Memcached([

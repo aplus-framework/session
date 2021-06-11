@@ -7,7 +7,7 @@ use Framework\Session\SaveHandlers\Redis;
  *
  * @runTestsInSeparateProcesses
  */
-class RedisTest extends AbstractHandler
+final class RedisTest extends AbstractHandler
 {
 	public function setUp() : void
 	{
