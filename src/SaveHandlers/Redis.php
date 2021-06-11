@@ -1,5 +1,6 @@
 <?php namespace Framework\Session\SaveHandlers;
 
+use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 
 class Redis extends SaveHandler
@@ -30,11 +31,18 @@ class Redis extends SaveHandler
 			return true;
 		}
 		$this->redis = new \Redis();
-		return $this->redis->connect(
+		$connected = $this->redis->connect(
 			$this->config['host'],
 			$this->config['port'],
 			$this->config['timeout']
 		);
+		if ($connected) {
+			return true;
+		}
+		$this->log(
+			'Session (redis): Could not connect to server ' . $this->config['host'] . ':' . $this->config['port']
+		);
+		return false;
 	}
 
 	public function read($id) : string
@@ -102,7 +110,7 @@ class Redis extends SaveHandler
 				}
 			}
 		} catch (\RedisException $e) {
-			// TODO: log
+			$this->log('Session (redis): Got RedisException on close: ' . $e->getMessage());
 		}
 		$this->redis = null;
 		return true;
@@ -113,7 +121,13 @@ class Redis extends SaveHandler
 		if ( ! $this->lockId) {
 			return false;
 		}
-		$this->redis->del($this->getKey($id));
+		$result = $this->redis->del($this->getKey($id));
+		if ($result !== 1) {
+			$this->log(
+				'Session (redis): Expected to delete 1 key, deleted ' . $result,
+				Logger::DEBUG
+			);
+		}
 		return true;
 	}
 
@@ -138,12 +152,25 @@ class Redis extends SaveHandler
 				continue;
 			}
 			if ( ! $this->redis->setex($lock_id, $ttl, (string) \time())) {
+				$this->log('Session (redis): Error while trying to lock ' . $lock_id);
 				return false;
 			}
 			$this->lockId = $lock_id;
 			break;
 		}
-		return $attempt !== $this->config['lock_attempts'];
+		if ($attempt === $this->config['lock_attempts']) {
+			$this->log(
+				"Session (redis): Unable to lock {$lock_id} after {$attempt} attempts"
+			);
+			return false;
+		}
+		if (isset($old_ttl) && $old_ttl === -1) {
+			$this->log(
+				'Session (redis): Lock for ' . $this->getKey($id) . ' had not TTL',
+				Logger::DEBUG
+			);
+		}
+		return true;
 	}
 
 	protected function releaseLock() : bool
@@ -152,6 +179,7 @@ class Redis extends SaveHandler
 			return true;
 		}
 		if ( ! $this->redis->del($this->lockId)) {
+			$this->log('Session (redis): Error while trying to unlock ' . $this->lockId);
 			return false;
 		}
 		$this->lockId = false;

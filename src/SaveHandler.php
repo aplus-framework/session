@@ -1,5 +1,7 @@
 <?php namespace Framework\Session;
 
+use Framework\Log\Logger;
+
 /**
  * Class SessionSaveHandler.
  *
@@ -14,20 +16,30 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	protected string | false $lockId = false;
 	protected bool $sessionExists = false;
 	protected ?string $sessionId;
+	protected ?Logger $logger;
 
 	/**
 	 * SessionSaveHandler constructor.
 	 *
-	 * @param array $config
+	 * @param array       $config
+	 * @param Logger|null $logger
 	 */
-	public function __construct(array $config = [])
+	public function __construct(array $config = [], Logger $logger = null)
 	{
 		$this->prepareConfig($config);
+		$this->logger = $logger;
 	}
 
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = $config;
+	}
+
+	protected function log(string $message, int $level = Logger::ERROR) : void
+	{
+		if ($this->logger) {
+			$this->logger->log($level, $message);
+		}
 	}
 
 	protected function getMaxlifetime() : int

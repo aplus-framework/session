@@ -163,6 +163,7 @@ class Database extends SaveHandler
 			$this->lockId = $id;
 			return true;
 		}
+		$this->log('Session (database): Error while trying to lock ' . $id);
 		return false;
 	}
 
@@ -184,6 +185,7 @@ class Database extends SaveHandler
 			$this->lockId = false;
 			return true;
 		}
+		$this->log('Session (database): Error while trying to unlock ' . $this->lockId);
 		return false;
 	}
 }

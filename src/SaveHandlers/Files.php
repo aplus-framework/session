@@ -1,5 +1,6 @@
 <?php namespace Framework\Session\SaveHandlers;
 
+use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 use LogicException;
 use RuntimeException;
@@ -99,7 +100,11 @@ class Files extends SaveHandler
 			\rewind($this->stream);
 		}
 		if ($data !== '') {
-			\fwrite($this->stream, $data);
+			$written = \fwrite($this->stream, $data);
+			if ($written === false) {
+				$this->log('Session (files): Unable to write data');
+				return false;
+			}
 		}
 		$this->fingerprint = \md5($data);
 		return true;
@@ -132,6 +137,10 @@ class Files extends SaveHandler
 	{
 		$dir_handle = \opendir($this->config['directory']);
 		if ($dir_handle === false) {
+			$this->log(
+				"Session (files): Garbage Collector could not open directory '{$this->config['directory']}'",
+				Logger::DEBUG
+			);
 			return false;
 		}
 		while (($filename = \readdir($dir_handle)) !== false) {
@@ -177,6 +186,7 @@ class Files extends SaveHandler
 			return false;
 		}
 		if (\flock($stream, \LOCK_EX) === false) {
+			$this->log("Session (files): Error while trying to lock '{$id}'");
 			\fclose($stream);
 			return false;
 		}
@@ -189,7 +199,10 @@ class Files extends SaveHandler
 		if ($this->stream === null) {
 			return true;
 		}
-		\flock($this->stream, \LOCK_UN);
+		$unlocked = \flock($this->stream, \LOCK_UN);
+		if ($unlocked === false) {
+			$this->log('Session (files): Error while trying to unlock ' . $this->getFilename($this->sessionId));
+		}
 		\fclose($this->stream);
 		$this->stream = null;
 		return true;

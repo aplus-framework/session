@@ -38,7 +38,7 @@ class MemcachedTest extends AbstractHandler
 		]);
 		$session = new Session([], $handler);
 		$this->expectException(\RuntimeException::class);
-		$this->expectExceptionMessage('Memcached could not connect to any server');
+		$this->expectExceptionMessage('Session (memcached): Could not connect to any server');
 		$session->start();
 	}
 }

@@ -17,7 +17,8 @@
 		"php": ">=8.0",
 		"ext-memcached": "*",
 		"ext-redis": "*",
-		"natanfelles/database": "^2.4"
+		"natanfelles/database": "^2.4",
+		"natanfelles/log": "^2.0"
 	},
 	"require-dev": {
 		"ext-xdebug": "*",

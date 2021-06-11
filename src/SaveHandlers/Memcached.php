@@ -1,5 +1,6 @@
 <?php namespace Framework\Session\SaveHandlers;
 
+use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 use OutOfBoundsException;
 
@@ -61,24 +62,30 @@ class Memcached extends SaveHandler
 			return true;
 		}
 		$this->memcached = new \Memcached();
+		$pool = [];
 		foreach ($this->config['servers'] as $server) {
+			$host = $server['host'] . ':' . $server['port'];
+			if (\in_array($host, $pool, true)) {
+				$this->log('Session (memcached): Server pool already has ' . $host, Logger::DEBUG);
+				continue;
+			}
 			$result = $this->memcached->addServer(
 				$server['host'],
 				$server['port'] ?? 11211,
 				$server['weight'] ?? 0,
 			);
 			if ($result === false) {
-				// TODO: Log
-				return false;
+				$this->log("Session (memcached): Could not add {$host} to server pool");
+				continue;
 			}
+			$pool[] = $host;
 		}
 		$result = $this->memcached->setOptions($this->config['options']);
 		if ($result === false) {
-			// TODO: Log
-			return false;
+			$this->log('Session (memcached): ' . $this->memcached->getLastErrorMessage());
 		}
 		if ($this->memcached->getStats() === false) {
-			throw new \RuntimeException('Memcached could not connect to any server');
+			throw new \RuntimeException('Session (memcached): Could not connect to any server');
 		}
 		return true;
 	}
@@ -178,12 +185,19 @@ class Memcached extends SaveHandler
 				continue;
 			}
 			if ( ! $this->memcached->set($lock_id, \time(), $expiration)) {
+				$this->log('Session (memcached): Error while trying to lock ' . $lock_id);
 				return false;
 			}
 			$this->lockId = $lock_id;
 			break;
 		}
-		return $attempt !== $this->config['lock_attempts'];
+		if ($attempt === $this->config['lock_attempts']) {
+			$this->log(
+				"Session (memcached): Unable to lock {$lock_id} after {$attempt} attempts"
+			);
+			return false;
+		}
+		return true;
 	}
 
 	protected function releaseLock() : bool
@@ -194,6 +208,7 @@ class Memcached extends SaveHandler
 		if ( ! $this->memcached->delete($this->lockId) &&
 			$this->memcached->getResultCode() !== \Memcached::RES_NOTFOUND
 		) {
+			$this->log('Session (memcached): Error while trying to unlock ' . $this->lockId);
 			return false;
 		}
 		$this->lockId = false;
