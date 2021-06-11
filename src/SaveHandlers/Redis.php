@@ -47,8 +47,7 @@ class Redis extends SaveHandler
 
 	public function read($id) : string
 	{
-		if ( ! isset($this->redis) || ! ($l = $this->lock($id))) {
-			\var_dump($l);
+		if ( ! isset($this->redis) || ! $this->lock($id)) {
 			return '';
 		}
 		if ( ! isset($this->sessionId)) {
