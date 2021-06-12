@@ -84,7 +84,7 @@ class Memcached extends SaveHandler
 		if ($result === false) {
 			$this->log('Session (memcached): ' . $this->memcached->getLastErrorMessage());
 		}
-		if ($this->memcached->getStats() === false) {
+		if ( ! $this->memcached->getStats()) {
 			throw new \RuntimeException('Session (memcached): Could not connect to any server');
 		}
 		return true;

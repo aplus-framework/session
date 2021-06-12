@@ -99,8 +99,7 @@ class Redis extends SaveHandler
 			return true;
 		}
 		try {
-			$ping = $this->redis->ping();
-			if ($ping === true || $ping === '+PONG') {
+			if ($this->redis->ping()) {
 				if ($this->lockId) {
 					$this->redis->del($this->lockId);
 				}
