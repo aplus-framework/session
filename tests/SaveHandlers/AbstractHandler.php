@@ -22,17 +22,17 @@ abstract class AbstractHandler extends SessionTest
 		$this->session->stop();
 		\ini_set('session.sid_bits_per_character', '6');
 		\ini_set('session.sid_length', '40');
-		$this->assertTrue($this->handler->validateId($id6));
-		$this->assertTrue($this->handler->validateId($id5));
-		$this->assertTrue($this->handler->validateId($id4));
+		self::assertTrue($this->handler->validateId($id6));
+		self::assertTrue($this->handler->validateId($id5));
+		self::assertTrue($this->handler->validateId($id4));
 		\ini_set('session.sid_bits_per_character', '5');
-		$this->assertFalse($this->handler->validateId($id6));
-		$this->assertTrue($this->handler->validateId($id5));
-		$this->assertTrue($this->handler->validateId($id4));
+		self::assertFalse($this->handler->validateId($id6));
+		self::assertTrue($this->handler->validateId($id5));
+		self::assertTrue($this->handler->validateId($id4));
 		\ini_set('session.sid_bits_per_character', '4');
-		$this->assertFalse($this->handler->validateId($id6));
-		$this->assertFalse($this->handler->validateId($id5));
-		$this->assertTrue($this->handler->validateId($id4));
+		self::assertFalse($this->handler->validateId($id6));
+		self::assertFalse($this->handler->validateId($id5));
+		self::assertTrue($this->handler->validateId($id4));
 	}
 
 	public function testGC() : void
@@ -42,22 +42,22 @@ abstract class AbstractHandler extends SessionTest
 			'gc_maxlifetime' => 1,
 		]);
 		$this->session->foo = 'bar';
-		$this->assertEquals($this->session->foo, 'bar');
+		self::assertSame($this->session->foo, 'bar');
 		$this->session->stop();
 		\sleep(2);
-		$this->assertTrue($this->handler->gc(0));
+		self::assertTrue($this->handler->gc(0));
 		$this->session->start();
-		$this->assertNull($this->session->foo);
+		self::assertNull($this->session->foo);
 	}
 
 	public function testRegenerate() : void
 	{
-		$this->assertTrue($this->session->regenerate());
-		$this->assertTrue($this->session->regenerate(true));
+		self::assertTrue($this->session->regenerate());
+		self::assertTrue($this->session->regenerate(true));
 	}
 
 	public function testReset() : void
 	{
-		$this->assertTrue($this->session->reset());
+		self::assertTrue($this->session->reset());
 	}
 }
