@@ -37,11 +37,7 @@ class Session
 		return $this->get($key);
 	}
 
-	/**
-	 * @param string $key
-	 * @param mixed  $value
-	 */
-	public function __set(string $key, mixed $value)
+	public function __set(string $key, mixed $value) : void
 	{
 		$this->set($key, $value);
 	}
@@ -51,7 +47,7 @@ class Session
 		return $this->has($key);
 	}
 
-	public function __unset(string $key)
+	public function __unset(string $key) : void
 	{
 		$this->remove($key);
 	}
