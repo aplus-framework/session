@@ -55,27 +55,32 @@ class FilesHandler extends SaveHandler
 	{
 		if ($this->stream !== null) {
 			\rewind($this->stream);
-		} else {
-			$filename = $this->getFilename($id);
-			$dirname = \dirname($filename);
-			if ( ! \is_dir($dirname) && ! \mkdir($dirname, 0700) && ! \is_dir($dirname)) {
-				throw new RuntimeException(
-					"Session subdirectory '{$dirname}' was not created",
-				);
-			}
-			$this->sessionExists = \is_file($filename);
-			if ( ! $this->lock($filename)) {
-				return '';
-			}
-			if ( ! isset($this->sessionId)) {
-				$this->sessionId = $id;
-			}
-			if ( ! $this->sessionExists) {
-				\chmod($filename, 0600);
-				$this->fingerprint = \md5('');
-				return '';
-			}
+			return $this->readData();
 		}
+		$filename = $this->getFilename($id);
+		$dirname = \dirname($filename);
+		if ( ! \is_dir($dirname) && ! \mkdir($dirname, 0700) && ! \is_dir($dirname)) {
+			throw new RuntimeException(
+				"Session subdirectory '{$dirname}' was not created",
+			);
+		}
+		$this->sessionExists = \is_file($filename);
+		if ( ! $this->lock($filename)) {
+			return '';
+		}
+		if ( ! isset($this->sessionId)) {
+			$this->sessionId = $id;
+		}
+		if ( ! $this->sessionExists) {
+			\chmod($filename, 0600);
+			$this->fingerprint = \md5('');
+			return '';
+		}
+		return $this->readData();
+	}
+
+	protected function readData() : string
+	{
 		$data = '';
 		while ( ! \feof($this->stream)) {
 			$data .= \fread($this->stream, 1024);
