@@ -22,10 +22,20 @@ class Database extends SaveHandler
 
 	protected function prepareConfig(array $config) : void
 	{
-		$this->config = \array_replace([
+		$this->config = \array_replace_recursive([
 			'table' => 'Sessions',
 			'maxlifetime' => null,
+			'columns' => [
+				'id' => 'id',
+				'data' => 'data',
+				'timestamp' => 'timestamp',
+			],
 		], $config);
+	}
+
+	protected function getColumn(string $key) : string
+	{
+		return $this->config['columns'][$key];
 	}
 
 	public function open($path, $session_name) : bool
@@ -46,7 +56,7 @@ class Database extends SaveHandler
 		$row = $this->database
 			->select()
 			->from($this->config['table'])
-			->whereEqual('id', $id)
+			->whereEqual($this->getColumn('id'), $id)
 			->limit(1)
 			->run()
 			->fetch();
@@ -72,11 +82,11 @@ class Database extends SaveHandler
 			$inserted = $this->database
 				->insert($this->config['table'])
 				->set([
-					'id' => $id,
-					'timestamp' => static function () {
+					$this->getColumn('id') => $id,
+					$this->getColumn('timestamp') => static function () : string {
 						return 'NOW()';
 					},
-					'data' => $data,
+					$this->getColumn('data') => $data,
 				])->run();
 			if ($inserted === 0) {
 				return false;
@@ -86,18 +96,18 @@ class Database extends SaveHandler
 			return true;
 		}
 		$columns = [
-			'timestamp' => static function () {
+			$this->getColumn('timestamp') => static function () {
 				return 'NOW()';
 			},
 		];
 		if ($this->fingerprint !== \md5($data)) {
-			$columns['data'] = $data;
+			$columns[$this->getColumn('data')] = $data;
 		}
 		$this->database
 			->update()
 			->table($this->config['table'])
 			->set($columns)
-			->whereEqual('id', $id)
+			->whereEqual($this->getColumn('id'), $id)
 			->limit(1)
 			->run();
 		return true;
@@ -109,7 +119,7 @@ class Database extends SaveHandler
 			->update()
 			->table($this->config['table'])
 			->set([
-				'timestamp' => static function () {
+				$this->getColumn('timestamp') => static function () : string {
 					return 'NOW()';
 				},
 			])
@@ -129,7 +139,7 @@ class Database extends SaveHandler
 		$this->database
 			->delete()
 			->from($this->config['table'])
-			->whereEqual('id', $id)
+			->whereEqual($this->getColumn('id'), $id)
 			->limit(1)
 			->run();
 		return true;
@@ -140,10 +150,12 @@ class Database extends SaveHandler
 		$this->database
 			->delete()
 			->from($this->config['table'])
-			->whereLessThan('timestamp', static function () use ($max_lifetime) {
-				return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
-			})
-			->run();
+			->whereLessThan(
+				$this->getColumn('timestamp'),
+				static function () use ($max_lifetime) : string {
+					return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
+				}
+			)->run();
 		return true;
 	}
 
@@ -152,7 +164,7 @@ class Database extends SaveHandler
 		$row = $this->database
 			->select()
 			->expressions([
-				'locked' => function (DB $db) use ($id) {
+				'locked' => function (DB $db) use ($id) : string {
 					$id = $db->quote($id);
 					$maxlifetime = $db->quote($this->getMaxlifetime());
 					return "GET_LOCK({$id}, {$maxlifetime})";
@@ -175,7 +187,7 @@ class Database extends SaveHandler
 		$row = $this->database
 			->select()
 			->expressions([
-				'unlocked' => function (DB $db) {
+				'unlocked' => function (DB $db) : string {
 					$lock_id = $db->quote($this->lockId);
 					return "RELEASE_LOCK({$lock_id})";
 				},
