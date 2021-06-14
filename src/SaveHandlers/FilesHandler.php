@@ -5,7 +5,7 @@ use Framework\Session\SaveHandler;
 use LogicException;
 use RuntimeException;
 
-class Files extends SaveHandler
+class FilesHandler extends SaveHandler
 {
 	/**
 	 * @var resource|null

@@ -2,10 +2,11 @@
 
 use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
+use Redis;
 
-class Redis extends SaveHandler
+class RedisHandler extends SaveHandler
 {
-	protected ?\Redis $redis;
+	protected ?Redis $redis;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -30,7 +31,7 @@ class Redis extends SaveHandler
 		if (isset($this->redis)) {
 			return true;
 		}
-		$this->redis = new \Redis();
+		$this->redis = new Redis();
 		$connected = $this->redis->connect(
 			$this->config['host'],
 			$this->config['port'],

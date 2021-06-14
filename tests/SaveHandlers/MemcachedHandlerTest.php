@@ -1,6 +1,6 @@
 <?php namespace Tests\Session\SaveHandlers;
 
-use Framework\Session\SaveHandlers\Memcached;
+use Framework\Session\SaveHandlers\MemcachedHandler;
 use Framework\Session\Session;
 
 /**
@@ -8,7 +8,7 @@ use Framework\Session\Session;
  *
  * @runTestsInSeparateProcesses
  */
-final class MemcachedTest extends AbstractHandler
+final class MemcachedHandlerTest extends AbstractHandler
 {
 	public function setUp() : void
 	{
@@ -19,17 +19,14 @@ final class MemcachedTest extends AbstractHandler
 				],
 			],
 		];
-		$this->handler = new Memcached($this->config);
+		$this->handler = new MemcachedHandler($this->config);
 		parent::setUp();
 	}
 
-	/**
-	 * @runInSeparateProcess
-	 */
 	public function testNoServers() : void
 	{
 		$this->session->stop();
-		$handler = new Memcached([
+		$handler = new MemcachedHandler([
 			'servers' => [
 				[
 					'host' => 'unknown',

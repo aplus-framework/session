@@ -2,11 +2,12 @@
 
 use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
+use Memcached;
 use OutOfBoundsException;
 
-class Memcached extends SaveHandler
+class MemcachedHandler extends SaveHandler
 {
-	protected ?\Memcached $memcached;
+	protected ?Memcached $memcached;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -20,7 +21,7 @@ class Memcached extends SaveHandler
 				],
 			],
 			'options' => [
-				\Memcached::OPT_BINARY_PROTOCOL => true,
+				Memcached::OPT_BINARY_PROTOCOL => true,
 			],
 			'lock_attempts' => 60,
 			'lock_ttl' => 600,
@@ -61,7 +62,7 @@ class Memcached extends SaveHandler
 		if (isset($this->memcached)) {
 			return true;
 		}
-		$this->memcached = new \Memcached();
+		$this->memcached = new Memcached();
 		$pool = [];
 		foreach ($this->config['servers'] as $server) {
 			$host = $server['host'] . ':' . $server['port'];
@@ -206,7 +207,7 @@ class Memcached extends SaveHandler
 			return true;
 		}
 		if ( ! $this->memcached->delete($this->lockId) &&
-			$this->memcached->getResultCode() !== \Memcached::RES_NOTFOUND
+			$this->memcached->getResultCode() !== Memcached::RES_NOTFOUND
 		) {
 			$this->log('Session (memcached): Error while trying to unlock ' . $this->lockId);
 			return false;

@@ -1,13 +1,13 @@
 <?php namespace Tests\Session\SaveHandlers;
 
-use Framework\Session\SaveHandlers\Files;
+use Framework\Session\SaveHandlers\FilesHandler;
 
 /**
  * Class FilesTest.
  *
  * @runTestsInSeparateProcesses
  */
-final class FilesTest extends AbstractHandler
+final class FilesHandlerTest extends AbstractHandler
 {
 	public function setUp() : void
 	{
@@ -18,7 +18,7 @@ final class FilesTest extends AbstractHandler
 		$this->config = [
 			'directory' => $directory,
 		];
-		$this->handler = new Files($this->config);
+		$this->handler = new FilesHandler($this->config);
 		parent::setUp();
 	}
 }

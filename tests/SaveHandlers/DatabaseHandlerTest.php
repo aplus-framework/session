@@ -2,14 +2,14 @@
 
 use Framework\Database\Database;
 use Framework\Database\Definition\Table\TableDefinition;
-use Framework\Session\SaveHandlers\Database as DatabaseSaveHandler;
+use Framework\Session\SaveHandlers\DatabaseHandler;
 
 /**
  * Class DatabaseTest.
  *
  * @runTestsInSeparateProcesses
  */
-final class DatabaseTest extends AbstractHandler
+final class DatabaseHandlerTest extends AbstractHandler
 {
 	public function setUp() : void
 	{
@@ -21,7 +21,7 @@ final class DatabaseTest extends AbstractHandler
 			'port' => \getenv('DB_PORT'),
 			'table' => \getenv('DB_TABLE'),
 		];
-		$this->handler = new DatabaseSaveHandler($this->config);
+		$this->handler = new DatabaseHandler($this->config);
 		$this->createDummyData();
 		parent::setUp();
 	}

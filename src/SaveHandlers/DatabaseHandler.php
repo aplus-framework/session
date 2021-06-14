@@ -1,6 +1,6 @@
 <?php namespace Framework\Session\SaveHandlers;
 
-use Framework\Database\Database as DB;
+use Framework\Database\Database;
 use Framework\Session\SaveHandler;
 
 /**
@@ -16,9 +16,9 @@ use Framework\Session\SaveHandler;
  * );
  * ```
  */
-class Database extends SaveHandler
+class DatabaseHandler extends SaveHandler
 {
-	protected ?DB $database;
+	protected ?Database $database;
 
 	protected function prepareConfig(array $config) : void
 	{
@@ -45,7 +45,7 @@ class Database extends SaveHandler
 
 	public function open($path, $session_name) : bool
 	{
-		$this->database = new DB($this->config);
+		$this->database = new Database($this->config);
 		return true;
 	}
 
@@ -169,9 +169,9 @@ class Database extends SaveHandler
 		$row = $this->database
 			->select()
 			->expressions([
-				'locked' => function (DB $db) use ($id) : string {
-					$id = $db->quote($id);
-					$maxlifetime = $db->quote($this->getMaxlifetime());
+				'locked' => function (Database $database) use ($id) : string {
+					$id = $database->quote($id);
+					$maxlifetime = $database->quote($this->getMaxlifetime());
 					return "GET_LOCK({$id}, {$maxlifetime})";
 				},
 			])->run()
@@ -192,8 +192,8 @@ class Database extends SaveHandler
 		$row = $this->database
 			->select()
 			->expressions([
-				'unlocked' => function (DB $db) : string {
-					$lock_id = $db->quote($this->lockId);
+				'unlocked' => function (Database $database) : string {
+					$lock_id = $database->quote($this->lockId);
 					return "RELEASE_LOCK({$lock_id})";
 				},
 			])->run()
