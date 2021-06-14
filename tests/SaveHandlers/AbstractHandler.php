@@ -13,6 +13,23 @@ abstract class AbstractHandler extends SessionTest
 	 * @var array<string, mixed>
 	 */
 	protected array $config = [];
+	protected string $handlerClass;
+
+	public function setUp() : void
+	{
+		$_SERVER['REMOTE_ADDR'] = '192.168.1.2';
+		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0';
+		$this->handler = new $this->handlerClass($this->config);
+		parent::setUp();
+	}
+
+	/**
+	 * @param array<string,mixed> $config
+	 */
+	protected function replaceConfig(array $config) : void
+	{
+		$this->config = \array_replace_recursive($this->config, $config);
+	}
 
 	public function testValidateId() : void
 	{

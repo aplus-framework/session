@@ -4,22 +4,23 @@ use Framework\Session\SaveHandlers\MemcachedHandler;
 use Framework\Session\Session;
 
 /**
- * Class MemcachedTest.
+ * Class MemcachedHandlerTest.
  *
  * @runTestsInSeparateProcesses
  */
-final class MemcachedHandlerTest extends AbstractHandler
+class MemcachedHandlerTest extends AbstractHandler
 {
+	protected string $handlerClass = MemcachedHandler::class;
+
 	public function setUp() : void
 	{
-		$this->config = [
+		$this->replaceConfig([
 			'servers' => [
 				[
 					'host' => \getenv('MEMCACHED_HOST'),
 				],
 			],
-		];
-		$this->handler = new MemcachedHandler($this->config);
+		]);
 		parent::setUp();
 	}
 

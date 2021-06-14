@@ -3,18 +3,19 @@
 use Framework\Session\SaveHandlers\RedisHandler;
 
 /**
- * Class RedisTest.
+ * Class RedisHandlerTest.
  *
  * @runTestsInSeparateProcesses
  */
-final class RedisHandlerTest extends AbstractHandler
+class RedisHandlerTest extends AbstractHandler
 {
+	protected string $handlerClass = RedisHandler::class;
+
 	public function setUp() : void
 	{
-		$this->config = [
+		$this->replaceConfig([
 			'host' => \getenv('REDIS_HOST'),
-		];
-		$this->handler = new RedisHandler($this->config);
+		]);
 		parent::setUp();
 	}
 }

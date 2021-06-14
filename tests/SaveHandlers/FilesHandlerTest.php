@@ -3,22 +3,23 @@
 use Framework\Session\SaveHandlers\FilesHandler;
 
 /**
- * Class FilesTest.
+ * Class FilesHandlerTest.
  *
  * @runTestsInSeparateProcesses
  */
-final class FilesHandlerTest extends AbstractHandler
+class FilesHandlerTest extends AbstractHandler
 {
+	protected string $handlerClass = FilesHandler::class;
+
 	public function setUp() : void
 	{
 		$directory = \getenv('FILES_DIR');
 		if ($directory && ! \is_dir($directory)) {
 			\mkdir($directory, 0700, true);
 		}
-		$this->config = [
+		$this->replaceConfig([
 			'directory' => $directory,
-		];
-		$this->handler = new FilesHandler($this->config);
+		]);
 		parent::setUp();
 	}
 }

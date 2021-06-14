@@ -5,23 +5,24 @@ use Framework\Database\Definition\Table\TableDefinition;
 use Framework\Session\SaveHandlers\DatabaseHandler;
 
 /**
- * Class DatabaseTest.
+ * Class DatabaseHandlerTest.
  *
  * @runTestsInSeparateProcesses
  */
-final class DatabaseHandlerTest extends AbstractHandler
+class DatabaseHandlerTest extends AbstractHandler
 {
+	protected string $handlerClass = DatabaseHandler::class;
+
 	public function setUp() : void
 	{
-		$this->config = [
+		$this->replaceConfig([
 			'username' => \getenv('DB_USERNAME'),
 			'password' => \getenv('DB_PASSWORD'),
 			'schema' => \getenv('DB_SCHEMA'),
 			'host' => \getenv('DB_HOST'),
 			'port' => \getenv('DB_PORT'),
 			'table' => \getenv('DB_TABLE'),
-		];
-		$this->handler = new DatabaseHandler($this->config);
+		]);
 		$this->createDummyData();
 		parent::setUp();
 	}
@@ -35,7 +36,11 @@ final class DatabaseHandlerTest extends AbstractHandler
 				$definition->column('id')->varchar(128)->primaryKey();
 				$definition->column('timestamp')->timestamp();
 				$definition->column('data')->blob();
+				$definition->column('ip')->varchar(45)->default('');
+				$definition->column('ua')->varchar(255)->default('');
 				$definition->index('timestamp')->key('timestamp');
+				$definition->index('ip')->key('ip');
+				$definition->index('ua')->key('ua');
 			})->run();
 	}
 }
