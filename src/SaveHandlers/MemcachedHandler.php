@@ -27,6 +27,8 @@ class MemcachedHandler extends SaveHandler
 			'lock_attempts' => 60,
 			'lock_ttl' => 600,
 			'maxlifetime' => null,
+			'match_ip' => false,
+			'match_ua' => false,
 		], $config);
 		foreach ($this->config['servers'] as $index => $server) {
 			if ( ! isset($server['host'])) {
@@ -55,7 +57,20 @@ class MemcachedHandler extends SaveHandler
 
 	protected function getKey(string $id) : string
 	{
-		return $this->config['prefix'] . $id;
+		$key = $this->config['prefix'] . $id;
+		if ($this->config['match_ip']) {
+			$key .= ':' . $this->getIP();
+		}
+		if ($this->config['match_ua']) {
+			$key .= ':' . \md5($this->getUA());
+		}
+		$key_length = \strlen($key);
+		if ($key_length > 250) {
+			throw new OutOfBoundsException(
+				'The max key length allowed by Memcached is 250 bytes, given ' . $key_length
+			);
+		}
+		return $key;
 	}
 
 	public function open($path, $name) : bool

@@ -17,6 +17,8 @@ class FilesHandler extends SaveHandler
 		$this->config = \array_replace([
 			'prefix' => '',
 			'directory' => '',
+			'match_ip' => false,
+			'match_ua' => false,
 		], $config);
 		if (empty($this->config['directory'])) {
 			throw new LogicException('Session config has not a directory');
@@ -43,7 +45,14 @@ class FilesHandler extends SaveHandler
 
 	protected function getFilename(string $id) : string
 	{
-		return $this->config['directory'] . $id[0] . $id[1] . \DIRECTORY_SEPARATOR . $id;
+		$filename = $this->config['directory'] . $id[0] . $id[1] . \DIRECTORY_SEPARATOR . $id;
+		if ($this->config['match_ip']) {
+			$filename .= ':' . $this->getIP();
+		}
+		if ($this->config['match_ua']) {
+			$filename .= ':' . \md5($this->getUA());
+		}
+		return $filename;
 	}
 
 	public function open($path, $name) : bool

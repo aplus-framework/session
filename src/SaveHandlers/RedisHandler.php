@@ -18,12 +18,21 @@ class RedisHandler extends SaveHandler
 			'lock_attempts' => 60,
 			'lock_ttl' => 600,
 			'maxlifetime' => null,
+			'match_ip' => false,
+			'match_ua' => false,
 		], $config);
 	}
 
 	protected function getKey(string $id) : string
 	{
-		return $this->config['prefix'] . $id;
+		$key = $this->config['prefix'] . $id;
+		if ($this->config['match_ip']) {
+			$key .= ':' . $this->getIP();
+		}
+		if ($this->config['match_ua']) {
+			$key .= ':' . \md5($this->getUA());
+		}
+		return $key;
 	}
 
 	public function open($path, $name) : bool

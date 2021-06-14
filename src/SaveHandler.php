@@ -54,6 +54,26 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	}
 
 	/**
+	 * Get the remote IP address.
+	 *
+	 * @return string
+	 */
+	protected function getIP() : string
+	{
+		return $_SERVER['REMOTE_ADDR'] ?? '';
+	}
+
+	/**
+	 * Get the HTTP User-Agent.
+	 *
+	 * @return string
+	 */
+	protected function getUA() : string
+	{
+		return $_SERVER['HTTP_USER_AGENT'] ?? '';
+	}
+
+	/**
 	 * @param string $id
 	 *
 	 * @return bool

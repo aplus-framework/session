@@ -29,7 +29,11 @@ class DatabaseHandler extends SaveHandler
 				'id' => 'id',
 				'data' => 'data',
 				'timestamp' => 'timestamp',
+				'ip' => 'ip',
+				'ua' => 'ua',
 			],
+			'match_ip' => false,
+			'match_ua' => false,
 		], $config);
 	}
 
@@ -58,13 +62,17 @@ class DatabaseHandler extends SaveHandler
 		if ( ! isset($this->sessionId)) {
 			$this->sessionId = $id;
 		}
-		$row = $this->database
+		$statement = $this->database
 			->select()
 			->from($this->getTable())
-			->whereEqual($this->getColumn('id'), $id)
-			->limit(1)
-			->run()
-			->fetch();
+			->whereEqual($this->getColumn('id'), $id);
+		if ($this->config['match_ip']) {
+			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
+		}
+		if ($this->config['match_ua']) {
+			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
+		}
+		$row = $statement->limit(1)->run()->fetch();
 		$this->sessionExists = (bool) $row;
 		$data = $row->data ?? '';
 		$this->fingerprint = \md5($data);
@@ -84,15 +92,23 @@ class DatabaseHandler extends SaveHandler
 			$this->sessionId = $id;
 		}
 		if ($this->sessionExists === false) {
+			$columns = [
+				$this->getColumn('id') => $id,
+				$this->getColumn('timestamp') => static function () : string {
+					return 'NOW()';
+				},
+				$this->getColumn('data') => $data,
+			];
+			if ($this->config['match_ip']) {
+				$columns[$this->getColumn('ip')] = $this->getIP();
+			}
+			if ($this->config['match_ua']) {
+				$columns[$this->getColumn('ua')] = $this->getUA();
+			}
 			$inserted = $this->database
 				->insert($this->getTable())
-				->set([
-					$this->getColumn('id') => $id,
-					$this->getColumn('timestamp') => static function () : string {
-						return 'NOW()';
-					},
-					$this->getColumn('data') => $data,
-				])->run();
+				->set($columns)
+				->run();
 			if ($inserted === 0) {
 				return false;
 			}
@@ -108,19 +124,24 @@ class DatabaseHandler extends SaveHandler
 		if ($this->fingerprint !== \md5($data)) {
 			$columns[$this->getColumn('data')] = $data;
 		}
-		$this->database
+		$statement = $this->database
 			->update()
 			->table($this->getTable())
 			->set($columns)
-			->whereEqual($this->getColumn('id'), $id)
-			->limit(1)
-			->run();
+			->whereEqual($this->getColumn('id'), $id);
+		if ($this->config['match_ip']) {
+			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
+		}
+		if ($this->config['match_ua']) {
+			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
+		}
+		$statement->limit(1)->run();
 		return true;
 	}
 
 	public function updateTimestamp($id, $data) : bool
 	{
-		$this->database
+		$statement = $this->database
 			->update()
 			->table($this->getTable())
 			->set([
@@ -128,9 +149,14 @@ class DatabaseHandler extends SaveHandler
 					return 'NOW()';
 				},
 			])
-			->whereEqual('id', $id)
-			->limit(1)
-			->run();
+			->whereEqual($this->getColumn('id'), $id);
+		if ($this->config['match_ip']) {
+			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
+		}
+		if ($this->config['match_ua']) {
+			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
+		}
+		$statement->limit(1)->run();
 		return true;
 	}
 
@@ -141,12 +167,17 @@ class DatabaseHandler extends SaveHandler
 
 	public function destroy($id) : bool
 	{
-		$this->database
+		$statement = $this->database
 			->delete()
 			->from($this->getTable())
-			->whereEqual($this->getColumn('id'), $id)
-			->limit(1)
-			->run();
+			->whereEqual($this->getColumn('id'), $id);
+		if ($this->config['match_ip']) {
+			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
+		}
+		if ($this->config['match_ua']) {
+			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
+		}
+		$statement->limit(1)->run();
 		return true;
 	}
 
