@@ -144,12 +144,12 @@ class SessionTest extends TestCase
 
 	public function testAutoClearTemp() : void
 	{
-		$this->session->setTemp('foo', 'Foo', 1);
+		$this->session->setTemp('foo', 'Foo', 2);
 		$this->session->stop();
 		$this->session->start();
 		self::assertSame('Foo', $this->session->getTemp('foo'));
 		$this->session->stop();
-		\sleep(2);
+		\sleep(3);
 		$this->session->start();
 		self::assertNull($this->session->getTemp('foo'));
 	}
