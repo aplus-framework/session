@@ -33,6 +33,11 @@ class Database extends SaveHandler
 		], $config);
 	}
 
+	protected function getTable() : string
+	{
+		return $this->config['table'];
+	}
+
 	protected function getColumn(string $key) : string
 	{
 		return $this->config['columns'][$key];
@@ -55,7 +60,7 @@ class Database extends SaveHandler
 		}
 		$row = $this->database
 			->select()
-			->from($this->config['table'])
+			->from($this->getTable())
 			->whereEqual($this->getColumn('id'), $id)
 			->limit(1)
 			->run()
@@ -80,7 +85,7 @@ class Database extends SaveHandler
 		}
 		if ($this->sessionExists === false) {
 			$inserted = $this->database
-				->insert($this->config['table'])
+				->insert($this->getTable())
 				->set([
 					$this->getColumn('id') => $id,
 					$this->getColumn('timestamp') => static function () : string {
@@ -105,7 +110,7 @@ class Database extends SaveHandler
 		}
 		$this->database
 			->update()
-			->table($this->config['table'])
+			->table($this->getTable())
 			->set($columns)
 			->whereEqual($this->getColumn('id'), $id)
 			->limit(1)
@@ -117,7 +122,7 @@ class Database extends SaveHandler
 	{
 		$this->database
 			->update()
-			->table($this->config['table'])
+			->table($this->getTable())
 			->set([
 				$this->getColumn('timestamp') => static function () : string {
 					return 'NOW()';
@@ -138,7 +143,7 @@ class Database extends SaveHandler
 	{
 		$this->database
 			->delete()
-			->from($this->config['table'])
+			->from($this->getTable())
 			->whereEqual($this->getColumn('id'), $id)
 			->limit(1)
 			->run();
@@ -149,7 +154,7 @@ class Database extends SaveHandler
 	{
 		$this->database
 			->delete()
-			->from($this->config['table'])
+			->from($this->getTable())
 			->whereLessThan(
 				$this->getColumn('timestamp'),
 				static function () use ($max_lifetime) : string {
