@@ -1,6 +1,5 @@
 #/bin/bash
 set -e
-mkdir -p build
 echo "------------------------"
 echo "Running Composer Install"
 echo "------------------------"
@@ -19,9 +18,15 @@ echo "--------------------"
 echo
 vendor/bin/php-cs-fixer fix --diff --dry-run --verbose
 echo
-echo "-----------------------"
-echo "Running PHPStan Analyse"
-echo "-----------------------"
+echo "-------------"
+echo "Running PHPMD"
+echo "-------------"
+echo
+vendor/bin/phpmd src xml phpmd.xml
+echo
+echo "---------------"
+echo "Running PHPStan"
+echo "---------------"
 echo
 vendor/bin/phpstan analyse -vvv
 echo
