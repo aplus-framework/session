@@ -4,6 +4,7 @@ use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 use Memcached;
 use OutOfBoundsException;
+use RuntimeException;
 
 class MemcachedHandler extends SaveHandler
 {
@@ -86,7 +87,7 @@ class MemcachedHandler extends SaveHandler
 			$this->log('Session (memcached): ' . $this->memcached->getLastErrorMessage());
 		}
 		if ( ! $this->memcached->getStats()) {
-			throw new \RuntimeException('Session (memcached): Could not connect to any server');
+			throw new RuntimeException('Session (memcached): Could not connect to any server');
 		}
 		return true;
 	}
