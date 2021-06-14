@@ -1,6 +1,9 @@
 <?php namespace Framework\Session\SaveHandlers;
 
 use Framework\Database\Database;
+use Framework\Database\Manipulation\Delete;
+use Framework\Database\Manipulation\Select;
+use Framework\Database\Manipulation\Update;
 use Framework\Session\SaveHandler;
 
 /**
@@ -47,6 +50,16 @@ class DatabaseHandler extends SaveHandler
 		return $this->config['columns'][$key];
 	}
 
+	protected function addWhereMatchs(Delete | Select | Update $statement) : void
+	{
+		if ($this->config['match_ip']) {
+			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
+		}
+		if ($this->config['match_ua']) {
+			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
+		}
+	}
+
 	public function open($path, $session_name) : bool
 	{
 		$this->database = new Database($this->config);
@@ -66,12 +79,7 @@ class DatabaseHandler extends SaveHandler
 			->select()
 			->from($this->getTable())
 			->whereEqual($this->getColumn('id'), $id);
-		if ($this->config['match_ip']) {
-			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
-		}
-		if ($this->config['match_ua']) {
-			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
-		}
+		$this->addWhereMatchs($statement);
 		$row = $statement->limit(1)->run()->fetch();
 		$this->sessionExists = (bool) $row;
 		$data = $row->data ?? '';
@@ -129,12 +137,7 @@ class DatabaseHandler extends SaveHandler
 			->table($this->getTable())
 			->set($columns)
 			->whereEqual($this->getColumn('id'), $id);
-		if ($this->config['match_ip']) {
-			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
-		}
-		if ($this->config['match_ua']) {
-			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
-		}
+		$this->addWhereMatchs($statement);
 		$statement->limit(1)->run();
 		return true;
 	}
@@ -150,12 +153,7 @@ class DatabaseHandler extends SaveHandler
 				},
 			])
 			->whereEqual($this->getColumn('id'), $id);
-		if ($this->config['match_ip']) {
-			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
-		}
-		if ($this->config['match_ua']) {
-			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
-		}
+		$this->addWhereMatchs($statement);
 		$statement->limit(1)->run();
 		return true;
 	}
@@ -171,12 +169,7 @@ class DatabaseHandler extends SaveHandler
 			->delete()
 			->from($this->getTable())
 			->whereEqual($this->getColumn('id'), $id);
-		if ($this->config['match_ip']) {
-			$statement->whereEqual($this->getColumn('ip'), $this->getIP());
-		}
-		if ($this->config['match_ua']) {
-			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
-		}
+		$this->addWhereMatchs($statement);
 		$statement->limit(1)->run();
 		return true;
 	}
