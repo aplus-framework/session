@@ -81,7 +81,7 @@ class MemcachedHandler extends SaveHandler
 		$this->memcached = new Memcached();
 		$pool = [];
 		foreach ($this->config['servers'] as $server) {
-			$host = $server['host'] . ':' . $server['port'];
+			$host = $server['host'] . ':' . ($server['port'] ?? 11211);
 			if (\in_array($host, $pool, true)) {
 				$this->log('Session (memcached): Server pool already has ' . $host, Logger::DEBUG);
 				continue;
