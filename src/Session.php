@@ -1,5 +1,6 @@
 <?php namespace Framework\Session;
 
+use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 use RuntimeException;
 
@@ -16,7 +17,7 @@ class Session
 	/**
 	 * Session constructor.
 	 *
-	 * @param array|mixed[]    $options
+	 * @param array|mixed[] $options
 	 * @param SaveHandler|null $handler
 	 */
 	public function __construct(array $options = [], SaveHandler $handler = null)
@@ -109,11 +110,11 @@ class Session
 	 */
 	public function start(array $custom_options = []) : bool
 	{
-		if ($this->isStarted()) {
-			throw new LogicException('Session was already started');
+		if ($this->isActive()) {
+			throw new LogicException('Session was already active');
 		}
 		if ( ! @\session_start($this->getOptions($custom_options))) {
-			throw new RuntimeException('Session could not be started.');
+			throw new RuntimeException('Session could not be started');
 		}
 		$time = \time();
 		$this->autoRegenerate($time);
@@ -159,7 +160,27 @@ class Session
 		}
 	}
 
+	/**
+	 * @return bool
+	 *
+	 * @deprecated Use {@see Session::isActive}
+	 * @codeCoverageIgnore
+	 */
+	#[Deprecated(
+		reason: 'since Session Library version 2.1, use isActive() instead',
+		replacement: '%class%->isActive()'
+	)]
 	public function isStarted() : bool
+	{
+		return $this->isActive();
+	}
+
+	/**
+	 * Tells if sessions are enabled, and one exists.
+	 *
+	 * @return bool
+	 */
+	public function isActive() : bool
 	{
 		return \session_status() === \PHP_SESSION_ACTIVE;
 	}
@@ -171,7 +192,7 @@ class Session
 	 */
 	public function destroy() : bool
 	{
-		if ($this->isStarted()) {
+		if ($this->isActive()) {
 			$destroyed = \session_destroy();
 		}
 		unset($_SESSION);
@@ -185,7 +206,7 @@ class Session
 	 */
 	public function stop() : bool
 	{
-		if ($this->isStarted()) {
+		if ($this->isActive()) {
 			$closed = \session_write_close();
 		}
 		return $closed ?? true;
@@ -230,7 +251,7 @@ class Session
 
 	/**
 	 * @param string $key
-	 * @param mixed  $value
+	 * @param mixed $value
 	 *
 	 * @return $this
 	 */
@@ -322,7 +343,7 @@ class Session
 
 	/**
 	 * @param string $key
-	 * @param mixed  $value
+	 * @param mixed $value
 	 *
 	 * @return $this
 	 */
@@ -364,8 +385,8 @@ class Session
 
 	/**
 	 * @param string $key
-	 * @param mixed  $value
-	 * @param int    $ttl
+	 * @param mixed $value
+	 * @param int $ttl
 	 *
 	 * @return $this
 	 */
@@ -391,7 +412,7 @@ class Session
 
 	public function id(string $new_id = null) : string | false
 	{
-		if ($new_id !== null && $this->isStarted()) {
+		if ($new_id !== null && $this->isActive()) {
 			throw new LogicException(
 				'Session ID cannot be changed when a session is active'
 			);

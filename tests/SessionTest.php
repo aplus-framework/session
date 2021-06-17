@@ -74,9 +74,9 @@ class SessionTest extends TestCase
 
 	public function testStop() : void
 	{
-		self::assertTrue($this->session->isStarted());
+		self::assertTrue($this->session->isActive());
 		$this->session->stop();
-		self::assertFalse($this->session->isStarted());
+		self::assertFalse($this->session->isActive());
 	}
 
 	public function testRemove() : void
@@ -97,10 +97,10 @@ class SessionTest extends TestCase
 		self::assertSame([], $this->session->getAll());
 	}
 
-	public function testAlreadyStarted() : void
+	public function testAlreadyActive() : void
 	{
 		$this->expectException(\LogicException::class);
-		$this->expectExceptionMessage('Session was already started');
+		$this->expectExceptionMessage('Session was already active');
 		$this->session->start();
 	}
 
