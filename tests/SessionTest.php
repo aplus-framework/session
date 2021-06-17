@@ -172,4 +172,21 @@ class SessionTest extends TestCase
 		$this->session->start();
 		self::assertNull($this->session->getFlash('foo'));
 	}
+
+	public function testId() : void
+	{
+		$this->session->stop();
+		$old_id = \session_id();
+		self::assertNotEmpty($old_id);
+		self::assertSame($old_id, $this->session->id());
+		$new_id = 'abc';
+		self::assertSame($old_id, $this->session->id($new_id));
+		self::assertSame($new_id, \session_id());
+		self::assertSame($new_id, $this->session->id());
+		$this->session->start();
+		self::assertNotSame($new_id, $this->session->id());
+		$this->expectException(\LogicException::class);
+		$this->expectExceptionMessage('Session ID cannot be changed when a session is active');
+		$this->session->id('foo');
+	}
 }

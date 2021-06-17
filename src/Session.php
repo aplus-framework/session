@@ -290,7 +290,7 @@ class Session
 	/**
 	 * Update the current session id with a newly generated one.
 	 *
-	 * @param bool $delete_old_session Whether to delete the old associated session file or not
+	 * @param bool $delete_old_session Whether to delete the old associated session item or not
 	 *
 	 * @return bool
 	 */
@@ -387,5 +387,15 @@ class Session
 	{
 		unset($_SESSION['$']['temp'][$key]);
 		return $this;
+	}
+
+	public function id(string $new_id = null) : string | false
+	{
+		if ($new_id !== null && $this->isStarted()) {
+			throw new LogicException(
+				'Session ID cannot be changed when a session is active'
+			);
+		}
+		return \session_id($new_id);
 	}
 }
