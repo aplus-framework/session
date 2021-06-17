@@ -179,7 +179,7 @@ class MemcachedHandler extends SaveHandler
 		}
 		$destroyed = $this->memcached->delete($this->getKey($id));
 		return ! ($destroyed === false
-			&& $this->memcached->getResultCode() !== $this->memcached::RES_NOTFOUND);
+			&& $this->memcached->getResultCode() !== Memcached::RES_NOTFOUND);
 	}
 
 	public function gc($max_lifetime) : bool
