@@ -128,7 +128,7 @@ class Session
 		if (empty($_SESSION['$']['regenerated_at'])
 			|| $_SESSION['$']['regenerated_at'] < $time - $this->options['regenerate_id']
 		) {
-			$this->regenerate();
+			$this->regenerateId();
 		}
 	}
 
@@ -315,13 +315,30 @@ class Session
 	 *
 	 * @return bool
 	 */
-	public function regenerate(bool $delete_old_session = false) : bool
+	public function regenerateId(bool $delete_old_session = false) : bool
 	{
 		$regenerated = \session_regenerate_id($delete_old_session);
 		if ($regenerated) {
 			$_SESSION['$']['regenerated_at'] = \time();
 		}
 		return $regenerated;
+	}
+
+	/**
+	 * @param bool $delete_old_session
+	 *
+	 * @return bool
+	 *
+	 * @deprecated Use {@see Session::regenerateId}
+	 * @codeCoverageIgnore
+	 */
+	#[Deprecated(
+		reason: 'since Session Library version 2.1, use regenerateId() instead',
+		replacement: '%class%->regenerateId(%parameter0%)'
+	)]
+	public function regenerate(bool $delete_old_session = false) : bool
+	{
+		return $this->regenerateId($delete_old_session);
 	}
 
 	public function reset() : bool

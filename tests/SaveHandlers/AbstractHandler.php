@@ -69,8 +69,8 @@ abstract class AbstractHandler extends SessionTest
 
 	public function testRegenerate() : void
 	{
-		self::assertTrue($this->session->regenerate());
-		self::assertTrue($this->session->regenerate(true));
+		self::assertTrue($this->session->regenerateId());
+		self::assertTrue($this->session->regenerateId(true));
 	}
 
 	public function testReset() : void
