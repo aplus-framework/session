@@ -10,14 +10,14 @@ use RuntimeException;
 class Session
 {
 	/**
-	 * @var array|mixed[]
+	 * @var array<string,int|string>
 	 */
 	protected array $options = [];
 
 	/**
 	 * Session constructor.
 	 *
-	 * @param array|mixed[] $options
+	 * @param array<string,int|string> $options
 	 * @param SaveHandler|null $handler
 	 */
 	public function __construct(array $options = [], SaveHandler $handler = null)
@@ -56,7 +56,7 @@ class Session
 	/**
 	 * @see http://php.net/manual/en/session.security.ini.php
 	 *
-	 * @param array|mixed[] $custom
+	 * @param array<string,int|string> $custom
 	 */
 	protected function setOptions(array $custom) : void
 	{
@@ -89,9 +89,9 @@ class Session
 	}
 
 	/**
-	 * @param array|mixed[] $custom
+	 * @param array<string,int|string> $custom
 	 *
-	 * @return array|mixed[]
+	 * @return array<string,int|string>
 	 */
 	protected function getOptions(array $custom = []) : array
 	{
@@ -104,7 +104,7 @@ class Session
 	}
 
 	/**
-	 * @param array|mixed[] $custom_options
+	 * @param array<string,int|string> $custom_options
 	 *
 	 * @return bool
 	 */
@@ -123,15 +123,23 @@ class Session
 		return true;
 	}
 
+	/**
+	 * Auto regenerate the session id.
+	 *
+	 * @param int $time
+	 */
 	protected function autoRegenerate(int $time) : void
 	{
 		if (empty($_SESSION['$']['regenerated_at'])
-			|| $_SESSION['$']['regenerated_at'] < $time - $this->options['regenerate_id']
+			|| $_SESSION['$']['regenerated_at'] < ($time - (int) $this->options['regenerate_id'])
 		) {
 			$this->regenerateId();
 		}
 	}
 
+	/**
+	 * Clears the Flash Data.
+	 */
 	protected function clearFlash() : void
 	{
 		unset($_SESSION['$']['flash']['old']);
@@ -146,6 +154,11 @@ class Session
 		}
 	}
 
+	/**
+	 * Clears the Temp Data.
+	 *
+	 * @param int $time The max time to temp data survive
+	 */
 	protected function clearTemp(int $time) : void
 	{
 		if (isset($_SESSION['$']['temp'])) {
@@ -212,15 +225,24 @@ class Session
 		return $closed ?? true;
 	}
 
+	/**
+	 * Tells if the session has an item.
+	 *
+	 * @param string $key The item key name
+	 *
+	 * @return bool True if has, otherwise false
+	 */
 	public function has(string $key) : bool
 	{
 		return isset($_SESSION[$key]);
 	}
 
 	/**
-	 * @param string $key
+	 * Gets one session item.
 	 *
-	 * @return mixed
+	 * @param string $key The item key name
+	 *
+	 * @return mixed The item value or null if no set
 	 */
 	public function get(string $key) : mixed
 	{
@@ -228,7 +250,9 @@ class Session
 	}
 
 	/**
-	 * @return array|mixed[]
+	 * Get all session items.
+	 *
+	 * @return array<int|string,mixed> The value of the $_SESSION global
 	 */
 	public function getAll() : array
 	{
@@ -236,9 +260,12 @@ class Session
 	}
 
 	/**
-	 * @param array|string[] $keys
+	 * Get multiple session items.
 	 *
-	 * @return array|mixed[]
+	 * @param array<int,string> $keys An array of key item names
+	 *
+	 * @return array<string,mixed> An associative array with items keys and
+	 * values. Item not set will return as null.
 	 */
 	public function getMulti(array $keys) : array
 	{
@@ -250,8 +277,10 @@ class Session
 	}
 
 	/**
-	 * @param string $key
-	 * @param mixed $value
+	 * Set a session item.
+	 *
+	 * @param string $key The item key name
+	 * @param mixed $value The item value
 	 *
 	 * @return $this
 	 */
@@ -262,7 +291,10 @@ class Session
 	}
 
 	/**
-	 * @param array|mixed[] $items
+	 * Set multiple session items.
+	 *
+	 * @param array<string,mixed> $items An associative array of items keys and
+	 * values
 	 *
 	 * @return $this
 	 */
@@ -275,7 +307,9 @@ class Session
 	}
 
 	/**
-	 * @param string $key
+	 * Remove (unset) a session item.
+	 *
+	 * @param string $key The item key name
 	 *
 	 * @return $this
 	 */
@@ -286,7 +320,9 @@ class Session
 	}
 
 	/**
-	 * @param array|string[] $keys
+	 * Remove (unset) multiple session items.
+	 *
+	 * @param array<int,string> $keys A list of items keys names
 	 *
 	 * @return $this
 	 */
@@ -299,6 +335,8 @@ class Session
 	}
 
 	/**
+	 * Remove (unset) all session items.
+	 *
 	 * @return $this
 	 */
 	public function removeAll()
@@ -341,15 +379,22 @@ class Session
 		return $this->regenerateId($delete_old_session);
 	}
 
+	/**
+	 * Re-initialize session array with original values.
+	 *
+	 * @return bool true if the session was successfully reinitialized or false on failure
+	 */
 	public function reset() : bool
 	{
 		return \session_reset();
 	}
 
 	/**
-	 * @param string $key
+	 * Get a Flash Data item.
 	 *
-	 * @return mixed
+	 * @param string $key The Flash item key name
+	 *
+	 * @return mixed The item value or null if not exists
 	 */
 	public function getFlash(string $key) : mixed
 	{
@@ -359,8 +404,10 @@ class Session
 	}
 
 	/**
-	 * @param string $key
-	 * @param mixed $value
+	 * Set a Flash Data item, available only in the next time the session is started.
+	 *
+	 * @param string $key The Flash Data item key name
+	 * @param mixed $value The item value
 	 *
 	 * @return $this
 	 */
@@ -371,7 +418,9 @@ class Session
 	}
 
 	/**
-	 * @param string $key
+	 * Remove a Flash Data item.
+	 *
+	 * @param string $key The item key name
 	 *
 	 * @return $this
 	 */
@@ -385,9 +434,11 @@ class Session
 	}
 
 	/**
-	 * @param string $key
+	 * Get a Temp Data item.
 	 *
-	 * @return mixed
+	 * @param string $key The item key name
+	 *
+	 * @return mixed The item value or null if it is expired or not set
 	 */
 	public function getTemp(string $key) : mixed
 	{
@@ -401,9 +452,11 @@ class Session
 	}
 
 	/**
-	 * @param string $key
-	 * @param mixed $value
-	 * @param int $ttl
+	 * Set a Temp Data item.
+	 *
+	 * @param string $key The item key name
+	 * @param mixed $value The item value
+	 * @param int $ttl The Time-To-Live of the item, in seconds
 	 *
 	 * @return $this
 	 */
@@ -417,7 +470,9 @@ class Session
 	}
 
 	/**
-	 * @param string $key
+	 * Remove (unset) a Temp Data item.
+	 *
+	 * @param string $key The item key name
 	 *
 	 * @return $this
 	 */
@@ -427,6 +482,17 @@ class Session
 		return $this;
 	}
 
+	/**
+	 * Get/Set the session id.
+	 *
+	 * @param string|null $new_id [optional] The new session id
+	 *
+	 * @throws LogicException when trying to set a new id and the session is active
+	 *
+	 * @return false|string The old session id or false on failure. Note: If a
+	 * $new_id is set, it is accepted but not validated. When session_start is
+	 * called, the id is only used if it is valid
+	 */
 	public function id(string $new_id = null) : string | false
 	{
 		if ($new_id !== null && $this->isActive()) {
