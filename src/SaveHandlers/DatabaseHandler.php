@@ -4,6 +4,7 @@ use Framework\Database\Database;
 use Framework\Database\Manipulation\Delete;
 use Framework\Database\Manipulation\Select;
 use Framework\Database\Manipulation\Update;
+use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 
 /**
@@ -138,7 +139,7 @@ class DatabaseHandler extends SaveHandler
 			->set($columns)
 			->whereEqual($this->getColumn('id'), $id);
 		$this->addWhereMatchs($statement);
-		$statement->limit(1)->run();
+		$statement->run();
 		return true;
 	}
 
@@ -154,7 +155,7 @@ class DatabaseHandler extends SaveHandler
 			])
 			->whereEqual($this->getColumn('id'), $id);
 		$this->addWhereMatchs($statement);
-		$statement->limit(1)->run();
+		$statement->run();
 		return true;
 	}
 
@@ -172,7 +173,13 @@ class DatabaseHandler extends SaveHandler
 			->from($this->getTable())
 			->whereEqual($this->getColumn('id'), $id);
 		$this->addWhereMatchs($statement);
-		$statement->limit(1)->run();
+		$result = $statement->run();
+		if ($result !== 1) {
+			$this->log(
+				'Session (database): Expected to delete 1 row, deleted ' . $result,
+				Logger::DEBUG
+			);
+		}
 		return true;
 	}
 
