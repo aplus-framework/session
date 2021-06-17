@@ -62,7 +62,7 @@ class DatabaseHandler extends SaveHandler
 
 	public function open($path, $session_name) : bool
 	{
-		$this->database = new Database($this->config);
+		$this->database ??= new Database($this->config);
 		return true;
 	}
 
@@ -160,7 +160,9 @@ class DatabaseHandler extends SaveHandler
 
 	public function close() : bool
 	{
-		return ! ($this->lockId && ! $this->unlock());
+		$closed = ! ($this->lockId && ! $this->unlock());
+		$this->database = null;
+		return $closed;
 	}
 
 	public function destroy($id) : bool
@@ -176,6 +178,7 @@ class DatabaseHandler extends SaveHandler
 
 	public function gc($max_lifetime) : bool
 	{
+		$this->database ??= new Database($this->config);
 		$this->database
 			->delete()
 			->from($this->getTable())
