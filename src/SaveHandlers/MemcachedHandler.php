@@ -56,7 +56,7 @@ class MemcachedHandler extends SaveHandler
 
 	/**
 	 * Get a key for Memcached, using the optional
-	 * match IP and match User-Agent configs.
+	 * prefix, match IP and match User-Agent configs.
 	 *
 	 * NOTE: The max key length allowed by Memcached is 250 bytes.
 	 *

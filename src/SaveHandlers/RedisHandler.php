@@ -25,6 +25,14 @@ class RedisHandler extends SaveHandler
 		], $config);
 	}
 
+	/**
+	 * Get a key for Redis, using the optional
+	 * prefix, match IP and match User-Agent configs.
+	 *
+	 * @param string $id The session id
+	 *
+	 * @return string The final key
+	 */
 	protected function getKey(string $id) : string
 	{
 		$key = $this->config['prefix'] . $id;

@@ -43,6 +43,14 @@ class FilesHandler extends SaveHandler
 		}
 	}
 
+	/**
+	 * Get the filename, using the optional
+	 * match IP and match User-Agent configs.
+	 *
+	 * @param string $id The session id
+	 *
+	 * @return string The final filename
+	 */
 	protected function getFilename(string $id) : string
 	{
 		$filename = $this->config['directory'] . $id[0] . $id[1] . \DIRECTORY_SEPARATOR . $id;

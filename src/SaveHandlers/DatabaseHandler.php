@@ -43,16 +43,33 @@ class DatabaseHandler extends SaveHandler
 		], $config);
 	}
 
+	/**
+	 * Get the table name based on custom/default configs.
+	 *
+	 * @return string The table name
+	 */
 	protected function getTable() : string
 	{
 		return $this->config['table'];
 	}
 
+	/**
+	 * Get a column name based on custom/default configs.
+	 *
+	 * @param string $key The columns config key
+	 *
+	 * @return string The column name
+	 */
 	protected function getColumn(string $key) : string
 	{
 		return $this->config['columns'][$key];
 	}
 
+	/**
+	 * Adds the `WHERE $column = $value` clauses when matching IP or User-Agent.
+	 *
+	 * @param Delete|Select|Update $statement The statement to add the WHERE clause
+	 */
 	protected function addWhereMatchs(Delete | Select | Update $statement) : void
 	{
 		if ($this->config['match_ip']) {
