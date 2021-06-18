@@ -8,6 +8,40 @@ class RedisHandler extends SaveHandler
 {
 	protected ?Redis $redis;
 
+	/**
+	 * Prepare configurations to be used by the RedisHandler.
+	 *
+	 * @param array<string,mixed> $config Custom configs
+	 *
+	 * The custom configs are:
+	 *
+	 * ```php
+	 * $configs = [
+	 *     // A custom prefix prepended in the keys
+	 *     'prefix' => '',
+	 *     // The Redis host
+	 *     'host' => '127.0.0.1',
+	 *     // The Redis host port
+	 *     'port' => 6379,
+	 *     // The connection timeout
+	 *     'timeout' => 0.0,
+	 *     // Optional auth password
+	 *     'password' => null,
+	 *     // Optional database to select
+	 *     'database' => null,
+	 *     // Maximum attempts to try lock a session id
+	 *     'lock_attempts' => 60,
+	 *     // TTL to the lock (valid for the current session only)
+	 *     'lock_ttl' => 600,
+	 *     // The maxlifetime (TTL) used for cache item expiration
+	 *     'maxlifetime' => null, // Null to use the ini value of session.gc_maxlifetime
+	 *     // Match IP?
+	 *     'match_ip' => false,
+	 *     // Match User-Agent?
+	 *     'match_ua' => false,
+	 * ];
+	 * ```
+	 */
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = \array_replace([

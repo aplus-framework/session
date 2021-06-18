@@ -15,8 +15,12 @@ use Framework\Session\SaveHandler;
  *     `id` varchar(128) NOT NULL,
  *     `timestamp` timestamp NOT NULL,
  *     `data` blob NOT NULL,
+ *     `ip` varchar(45) NOT NULL, -- optional
+ *     `ua` varchar(255) NOT NULL, -- optional
  *     PRIMARY KEY (`id`),
- *     KEY `timestamp` (`timestamp`)
+ *     KEY `timestamp` (`timestamp`),
+ *     KEY `ip` (`ip`), -- optional
+ *     KEY `ua` (`ua`) -- optional
  * );
  * ```
  */
@@ -24,6 +28,40 @@ class DatabaseHandler extends SaveHandler
 {
 	protected ?Database $database;
 
+	/**
+	 * Prepare configurations to be used by the DatabaseHandler.
+	 *
+	 * @param array<string,mixed> $config Custom configs
+	 *
+	 * The custom configs are:
+	 *
+	 * ```php
+	 * $configs = [
+	 *     // The name of the table used for sessions
+	 *     'table' => 'Sessions',
+	 *     // The maxlifetime used for locking
+	 *     'maxlifetime' => null, // Null to use the ini value of session.gc_maxlifetime
+	 *     // The custom column names as values
+	 *     'columns' => [
+	 *         'id' => 'id',
+	 *         'data' => 'data',
+	 *         'timestamp' => 'timestamp',
+	 *         'ip' => 'ip',
+	 *         'ua' => 'ua',
+	 *     ],
+	 *     // Match IP?
+	 *     'match_ip' => false,
+	 *     // Match User-Agent?
+	 *     'match_ua' => false,
+	 *     // Independent of match_ip, save the initial IP in the ip column?
+	 *     'save_ip' => false,
+	 *     // Independent of match_ua, save the initial User-Agent in the ua column?
+	 *     'save_ua' => false,
+	 * ];
+	 * ```
+	 *
+	 * NOTE: The Database::connect configs was not shown.
+	 */
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = \array_replace_recursive([

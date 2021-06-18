@@ -12,6 +12,26 @@ class FilesHandler extends SaveHandler
 	 */
 	protected $stream;
 
+	/**
+	 * Prepare configurations to be used by the FilesHandler.
+	 *
+	 * @param array<string,mixed> $config Custom configs
+	 *
+	 * The custom configs are:
+	 *
+	 * ```php
+	 * $configs = [
+	 *     // The directory path where the session files will be saved
+	 *     'directory' => '',
+	 *     // A custom directory name inside the `directory` path
+	 *     'prefix' => '',
+	 *     // Match IP?
+	 *     'match_ip' => false,
+	 *     // Match User-Agent?
+	 *     'match_ua' => false,
+	 * ];
+	 * ```
+	 */
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = \array_replace([

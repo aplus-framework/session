@@ -9,6 +9,42 @@ class MemcachedHandler extends SaveHandler
 {
 	protected ?Memcached $memcached;
 
+	/**
+	 * Prepare configurations to be used by the MemcachedHandler.
+	 *
+	 * @param array<string,mixed> $config Custom configs
+	 *
+	 * The custom configs are:
+	 *
+	 * ```php
+	 * $configs = [
+	 *     // A custom prefix prepended in the keys
+	 *     'prefix' => '',
+	 *     // A list of Memcached servers
+	 *     'servers' => [
+	 *         [
+	 *             'host' => '127.0.0.1', // host always is required
+	 *             'port' => 11211, // port is optional, default to 11211
+	 *             'weight' => 0, // weight is optional, default to 0
+	 *         ],
+	 *     ],
+	 *     // An associative array of Memcached::OPT_* constants
+	 *     'options' => [
+	 *         Memcached::OPT_BINARY_PROTOCOL => true,
+	 *     ],
+	 *     // Maximum attempts to try lock a session id
+	 *     'lock_attempts' => 60,
+	 *     // TTL to the lock (valid for the current session only)
+	 *     'lock_ttl' => 600,
+	 *     // The maxlifetime (TTL) used for cache item expiration
+	 *     'maxlifetime' => null, // Null to use the ini value of session.gc_maxlifetime
+	 *     // Match IP?
+	 *     'match_ip' => false,
+	 *     // Match User-Agent?
+	 *     'match_ua' => false,
+	 * ];
+	 * ```
+	 */
 	protected function prepareConfig(array $config) : void
 	{
 		$this->config = \array_replace_recursive([
