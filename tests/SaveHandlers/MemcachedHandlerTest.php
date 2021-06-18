@@ -33,10 +33,18 @@ class MemcachedHandlerTest extends AbstractHandler
 					'host' => 'unknown',
 				],
 			],
-		]);
+		], $this->logger);
 		$session = new Session([], $handler);
 		$this->expectException(\RuntimeException::class);
-		$this->expectExceptionMessage('Session (memcached): Could not connect to any server');
-		$session->start();
+		$this->expectExceptionMessage('Session could not be started');
+		try {
+			$session->start();
+		} catch (\RuntimeException $exception) {
+			self::assertSame(
+				'Session (memcached): Could not connect to any server',
+				$this->logger->getLastLog()->message
+			);
+			throw $exception;
+		}
 	}
 }

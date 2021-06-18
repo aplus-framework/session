@@ -1,5 +1,6 @@
 <?php namespace Tests\Session\SaveHandlers;
 
+use Framework\Log\Logger;
 use Tests\Session\SessionTest;
 
 /**
@@ -14,12 +15,14 @@ abstract class AbstractHandler extends SessionTest
 	 */
 	protected array $config = [];
 	protected string $handlerClass;
+	protected Logger $logger;
 
 	public function setUp() : void
 	{
 		$_SERVER['REMOTE_ADDR'] = '192.168.1.2';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0';
-		$this->handler = new $this->handlerClass($this->config);
+		$this->logger = new Logger('/tmp');
+		$this->handler = new $this->handlerClass($this->config, $this->logger);
 		parent::setUp();
 	}
 

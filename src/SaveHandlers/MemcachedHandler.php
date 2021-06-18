@@ -4,7 +4,6 @@ use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 use Memcached;
 use OutOfBoundsException;
-use RuntimeException;
 
 class MemcachedHandler extends SaveHandler
 {
@@ -83,7 +82,10 @@ class MemcachedHandler extends SaveHandler
 		foreach ($this->config['servers'] as $server) {
 			$host = $server['host'] . ':' . ($server['port'] ?? 11211);
 			if (\in_array($host, $pool, true)) {
-				$this->log('Session (memcached): Server pool already has ' . $host, Logger::DEBUG);
+				$this->log(
+					'Session (memcached): Server pool already has ' . $host,
+					Logger::DEBUG
+				);
 				continue;
 			}
 			$result = $this->memcached->addServer(
@@ -102,7 +104,8 @@ class MemcachedHandler extends SaveHandler
 			$this->log('Session (memcached): ' . $this->memcached->getLastErrorMessage());
 		}
 		if ( ! $this->memcached->getStats()) {
-			throw new RuntimeException('Session (memcached): Could not connect to any server');
+			$this->log('Session (memcached): Could not connect to any server');
+			return false;
 		}
 		return true;
 	}
