@@ -62,8 +62,8 @@ class Session
 	{
 		$serializer = \ini_get('session.serialize_handler');
 		$serializer = $serializer === 'php' ? 'php_serialize' : $serializer;
-		$secure = \filter_input(\INPUT_SERVER, 'REQUEST_SCHEME') === 'https'
-			|| \filter_input(\INPUT_SERVER, 'HTTPS') === 'on';
+		$secure = (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] === 'https')
+			|| (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
 		$default = [
 			'name' => 'session_id',
 			'serialize_handler' => $serializer,
