@@ -80,7 +80,7 @@ class DatabaseHandler extends SaveHandler
 	public function read($id) : string
 	{
 		if ( ! isset($this->database) || $this->lock($id) === false) {
-			$this->fingerprint = \md5('');
+			$this->setFingerprint('');
 			return '';
 		}
 		if ( ! isset($this->sessionId)) {
@@ -94,7 +94,7 @@ class DatabaseHandler extends SaveHandler
 		$row = $statement->limit(1)->run()->fetch();
 		$this->sessionExists = (bool) $row;
 		$data = $row->data ?? '';
-		$this->fingerprint = \md5($data);
+		$this->setFingerprint($data);
 		return $data;
 	}
 
@@ -131,7 +131,7 @@ class DatabaseHandler extends SaveHandler
 			if ($inserted === 0) {
 				return false;
 			}
-			$this->fingerprint = \md5($data);
+			$this->setFingerprint($data);
 			$this->sessionExists = true;
 			return true;
 		}
@@ -140,7 +140,7 @@ class DatabaseHandler extends SaveHandler
 				return 'NOW()';
 			},
 		];
-		if ($this->fingerprint !== \md5($data)) {
+		if ( ! $this->hasSameFingerprint($data)) {
 			$columns[$this->getColumn('data')] = $data;
 		}
 		$statement = $this->database

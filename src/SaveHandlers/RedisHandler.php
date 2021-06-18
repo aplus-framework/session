@@ -81,7 +81,7 @@ class RedisHandler extends SaveHandler
 		}
 		$data = $this->redis->get($this->getKey($id));
 		\is_string($data) ? $this->sessionExists = true : $data = '';
-		$this->fingerprint = \md5($data);
+		$this->setFingerprint($data);
 		return $data;
 	}
 
@@ -102,10 +102,9 @@ class RedisHandler extends SaveHandler
 		}
 		$maxlifetime = $this->getMaxlifetime();
 		$this->redis->expire($this->lockId, $this->config['lock_ttl']);
-		$fingerprint = \md5($data);
-		if ($this->fingerprint !== $fingerprint || $this->sessionExists === false) {
+		if ( ! $this->hasSameFingerprint($data) || $this->sessionExists === false) {
 			if ($this->redis->set($this->getKey($id), $data, $maxlifetime)) {
-				$this->fingerprint = $fingerprint;
+				$this->setFingerprint($data);
 				$this->sessionExists = true;
 				return true;
 			}

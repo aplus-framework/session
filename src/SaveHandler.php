@@ -15,6 +15,13 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 * @var array<string,mixed>
 	 */
 	protected array $config;
+	/**
+	 * The current data fingerprint.
+	 *
+	 * Normally the md5 hash of the data.
+	 *
+	 * @var string
+	 */
 	protected string $fingerprint;
 	protected string | false $lockId = false;
 	protected bool $sessionExists = false;
@@ -46,6 +53,33 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 		if ($this->logger) {
 			$this->logger->log($level, $message);
 		}
+	}
+
+	/**
+	 * Set the data fingerprint.
+	 *
+	 * @param string $data The data to set the new fingerprint
+	 */
+	protected function setFingerprint(string $data) : void
+	{
+		$this->fingerprint = $this->makeFingerprint($data);
+	}
+
+	private function makeFingerprint(string $data) : string
+	{
+		return \md5($data);
+	}
+
+	/**
+	 * Tells if the data has the same current fingerprint.
+	 *
+	 * @param string $data The data to compare
+	 *
+	 * @return bool True if the fingerprints are the same, otherwise false
+	 */
+	protected function hasSameFingerprint(string $data) : bool
+	{
+		return $this->fingerprint === $this->makeFingerprint($data);
 	}
 
 	protected function getMaxlifetime() : int

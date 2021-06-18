@@ -119,7 +119,7 @@ class MemcachedHandler extends SaveHandler
 			$this->sessionId = $id;
 		}
 		$data = (string) $this->memcached->get($this->getKey($id));
-		$this->fingerprint = \md5($data);
+		$this->setFingerprint($data);
 		return $data;
 	}
 
@@ -132,7 +132,7 @@ class MemcachedHandler extends SaveHandler
 			if ( ! $this->unlock() || ! $this->lock($id)) {
 				return false;
 			}
-			$this->fingerprint = \md5('');
+			$this->setFingerprint('');
 			$this->sessionId = $id;
 		}
 		if ($this->lockId === false) {
@@ -144,12 +144,11 @@ class MemcachedHandler extends SaveHandler
 			$this->getExpiration($this->config['lock_ttl'])
 		);
 		$maxlifetime = $this->getExpiration($this->getMaxlifetime());
-		$fingerprint = \md5($data);
-		if ($this->fingerprint === $fingerprint) {
+		if ($this->hasSameFingerprint($data)) {
 			return $this->memcached->touch($this->getKey($id), $maxlifetime);
 		}
 		if ($this->memcached->set($this->getKey($id), $data, $maxlifetime)) {
-			$this->fingerprint = $fingerprint;
+			$this->setFingerprint($data);
 			return true;
 		}
 		return false;

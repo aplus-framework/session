@@ -82,7 +82,7 @@ class FilesHandler extends SaveHandler
 		}
 		if ( ! $this->sessionExists) {
 			\chmod($filename, 0600);
-			$this->fingerprint = \md5('');
+			$this->setFingerprint('');
 			return '';
 		}
 		return $this->readData();
@@ -94,7 +94,7 @@ class FilesHandler extends SaveHandler
 		while ( ! \feof($this->stream)) {
 			$data .= \fread($this->stream, 1024);
 		}
-		$this->fingerprint = \md5($data);
+		$this->setFingerprint($data);
 		return $data;
 	}
 
@@ -106,7 +106,7 @@ class FilesHandler extends SaveHandler
 		if ($id !== $this->sessionId) {
 			$this->sessionId = $id;
 		}
-		if ($this->fingerprint === \md5($data)) {
+		if ($this->hasSameFingerprint($data)) {
 			return ! $this->sessionExists || \touch($this->getFilename($id));
 		}
 		if ($this->sessionExists) {
@@ -120,7 +120,7 @@ class FilesHandler extends SaveHandler
 				return false;
 			}
 		}
-		$this->fingerprint = \md5($data);
+		$this->setFingerprint($data);
 		return true;
 	}
 
