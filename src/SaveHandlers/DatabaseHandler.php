@@ -38,6 +38,8 @@ class DatabaseHandler extends SaveHandler
 			],
 			'match_ip' => false,
 			'match_ua' => false,
+			'save_ip' => false,
+			'save_ua' => false,
 		], $config);
 	}
 
@@ -116,10 +118,10 @@ class DatabaseHandler extends SaveHandler
 				},
 				$this->getColumn('data') => $data,
 			];
-			if ($this->config['match_ip']) {
+			if ($this->config['match_ip'] || $this->config['save_ip']) {
 				$columns[$this->getColumn('ip')] = $this->getIP();
 			}
-			if ($this->config['match_ua']) {
+			if ($this->config['match_ua'] || $this->config['save_ua']) {
 				$columns[$this->getColumn('ua')] = $this->getUA();
 			}
 			$inserted = $this->database
