@@ -3,6 +3,7 @@
 use Framework\Database\Database;
 use Framework\Database\Definition\Table\TableDefinition;
 use Framework\Session\SaveHandlers\DatabaseHandler;
+use Framework\Session\Session;
 
 /**
  * Class DatabaseHandlerTest.
@@ -42,5 +43,28 @@ class DatabaseHandlerTest extends AbstractHandler
 				$definition->index('ip')->key('ip');
 				$definition->index('ua')->key('ua');
 			})->run();
+	}
+
+	public function testOpenError() : void
+	{
+		$this->session->stop();
+		$handler = new DatabaseHandler([
+			'username' => 'user-error',
+			'password' => \getenv('DB_PASSWORD'),
+			'host' => \getenv('DB_HOST'),
+		], $this->logger);
+		$session = new Session([], $handler);
+		$this->expectException(\RuntimeException::class);
+		$this->expectExceptionMessage('Session could not be started');
+		try {
+			$session->start();
+		} catch (\RuntimeException $exception) {
+			self::assertMatchesRegularExpression(
+				'#Session \(database\): Thrown a mysqli_sql_exception while trying to open: '
+				. 'Access denied for user \'user-error\'@\'[0-9\.]+\' \(using password: YES\)#',
+				$this->logger->getLastLog()->message
+			);
+			throw $exception;
+		}
 	}
 }

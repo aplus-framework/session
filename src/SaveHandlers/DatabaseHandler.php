@@ -63,8 +63,16 @@ class DatabaseHandler extends SaveHandler
 
 	public function open($path, $session_name) : bool
 	{
-		$this->database ??= new Database($this->config);
-		return true;
+		try {
+			$this->database ??= new Database($this->config);
+			return true;
+		} catch (\Exception $exception) {
+			$this->log(
+				'Session (database): Thrown a ' . \get_class($exception)
+				. ' while trying to open: ' . $exception->getMessage()
+			);
+		}
+		return false;
 	}
 
 	public function read($id) : string
@@ -185,7 +193,15 @@ class DatabaseHandler extends SaveHandler
 
 	public function gc($max_lifetime) : bool
 	{
-		$this->database ??= new Database($this->config);
+		try {
+			$this->database ??= new Database($this->config);
+		} catch (\Exception $exception) {
+			$this->log(
+				'Session (database): Thrown a ' . \get_class($exception)
+				. ' while trying to gc: ' . $exception->getMessage()
+			);
+			return false;
+		}
 		$this->database
 			->delete()
 			->from($this->getTable())
