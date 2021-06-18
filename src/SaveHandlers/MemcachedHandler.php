@@ -54,6 +54,16 @@ class MemcachedHandler extends SaveHandler
 		return \time() + $seconds;
 	}
 
+	/**
+	 * Get a key for Memcached, using the optional
+	 * match IP and match User-Agent configs.
+	 *
+	 * NOTE: The max key length allowed by Memcached is 250 bytes.
+	 *
+	 * @param string $id The session id
+	 *
+	 * @return string The final key
+	 */
 	protected function getKey(string $id) : string
 	{
 		$key = $this->config['prefix'] . $id;
@@ -62,12 +72,6 @@ class MemcachedHandler extends SaveHandler
 		}
 		if ($this->config['match_ua']) {
 			$key .= ':' . \md5($this->getUA());
-		}
-		$key_length = \strlen($key);
-		if ($key_length > 250) {
-			throw new OutOfBoundsException(
-				'The max key length allowed by Memcached is 250 bytes, given ' . $key_length
-			);
 		}
 		return $key;
 	}
