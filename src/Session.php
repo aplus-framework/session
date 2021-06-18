@@ -106,6 +106,9 @@ class Session
 	/**
 	 * @param array<string,int|string> $custom_options
 	 *
+	 * @throws LogicException if session was already active
+	 * @throws RuntimeException if session could not be started
+	 *
 	 * @return bool
 	 */
 	public function start(array $custom_options = []) : bool
@@ -374,8 +377,9 @@ class Session
 		reason: 'since Session Library version 2.1, use regenerateId() instead',
 		replacement: '%class%->regenerateId(%parameter0%)'
 	)]
-	public function regenerate(bool $delete_old_session = false) : bool
-	{
+	public function regenerate(
+		bool $delete_old_session = false
+	) : bool {
 		return $this->regenerateId($delete_old_session);
 	}
 
