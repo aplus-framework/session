@@ -15,6 +15,8 @@ class RedisHandler extends SaveHandler
 			'host' => '127.0.0.1',
 			'port' => 6379,
 			'timeout' => 0.0,
+			'password' => null,
+			'database' => null,
 			'lock_attempts' => 60,
 			'lock_ttl' => 600,
 			'maxlifetime' => null,
@@ -46,13 +48,27 @@ class RedisHandler extends SaveHandler
 			$this->config['port'],
 			$this->config['timeout']
 		);
-		if ($connected) {
-			return true;
+		if ( ! $connected) {
+			$this->log(
+				'Session (redis): Could not connect to server '
+				. $this->config['host'] . ':' . $this->config['port']
+			);
+			return false;
 		}
-		$this->log(
-			'Session (redis): Could not connect to server ' . $this->config['host'] . ':' . $this->config['port']
-		);
-		return false;
+		if (isset($this->config['password'])
+			&& ! $this->redis->auth($this->config['password'])
+		) {
+			$this->log('Session (redis): Authentication failed');
+			return false;
+		}
+		if (isset($this->config['database'])
+			&& ! $this->redis->select($this->config['database'])) {
+			$this->log(
+				"Session (redis): Could not select the database '{$this->config['database']}'"
+			);
+			return false;
+		}
+		return true;
 	}
 
 	public function read($id) : string
