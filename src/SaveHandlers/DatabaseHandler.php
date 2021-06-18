@@ -8,7 +8,7 @@ use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 
 /**
- * Class Database.
+ * Class DatabaseHandler.
  *
  * ```sql
  * CREATE TABLE `Sessions` (

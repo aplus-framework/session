@@ -3,7 +3,7 @@
 use Framework\Log\Logger;
 
 /**
- * Class SessionSaveHandler.
+ * Class SaveHandler.
  *
  * @see https://www.php.net/manual/en/class.sessionhandler.php
  * @see https://gist.github.com/mindplay-dk/623bdd50c1b4c0553cd3

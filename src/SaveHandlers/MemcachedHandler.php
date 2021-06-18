@@ -5,6 +5,9 @@ use Framework\Session\SaveHandler;
 use Memcached;
 use OutOfBoundsException;
 
+/**
+ * Class MemcachedHandler.
+ */
 class MemcachedHandler extends SaveHandler
 {
 	protected ?Memcached $memcached;

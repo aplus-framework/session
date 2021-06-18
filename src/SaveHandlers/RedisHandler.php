@@ -4,6 +4,9 @@ use Framework\Log\Logger;
 use Framework\Session\SaveHandler;
 use Redis;
 
+/**
+ * Class RedisHandler.
+ */
 class RedisHandler extends SaveHandler
 {
 	protected ?Redis $redis;

@@ -5,6 +5,9 @@ use Framework\Session\SaveHandler;
 use LogicException;
 use RuntimeException;
 
+/**
+ * Class FilesHandler.
+ */
 class FilesHandler extends SaveHandler
 {
 	/**
