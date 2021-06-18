@@ -32,7 +32,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 * SessionSaveHandler constructor.
 	 *
 	 * @param array<string,mixed> $config
-	 * @param Logger|null         $logger
+	 * @param Logger|null $logger
 	 */
 	public function __construct(array $config = [], Logger $logger = null)
 	{
@@ -42,6 +42,8 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 
 	/**
 	 * @param array<string,mixed> $config
+	 *
+	 * @codeCoverageIgnore
 	 */
 	protected function prepareConfig(array $config) : void
 	{
