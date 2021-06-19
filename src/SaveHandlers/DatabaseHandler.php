@@ -1,5 +1,6 @@
 <?php namespace Framework\Session\SaveHandlers;
 
+use Closure;
 use Framework\Database\Database;
 use Framework\Database\Manipulation\Delete;
 use Framework\Database\Manipulation\Select;
@@ -73,11 +74,13 @@ class DatabaseHandler extends SaveHandler
 				'timestamp' => 'timestamp',
 				'ip' => 'ip',
 				'ua' => 'ua',
+				'user_id' => 'user_id',
 			],
 			'match_ip' => false,
 			'match_ua' => false,
 			'save_ip' => false,
 			'save_ua' => false,
+			'save_user_id' => false,
 		], $config);
 	}
 
@@ -115,6 +118,19 @@ class DatabaseHandler extends SaveHandler
 		}
 		if ($this->config['match_ua']) {
 			$statement->whereEqual($this->getColumn('ua'), $this->getUA());
+		}
+	}
+
+	/**
+	 * Adds the optional `user_id` column.
+	 *
+	 * @param array<string,Closure|string> $columns The statement columns to insert/update
+	 */
+	protected function addUserIdColumn(array &$columns) : void
+	{
+		if ($this->config['save_user_id']) {
+			$key = $this->getColumn('user_id');
+			$columns[$key] = $_SESSION[$key] ?? null;
 		}
 	}
 
@@ -179,6 +195,7 @@ class DatabaseHandler extends SaveHandler
 			if ($this->config['match_ua'] || $this->config['save_ua']) {
 				$columns[$this->getColumn('ua')] = $this->getUA();
 			}
+			$this->addUserIdColumn($columns);
 			$inserted = $this->database
 				->insert($this->getTable())
 				->set($columns)
@@ -198,6 +215,7 @@ class DatabaseHandler extends SaveHandler
 		if ( ! $this->hasSameFingerprint($data)) {
 			$columns[$this->getColumn('data')] = $data;
 		}
+		$this->addUserIdColumn($columns);
 		$statement = $this->database
 			->update()
 			->table($this->getTable())
