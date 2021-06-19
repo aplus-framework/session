@@ -181,34 +181,44 @@ class DatabaseHandler extends SaveHandler
 			$this->sessionExists = false;
 			$this->sessionId = $id;
 		}
-		if ($this->sessionExists === false) {
-			$columns = [
-				$this->getColumn('id') => $id,
-				$this->getColumn('timestamp') => static function () : string {
-					return 'NOW()';
-				},
-				$this->getColumn('data') => $data,
-			];
-			if ($this->config['match_ip'] || $this->config['save_ip']) {
-				$columns[$this->getColumn('ip')] = $this->getIP();
-			}
-			if ($this->config['match_ua'] || $this->config['save_ua']) {
-				$columns[$this->getColumn('ua')] = $this->getUA();
-			}
-			$this->addUserIdColumn($columns);
-			$inserted = $this->database
-				->insert($this->getTable())
-				->set($columns)
-				->run();
-			if ($inserted === 0) {
-				return false;
-			}
-			$this->setFingerprint($data);
-			$this->sessionExists = true;
-			return true;
+		if ($this->sessionExists) {
+			return $this->writeUpdate($id, $data);
 		}
+		return $this->writeInsert($id, $data);
+	}
+
+	protected function writeInsert(string $id, string $data) : bool
+	{
 		$columns = [
-			$this->getColumn('timestamp') => static function () {
+			$this->getColumn('id') => $id,
+			$this->getColumn('timestamp') => static function () : string {
+				return 'NOW()';
+			},
+			$this->getColumn('data') => $data,
+		];
+		if ($this->config['match_ip'] || $this->config['save_ip']) {
+			$columns[$this->getColumn('ip')] = $this->getIP();
+		}
+		if ($this->config['match_ua'] || $this->config['save_ua']) {
+			$columns[$this->getColumn('ua')] = $this->getUA();
+		}
+		$this->addUserIdColumn($columns);
+		$inserted = $this->database
+			->insert($this->getTable())
+			->set($columns)
+			->run();
+		if ($inserted === 0) {
+			return false;
+		}
+		$this->setFingerprint($data);
+		$this->sessionExists = true;
+		return true;
+	}
+
+	protected function writeUpdate(string $id, string $data) : bool
+	{
+		$columns = [
+			$this->getColumn('timestamp') => static function () : string {
 				return 'NOW()';
 			},
 		];
