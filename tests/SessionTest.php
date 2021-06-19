@@ -44,14 +44,14 @@ class SessionTest extends TestCase
 			['foo' => null, 'bar' => null, 'baz' => null],
 			$this->session->getMulti(['foo', 'bar', 'baz'])
 		);
-		self::assertSame(['$' => $this->session->get('$')], $this->session->getAll());
+		self::assertSame([], $this->session->getAll());
 		$this->session->setMulti(['foo' => 123, 'bar' => 456]);
 		self::assertSame(
 			['foo' => 123, 'bar' => 456, 'baz' => null],
 			$this->session->getMulti(['foo', 'bar', 'baz'])
 		);
 		self::assertSame(
-			['$' => $this->session->get('$'), 'foo' => 123, 'bar' => 456],
+			['foo' => 123, 'bar' => 456],
 			$this->session->getAll()
 		);
 	}
@@ -85,12 +85,12 @@ class SessionTest extends TestCase
 		$this->session->bar = 'bar';
 		$this->session->baz = 'baz';
 		self::assertSame(
-			['$' => $this->session->get('$'), 'foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz'],
+			['foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz'],
 			$this->session->getAll()
 		);
 		$this->session->removeMulti(['foo', 'baz']);
 		self::assertSame(
-			['$' => $this->session->get('$'), 'bar' => 'bar'],
+			['bar' => 'bar'],
 			$this->session->getAll()
 		);
 		$this->session->removeAll();
@@ -193,5 +193,27 @@ class SessionTest extends TestCase
 	public function testGc() : void
 	{
 		self::assertIsInt($this->session->gc());
+	}
+
+	public function testAutoRegenerate() : void
+	{
+		$this->session->set('foo', 'bar');
+		self::assertSame('bar', $this->session->get('foo'));
+		$id = (string) $this->session->id();
+		$this->session->stop();
+		$this->session = new Session([], $this->handler);
+		$this->session->id($id);
+		$this->session->start();
+		self::assertSame('bar', $this->session->get('foo'));
+		$this->session->stop();
+		$this->session = new Session(['auto_regenerate_maxlifetime' => 2], $this->handler);
+		$this->session->id($id);
+		$this->session->start();
+		self::assertSame('bar', $this->session->get('foo'));
+		$this->session->stop();
+		\sleep(2);
+		$this->session->id($id);
+		$this->session->start();
+		self::assertNull($this->session->get('foo'));
 	}
 }

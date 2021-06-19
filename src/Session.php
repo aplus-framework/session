@@ -76,16 +76,17 @@ class Session
 			'cookie_samesite' => 'Strict',
 			'cookie_secure' => $secure,
 			'referer_check' => '',
-			'regenerate_id' => 64800,
 			'use_cookies' => 1,
 			'use_only_cookies' => 1,
 			'use_strict_mode' => 1,
 			'use_trans_sid' => 0,
+			// used to auto-regenerate the session id:
+			'auto_regenerate_maxlifetime' => 0,
+			'auto_regenerate_destroy' => true,
 		];
-		if ($custom) {
-			$default = \array_replace($default, $custom);
-		}
-		$this->options = $default;
+		$this->options = $custom
+			? \array_replace($default, $custom)
+			: $default;
 	}
 
 	/**
@@ -95,11 +96,13 @@ class Session
 	 */
 	protected function getOptions(array $custom = []) : array
 	{
-		$options = $this->options;
-		if ($custom) {
-			$options = \array_replace($this->options, $custom);
-		}
-		unset($options['regenerate_id']);
+		$options = $custom
+			? \array_replace($this->options, $custom)
+			: $this->options;
+		unset(
+			$options['auto_regenerate_maxlifetime'],
+			$options['auto_regenerate_destroy']
+		);
 		return $options;
 	}
 
@@ -130,13 +133,17 @@ class Session
 	 * Auto regenerate the session id.
 	 *
 	 * @param int $time
+	 *
+	 * @see https://owasp.org/www-community/attacks/Session_fixation
 	 */
 	protected function autoRegenerate(int $time) : void
 	{
-		if (empty($_SESSION['$']['regenerated_at'])
-			|| $_SESSION['$']['regenerated_at'] < ($time - (int) $this->options['regenerate_id'])
+		$maxlifetime = (int) $this->options['auto_regenerate_maxlifetime'];
+		$is_active = $maxlifetime > 0;
+		if (($is_active && empty($_SESSION['$']['regenerated_at']))
+			|| ($is_active && $_SESSION['$']['regenerated_at'] < ($time - $maxlifetime))
 		) {
-			$this->regenerateId();
+			$this->regenerateId((bool) $this->options['auto_regenerate_destroy']);
 		}
 	}
 
