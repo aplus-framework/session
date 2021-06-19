@@ -276,7 +276,7 @@ class DatabaseHandler extends SaveHandler
 		return true;
 	}
 
-	public function gc($max_lifetime) : bool
+	public function gc($max_lifetime) : int | false
 	{
 		try {
 			$this->database ??= new Database($this->config);
@@ -287,7 +287,7 @@ class DatabaseHandler extends SaveHandler
 			);
 			return false;
 		}
-		$this->database
+		return $this->database
 			->delete()
 			->from($this->getTable())
 			->whereLessThan(
@@ -296,7 +296,6 @@ class DatabaseHandler extends SaveHandler
 					return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
 				}
 			)->run();
-		return true;
 	}
 
 	protected function lock(string $id) : bool

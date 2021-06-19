@@ -199,9 +199,9 @@ class RedisHandler extends SaveHandler
 		return true;
 	}
 
-	public function gc($max_lifetime) : bool
+	public function gc($max_lifetime) : int | false
 	{
-		return true;
+		return 0;
 	}
 
 	protected function lock(string $id) : bool

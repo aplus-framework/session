@@ -260,9 +260,10 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 *
 	 * @see https://www.php.net/manual/en/sessionhandlerinterface.gc.php
 	 *
-	 * @return bool Returns TRUE on success, FALSE on failure
+	 * @return false|int Returns the number of deleted session data for success,
+	 * false for failure
 	 */
-	abstract public function gc($max_lifetime) : bool;
+	abstract public function gc($max_lifetime) : int | false;
 
 	/**
 	 * Acquire a lock for a session id.

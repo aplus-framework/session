@@ -65,7 +65,7 @@ abstract class AbstractHandler extends SessionTest
 		self::assertSame($this->session->foo, 'bar');
 		$this->session->stop();
 		\sleep(2);
-		self::assertTrue($this->handler->gc(0));
+		self::assertIsInt($this->handler->gc(0));
 		$this->session->start();
 		self::assertNull($this->session->foo);
 	}

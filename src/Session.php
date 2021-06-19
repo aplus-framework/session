@@ -506,4 +506,15 @@ class Session
 		}
 		return \session_id($new_id);
 	}
+
+	/**
+	 * Perform session data garbage collection.
+	 *
+	 * @return false|int Returns the number of deleted session data for success,
+	 * false for failure
+	 */
+	public function gc() : int | false
+	{
+		return @\session_gc();
+	}
 }

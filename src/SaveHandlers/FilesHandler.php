@@ -178,7 +178,7 @@ class FilesHandler extends SaveHandler
 		return ! \is_file($filename) || \unlink($filename);
 	}
 
-	public function gc($max_lifetime) : bool
+	public function gc($max_lifetime) : int | false
 	{
 		$dir_handle = \opendir($this->config['directory']);
 		if ($dir_handle === false) {
@@ -188,40 +188,45 @@ class FilesHandler extends SaveHandler
 			);
 			return false;
 		}
+		$gc_count = 0;
+		$max_lifetime = \time() - $max_lifetime;
 		while (($filename = \readdir($dir_handle)) !== false) {
 			if ($filename !== '.'
 				&& $filename !== '..'
 				&& \is_dir($this->config['directory'] . $filename)
 			) {
-				$this->gcSubdir($this->config['directory'] . $filename, $max_lifetime);
+				$gc_count += $this->gcSubdir(
+					$this->config['directory'] . $filename,
+					$max_lifetime
+				);
 			}
 		}
 		\closedir($dir_handle);
-		return true;
+		return $gc_count;
 	}
 
-	protected function gcSubdir(string $directory, int $max_lifetime) : void
+	protected function gcSubdir(string $directory, int $max_mtime) : int
 	{
+		$gc_count = 0;
 		$dir_handle = \opendir($directory);
 		if ($dir_handle === false) {
-			return;
+			return $gc_count;
 		}
-		$dir_count = 0;
 		while (($filename = \readdir($dir_handle)) !== false) {
 			$filename = $directory . \DIRECTORY_SEPARATOR . $filename;
 			if (\is_dir($filename)) {
-				$dir_count++;
 				continue;
 			}
 			$mtime = \filemtime($filename);
-			if ($mtime < \time() - $max_lifetime) {
-				\unlink($filename);
+			if (($mtime < $max_mtime) && \unlink($filename)) {
+				$gc_count++;
 			}
 		}
 		\closedir($dir_handle);
-		if ($dir_count === 2) {
+		if (\count((array) \scandir($directory)) === 2) {
 			\rmdir($directory);
 		}
+		return $gc_count;
 	}
 
 	protected function lock(string $id) : bool

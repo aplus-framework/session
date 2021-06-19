@@ -189,4 +189,9 @@ class SessionTest extends TestCase
 		$this->expectExceptionMessage('Session ID cannot be changed when a session is active');
 		$this->session->id('foo');
 	}
+
+	public function testGc() : void
+	{
+		self::assertIsInt($this->session->gc());
+	}
 }
