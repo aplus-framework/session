@@ -157,7 +157,10 @@ class FilesHandler extends SaveHandler
 
 	public function updateTimestamp($id, $data) : bool
 	{
-		return \touch($this->getFilename($id));
+		$filename = $this->getFilename($id);
+		return \is_file($filename)
+			? \touch($filename)
+			: \fwrite($this->stream, $data) !== false;
 	}
 
 	public function close() : bool
