@@ -164,7 +164,7 @@ class DatabaseHandler extends SaveHandler
 		$this->addWhereMatchs($statement);
 		$row = $statement->limit(1)->run()->fetch();
 		$this->sessionExists = (bool) $row;
-		$data = $row->data ?? '';
+		$data = $row->data ?? ''; // @phpstan-ignore-line
 		$this->setFingerprint($data);
 		return $data;
 	}
@@ -310,7 +310,7 @@ class DatabaseHandler extends SaveHandler
 				},
 			])->run()
 			->fetch();
-		if ($row && $row->locked) {
+		if ($row && $row->locked) { // @phpstan-ignore-line
 			$this->lockId = $id;
 			return true;
 		}
@@ -332,7 +332,7 @@ class DatabaseHandler extends SaveHandler
 				},
 			])->run()
 			->fetch();
-		if ($row && $row->unlocked) {
+		if ($row && $row->unlocked) { // @phpstan-ignore-line
 			$this->lockId = false;
 			return true;
 		}
