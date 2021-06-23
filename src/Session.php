@@ -195,6 +195,10 @@ class Session
 	)]
 	public function isStarted() : bool
 	{
+		\trigger_error(
+			'Method ' . __METHOD__ . ' is deprecated',
+			\E_USER_DEPRECATED
+		);
 		return $this->isActive();
 	}
 
@@ -387,6 +391,10 @@ class Session
 	public function regenerate(
 		bool $delete_old_session = false
 	) : bool {
+		\trigger_error(
+			'Method ' . __METHOD__ . ' is deprecated',
+			\E_USER_DEPRECATED
+		);
 		return $this->regenerateId($delete_old_session);
 	}
 
