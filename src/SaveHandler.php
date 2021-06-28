@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * This file is part of The Framework Session Library.
  *
@@ -140,7 +140,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 	 */
 	protected function getMaxlifetime() : int
 	{
-		return $this->config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime');
+		return (int) ($this->config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
 	}
 
 	/**
