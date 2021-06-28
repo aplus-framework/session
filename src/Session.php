@@ -305,9 +305,9 @@ class Session
 	 * @param string $key The item key name
 	 * @param mixed $value The item value
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function set(string $key, mixed $value)
+	public function set(string $key, mixed $value) : static
 	{
 		$_SESSION[$key] = $value;
 		return $this;
@@ -319,9 +319,9 @@ class Session
 	 * @param array<string,mixed> $items An associative array of items keys and
 	 * values
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function setMulti(array $items)
+	public function setMulti(array $items) : static
 	{
 		foreach ($items as $key => $value) {
 			$this->set($key, $value);
@@ -334,9 +334,9 @@ class Session
 	 *
 	 * @param string $key The item key name
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function remove(string $key)
+	public function remove(string $key) : static
 	{
 		unset($_SESSION[$key]);
 		return $this;
@@ -347,9 +347,9 @@ class Session
 	 *
 	 * @param array<int,string> $keys A list of items keys names
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function removeMulti(array $keys)
+	public function removeMulti(array $keys) : static
 	{
 		foreach ($keys as $key) {
 			$this->remove($key);
@@ -360,9 +360,9 @@ class Session
 	/**
 	 * Remove (unset) all session items.
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function removeAll()
+	public function removeAll() : static
 	{
 		@\session_unset();
 		$_SESSION = [];
@@ -437,9 +437,9 @@ class Session
 	 * @param string $key The Flash Data item key name
 	 * @param mixed $value The item value
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function setFlash(string $key, mixed $value)
+	public function setFlash(string $key, mixed $value) : static
 	{
 		$_SESSION['$']['flash']['new'][$key] = $value;
 		return $this;
@@ -450,9 +450,9 @@ class Session
 	 *
 	 * @param string $key The item key name
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function removeFlash(string $key)
+	public function removeFlash(string $key) : static
 	{
 		unset(
 			$_SESSION['$']['flash']['old'][$key],
@@ -486,9 +486,9 @@ class Session
 	 * @param mixed $value The item value
 	 * @param int $ttl The Time-To-Live of the item, in seconds
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function setTemp(string $key, mixed $value, int $ttl = 60)
+	public function setTemp(string $key, mixed $value, int $ttl = 60) : static
 	{
 		$_SESSION['$']['temp'][$key] = [
 			'ttl' => \time() + $ttl,
@@ -502,9 +502,9 @@ class Session
 	 *
 	 * @param string $key The item key name
 	 *
-	 * @return $this
+	 * @rerun static
 	 */
-	public function removeTemp(string $key)
+	public function removeTemp(string $key) : static
 	{
 		unset($_SESSION['$']['temp'][$key]);
 		return $this;
