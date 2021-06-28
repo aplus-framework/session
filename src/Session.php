@@ -10,6 +10,7 @@
 namespace Framework\Session;
 
 use JetBrains\PhpStorm\Deprecated;
+use JetBrains\PhpStorm\Pure;
 use LogicException;
 use RuntimeException;
 
@@ -255,6 +256,7 @@ class Session
 	 *
 	 * @return bool True if has, otherwise false
 	 */
+	#[Pure]
 	public function has(string $key) : bool
 	{
 		return isset($_SESSION[$key]);
@@ -267,6 +269,7 @@ class Session
 	 *
 	 * @return mixed The item value or null if no set
 	 */
+	#[Pure]
 	public function get(string $key) : mixed
 	{
 		return $_SESSION[$key] ?? null;
@@ -277,6 +280,7 @@ class Session
 	 *
 	 * @return array<int|string,mixed> The value of the $_SESSION global
 	 */
+	#[Pure]
 	public function getAll() : array
 	{
 		return $_SESSION;
@@ -290,6 +294,7 @@ class Session
 	 * @return array<string,mixed> An associative array with items keys and
 	 * values. Item not set will return as null.
 	 */
+	#[Pure]
 	public function getMulti(array $keys) : array
 	{
 		$items = [];
@@ -424,6 +429,7 @@ class Session
 	 *
 	 * @return mixed The item value or null if not exists
 	 */
+	#[Pure]
 	public function getFlash(string $key) : mixed
 	{
 		return $_SESSION['$']['flash']['new'][$key]
