@@ -1,7 +1,7 @@
 parameters:
 	level: 7
 	paths:
-		- %currentWorkingDirectory%/src
-		- %currentWorkingDirectory%/tests
+		- src
+		- tests
 	ignoreErrors:
 		- '#Access to an undefined property Framework\\Session\\Session::\$[a-zA-Z0-9_]+\.#'
