@@ -16,8 +16,8 @@ namespace Tests\Session\SaveHandlers;
  */
 class RedisHandlerMatchTest extends RedisHandlerTest
 {
-	protected array $config = [
-		'match_ip' => true,
-		'match_ua' => true,
-	];
+    protected array $config = [
+        'match_ip' => true,
+        'match_ua' => true,
+    ];
 }

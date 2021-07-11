@@ -18,13 +18,13 @@ use Framework\Session\SaveHandlers\RedisHandler;
  */
 class RedisHandlerTest extends AbstractHandler
 {
-	protected string $handlerClass = RedisHandler::class;
+    protected string $handlerClass = RedisHandler::class;
 
-	public function setUp() : void
-	{
-		$this->replaceConfig([
-			'host' => \getenv('REDIS_HOST'),
-		]);
-		parent::setUp();
-	}
+    public function setUp() : void
+    {
+        $this->replaceConfig([
+            'host' => \getenv('REDIS_HOST'),
+        ]);
+        parent::setUp();
+    }
 }
