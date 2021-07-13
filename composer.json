@@ -1,7 +1,7 @@
 {
-    "name": "natanfelles/session",
+    "name": "aplus/session",
     "type": "library",
-    "description": "The Framework Session Library",
+    "description": "Aplus Framework Session Library",
     "keywords": [
         "session",
         "files",
@@ -10,7 +10,7 @@
         "redis",
         "cookie"
     ],
-    "homepage": "https://the-framework.gitlab.io/libraries/session.html",
+    "homepage": "https://aplus-framework.com/docs/session",
     "license": "MIT",
     "authors": [
         {
@@ -54,9 +54,9 @@
     "prefer-stable": true,
     "support": {
         "email": "natanfelles@gmail.com",
-        "issues": "https://gitlab.com/the-framework/libraries/session/issues",
-        "wiki": "https://gitlab.com/the-framework/libraries/session/wikis/home",
-        "source": "https://gitlab.com/the-framework/libraries/session",
-        "docs": "https://the-framework.gitlab.io/libraries/session/docs/"
+        "issues": "https://gitlab.com/aplus-framework/libraries/session/issues",
+        "wiki": "https://gitlab.com/aplus-framework/libraries/session/wikis/home",
+        "source": "https://gitlab.com/aplus-framework/libraries/session",
+        "docs": "https://aplus-framework.gitlab.io/libraries/session/docs/"
     }
 }
