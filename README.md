@@ -1,4 +1,4 @@
-# The Framework Session Library
+# Aplus Framework Session Library
 
 - [Homepage](https://the-framework.gitlab.io/libraries/session.html)
 - [API Documentation](https://the-framework.gitlab.io/libraries/session/docs/)
