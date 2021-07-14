@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of The Framework Session Library.
+ * This file is part of Aplus Framework Session Library.
  *
  * (c) Natan Felles <natanfelles@gmail.com>
  *
