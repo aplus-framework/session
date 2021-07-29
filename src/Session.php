@@ -236,6 +236,23 @@ class Session
         return $destroyed ?? true;
     }
 
+    public function destroyCookie() : bool
+    {
+        $name = \session_name();
+        if ($name === false) {
+            throw new RuntimeException('Could not get the session name');
+        }
+        $params = \session_get_cookie_params();
+        return \setcookie($name, '', [
+            'expires' => 0,
+            'path' => $params['path'],
+            'domain' => $params['domain'],
+            'secure' => $params['secure'],
+            'httponly' => $params['httponly'],
+            'samesite' => $params['samesite'],
+        ]);
+    }
+
     /**
      * Write session data and end session.
      *
