@@ -236,7 +236,7 @@ class MemcachedHandler extends SaveHandler
             && $this->memcached->getResultCode() !== Memcached::RES_NOTFOUND);
     }
 
-    public function gc($max_lifetime) : int | false
+    public function gc($maxLifetime) : int | false
     {
         return 0;
     }
@@ -247,24 +247,24 @@ class MemcachedHandler extends SaveHandler
         if ($this->lockId && $this->memcached->get($this->lockId)) {
             return $this->memcached->replace($this->lockId, \time(), $expiration);
         }
-        $lock_id = $this->getKey($id) . ':lock';
+        $lockId = $this->getKey($id) . ':lock';
         $attempt = 0;
         while ($attempt < $this->config['lock_attempts']) {
             $attempt++;
-            if ($this->memcached->get($lock_id)) {
+            if ($this->memcached->get($lockId)) {
                 \sleep(1);
                 continue;
             }
-            if ( ! $this->memcached->set($lock_id, \time(), $expiration)) {
-                $this->log('Session (memcached): Error while trying to lock ' . $lock_id);
+            if ( ! $this->memcached->set($lockId, \time(), $expiration)) {
+                $this->log('Session (memcached): Error while trying to lock ' . $lockId);
                 return false;
             }
-            $this->lockId = $lock_id;
+            $this->lockId = $lockId;
             break;
         }
         if ($attempt === $this->config['lock_attempts']) {
             $this->log(
-                "Session (memcached): Unable to lock {$lock_id} after {$attempt} attempts"
+                "Session (memcached): Unable to lock {$lockId} after {$attempt} attempts"
             );
             return false;
         }

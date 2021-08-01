@@ -117,19 +117,19 @@ class Session
     }
 
     /**
-     * @param array<string,int|string> $custom_options
+     * @param array<string,int|string> $customOptions
      *
      * @throws LogicException if session was already active
      * @throws RuntimeException if session could not be started
      *
      * @return bool
      */
-    public function start(array $custom_options = []) : bool
+    public function start(array $customOptions = []) : bool
     {
         if ($this->isActive()) {
             throw new LogicException('Session was already active');
         }
-        if ( ! @\session_start($this->getOptions($custom_options))) {
+        if ( ! @\session_start($this->getOptions($customOptions))) {
             throw new RuntimeException('Session could not be started');
         }
         $time = \time();
@@ -149,9 +149,9 @@ class Session
     protected function autoRegenerate(int $time) : void
     {
         $maxlifetime = (int) $this->options['auto_regenerate_maxlifetime'];
-        $is_active = $maxlifetime > 0;
-        if (($is_active && empty($_SESSION['$']['regenerated_at']))
-            || ($is_active && $_SESSION['$']['regenerated_at'] < ($time - $maxlifetime))
+        $isActive = $maxlifetime > 0;
+        if (($isActive && empty($_SESSION['$']['regenerated_at']))
+            || ($isActive && $_SESSION['$']['regenerated_at'] < ($time - $maxlifetime))
         ) {
             $this->regenerateId((bool) $this->options['auto_regenerate_destroy']);
         }
@@ -394,13 +394,13 @@ class Session
     /**
      * Update the current session id with a newly generated one.
      *
-     * @param bool $delete_old_session Whether to delete the old associated session item or not
+     * @param bool $deleteOldSession Whether to delete the old associated session item or not
      *
      * @return bool
      */
-    public function regenerateId(bool $delete_old_session = false) : bool
+    public function regenerateId(bool $deleteOldSession = false) : bool
     {
-        $regenerated = \session_regenerate_id($delete_old_session);
+        $regenerated = \session_regenerate_id($deleteOldSession);
         if ($regenerated) {
             $_SESSION['$']['regenerated_at'] = \time();
         }
@@ -408,7 +408,7 @@ class Session
     }
 
     /**
-     * @param bool $delete_old_session
+     * @param bool $deleteOldSession
      *
      * @return bool
      *
@@ -420,13 +420,13 @@ class Session
         replacement: '%class%->regenerateId(%parameter0%)'
     )]
     public function regenerate(
-        bool $delete_old_session = false
+        bool $deleteOldSession = false
     ) : bool {
         \trigger_error(
             'Method ' . __METHOD__ . ' is deprecated',
             \E_USER_DEPRECATED
         );
-        return $this->regenerateId($delete_old_session);
+        return $this->regenerateId($deleteOldSession);
     }
 
     /**
@@ -536,22 +536,22 @@ class Session
     /**
      * Get/Set the session id.
      *
-     * @param string|null $new_id [optional] The new session id
+     * @param string|null $newId [optional] The new session id
      *
      * @throws LogicException when trying to set a new id and the session is active
      *
      * @return false|string The old session id or false on failure. Note: If a
-     * $new_id is set, it is accepted but not validated. When session_start is
+     * $newId is set, it is accepted but not validated. When session_start is
      * called, the id is only used if it is valid
      */
-    public function id(string $new_id = null) : string | false
+    public function id(string $newId = null) : string | false
     {
-        if ($new_id !== null && $this->isActive()) {
+        if ($newId !== null && $this->isActive()) {
             throw new LogicException(
                 'Session ID cannot be changed when a session is active'
             );
         }
-        return \session_id($new_id);
+        return \session_id($newId);
     }
 
     /**

@@ -190,55 +190,55 @@ class FilesHandler extends SaveHandler
         return ! \is_file($filename) || \unlink($filename);
     }
 
-    public function gc($max_lifetime) : int | false
+    public function gc($maxLifetime) : int | false
     {
-        $dir_handle = \opendir($this->config['directory']);
-        if ($dir_handle === false) {
+        $dirHandle = \opendir($this->config['directory']);
+        if ($dirHandle === false) {
             $this->log(
                 "Session (files): Garbage Collector could not open directory '{$this->config['directory']}'",
                 Logger::DEBUG
             );
             return false;
         }
-        $gc_count = 0;
-        $max_lifetime = \time() - $max_lifetime;
-        while (($filename = \readdir($dir_handle)) !== false) {
+        $gcCount = 0;
+        $maxLifetime = \time() - $maxLifetime;
+        while (($filename = \readdir($dirHandle)) !== false) {
             if ($filename !== '.'
                 && $filename !== '..'
                 && \is_dir($this->config['directory'] . $filename)
             ) {
-                $gc_count += $this->gcSubdir(
+                $gcCount += $this->gcSubdir(
                     $this->config['directory'] . $filename,
-                    $max_lifetime
+                    $maxLifetime
                 );
             }
         }
-        \closedir($dir_handle);
-        return $gc_count;
+        \closedir($dirHandle);
+        return $gcCount;
     }
 
-    protected function gcSubdir(string $directory, int $max_mtime) : int
+    protected function gcSubdir(string $directory, int $maxMtime) : int
     {
-        $gc_count = 0;
-        $dir_handle = \opendir($directory);
-        if ($dir_handle === false) {
-            return $gc_count;
+        $gcCount = 0;
+        $dirHandle = \opendir($directory);
+        if ($dirHandle === false) {
+            return $gcCount;
         }
-        while (($filename = \readdir($dir_handle)) !== false) {
+        while (($filename = \readdir($dirHandle)) !== false) {
             $filename = $directory . \DIRECTORY_SEPARATOR . $filename;
             if (\is_dir($filename)) {
                 continue;
             }
             $mtime = \filemtime($filename);
-            if (($mtime < $max_mtime) && \unlink($filename)) {
-                $gc_count++;
+            if (($mtime < $maxMtime) && \unlink($filename)) {
+                $gcCount++;
             }
         }
-        \closedir($dir_handle);
+        \closedir($dirHandle);
         if (\count((array) \scandir($directory)) === 2) {
             \rmdir($directory);
         }
-        return $gc_count;
+        return $gcCount;
     }
 
     protected function lock(string $id) : bool

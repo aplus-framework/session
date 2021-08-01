@@ -176,13 +176,13 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     {
         $bits = \ini_get('session.sid_bits_per_character') ?: 5;
         $length = \ini_get('session.sid_length') ?: 40;
-        $bits_regex = [
+        $bitsRegex = [
             4 => '[0-9a-f]',
             5 => '[0-9a-v]',
             6 => '[0-9a-zA-Z,-]',
         ];
-        return isset($bits_regex[$bits])
-            && \preg_match('#\A' . $bits_regex[$bits] . '{' . $length . '}\z#', $id);
+        return isset($bitsRegex[$bits])
+            && \preg_match('#\A' . $bitsRegex[$bits] . '{' . $length . '}\z#', $id);
     }
 
     /**
@@ -264,15 +264,15 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     /**
      * Cleanup old sessions.
      *
-     * @param int $max_lifetime Sessions that have not updated for
-     * the last $max_lifetime seconds will be removed
+     * @param int $maxLifetime Sessions that have not updated for
+     * the last $maxLifetime seconds will be removed
      *
      * @see https://www.php.net/manual/en/sessionhandlerinterface.gc.php
      *
      * @return false|int Returns the number of deleted session data for success,
      * false for failure
      */
-    abstract public function gc($max_lifetime) : int | false;
+    abstract public function gc($maxLifetime) : int | false;
 
     /**
      * Acquire a lock for a session id.

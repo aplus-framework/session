@@ -143,7 +143,7 @@ class DatabaseHandler extends SaveHandler
         }
     }
 
-    public function open($path, $session_name) : bool
+    public function open($path, $name) : bool
     {
         try {
             $this->database ??= new Database($this->config);
@@ -285,7 +285,7 @@ class DatabaseHandler extends SaveHandler
         return true;
     }
 
-    public function gc($max_lifetime) : int | false
+    public function gc($maxLifetime) : int | false
     {
         try {
             $this->database ??= new Database($this->config);
@@ -301,8 +301,8 @@ class DatabaseHandler extends SaveHandler
             ->from($this->getTable())
             ->whereLessThan(
                 $this->getColumn('timestamp'),
-                static function () use ($max_lifetime) : string {
-                    return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
+                static function () use ($maxLifetime) : string {
+                    return 'NOW() - INTERVAL ' . $maxLifetime . ' second';
                 }
             )->run();
     }
@@ -336,8 +336,8 @@ class DatabaseHandler extends SaveHandler
             ->select()
             ->expressions([
                 'unlocked' => function (Database $database) : string {
-                    $lock_id = $database->quote($this->lockId);
-                    return "RELEASE_LOCK({$lock_id})";
+                    $lockId = $database->quote($this->lockId);
+                    return "RELEASE_LOCK({$lockId})";
                 },
             ])->run()
             ->fetch();

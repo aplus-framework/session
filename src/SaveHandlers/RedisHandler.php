@@ -208,7 +208,7 @@ class RedisHandler extends SaveHandler
         return true;
     }
 
-    public function gc($max_lifetime) : int | false
+    public function gc($maxLifetime) : int | false
     {
         return 0;
     }
@@ -219,29 +219,29 @@ class RedisHandler extends SaveHandler
         if ($this->lockId && $this->redis->get($this->lockId)) {
             return $this->redis->expire($this->lockId, $ttl);
         }
-        $lock_id = $this->getKey($id) . ':lock';
+        $lockId = $this->getKey($id) . ':lock';
         $attempt = 0;
         while ($attempt < $this->config['lock_attempts']) {
             $attempt++;
-            $old_ttl = $this->redis->ttl($lock_id);
-            if ($old_ttl > 0) {
+            $oldTtl = $this->redis->ttl($lockId);
+            if ($oldTtl > 0) {
                 \sleep(1);
                 continue;
             }
-            if ( ! $this->redis->setex($lock_id, $ttl, (string) \time())) {
-                $this->log('Session (redis): Error while trying to lock ' . $lock_id);
+            if ( ! $this->redis->setex($lockId, $ttl, (string) \time())) {
+                $this->log('Session (redis): Error while trying to lock ' . $lockId);
                 return false;
             }
-            $this->lockId = $lock_id;
+            $this->lockId = $lockId;
             break;
         }
         if ($attempt === $this->config['lock_attempts']) {
             $this->log(
-                "Session (redis): Unable to lock {$lock_id} after {$attempt} attempts"
+                "Session (redis): Unable to lock {$lockId} after {$attempt} attempts"
             );
             return false;
         }
-        if (isset($old_ttl) && $old_ttl === -1) {
+        if (isset($oldTtl) && $oldTtl === -1) {
             $this->log(
                 'Session (redis): Lock for ' . $this->getKey($id) . ' had not TTL',
                 Logger::DEBUG
