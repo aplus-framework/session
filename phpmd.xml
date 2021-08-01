@@ -4,28 +4,15 @@
     <rule ref="rulesets/cleancode.xml">
         <exclude name="BooleanArgumentFlag"/>
         <exclude name="ErrorControlOperator"/>
-        <exclude name="StaticAccess"/>
     </rule>
     <!-- codesize -->
     <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
         <properties>
-            <property name="maximum" value="70"/>
-        </properties>
-    </rule>
-    <rule ref="rulesets/codesize.xml/ExcessiveParameterList">
-        <properties>
-            <property name="minimum" value="7"/>
-        </properties>
-    </rule>
-    <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
-        <properties>
-            <property name="maxmethods" value="20"/>
+            <property name="maximum" value="80"/>
         </properties>
     </rule>
     <!-- controversial -->
     <rule ref="rulesets/controversial.xml">
-        <exclude name="CamelCaseParameterName"/>
-        <exclude name="CamelCaseVariableName"/>
         <exclude name="Superglobals"/>
     </rule>
     <!-- design -->
