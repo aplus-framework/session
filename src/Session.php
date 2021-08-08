@@ -16,6 +16,8 @@ use RuntimeException;
 
 /**
  * Class Session.
+ *
+ * @package session
  */
 class Session
 {

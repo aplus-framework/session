@@ -17,6 +17,8 @@ use Framework\Log\Logger;
  * @see https://www.php.net/manual/en/class.sessionhandler.php
  * @see https://gist.github.com/mindplay-dk/623bdd50c1b4c0553cd3
  * @see https://www.cloudways.com/blog/setup-redis-as-session-handler-php/#sessionlifecycle
+ *
+ * @package session
  */
 abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTimestampHandlerInterface
 {

@@ -33,6 +33,8 @@ use Framework\Session\SaveHandler;
  *     KEY `ua` (`ua`) -- optional
  * );
  * ```
+ *
+ * @package session
  */
 class DatabaseHandler extends SaveHandler
 {

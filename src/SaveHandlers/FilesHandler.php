@@ -16,6 +16,8 @@ use RuntimeException;
 
 /**
  * Class FilesHandler.
+ *
+ * @package session
  */
 class FilesHandler extends SaveHandler
 {

@@ -16,6 +16,8 @@ use OutOfBoundsException;
 
 /**
  * Class MemcachedHandler.
+ *
+ * @package session
  */
 class MemcachedHandler extends SaveHandler
 {

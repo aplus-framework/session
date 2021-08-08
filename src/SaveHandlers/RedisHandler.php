@@ -15,6 +15,8 @@ use Redis;
 
 /**
  * Class RedisHandler.
+ *
+ * @package session
  */
 class RedisHandler extends SaveHandler
 {
