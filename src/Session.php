@@ -238,6 +238,14 @@ class Session
         return $destroyed ?? true;
     }
 
+    /**
+     * Sets a Cookie with the session name to be destroyed in the user-agent.
+     *
+     * @throws RuntimeException If could not get the session name
+     *
+     * @return bool True if the Set-Cookie header was set to invalidate the
+     * session cookie, false if output exists
+     */
     public function destroyCookie() : bool
     {
         $name = \session_name();
