@@ -45,6 +45,8 @@ class RedisHandler extends SaveHandler
      *     'database' => null,
      *     // Maximum attempts to try lock a session id
      *     'lock_attempts' => 60,
+     *     // Interval between the lock attempts in microseconds
+     *     'lock_sleep' => 1_000_000,
      *     // TTL to the lock (valid for the current session only)
      *     'lock_ttl' => 600,
      *     // The maxlifetime (TTL) used for cache item expiration
@@ -66,6 +68,7 @@ class RedisHandler extends SaveHandler
             'password' => null,
             'database' => null,
             'lock_attempts' => 60,
+            'lock_sleep' => 1_000_000,
             'lock_ttl' => 600,
             'maxlifetime' => null,
             'match_ip' => false,
@@ -227,7 +230,7 @@ class RedisHandler extends SaveHandler
             $attempt++;
             $oldTtl = $this->redis->ttl($lockId);
             if ($oldTtl > 0) {
-                \sleep(1);
+                \usleep($this->config['lock_sleep']);
                 continue;
             }
             if ( ! $this->redis->setex($lockId, $ttl, (string) \time())) {

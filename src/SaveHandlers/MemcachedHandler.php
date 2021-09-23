@@ -48,6 +48,8 @@ class MemcachedHandler extends SaveHandler
      *     ],
      *     // Maximum attempts to try lock a session id
      *     'lock_attempts' => 60,
+     *     // Interval between the lock attempts in microseconds
+     *     'lock_sleep' => 1_000_000,
      *     // TTL to the lock (valid for the current session only)
      *     'lock_ttl' => 600,
      *     // The maxlifetime (TTL) used for cache item expiration
@@ -74,6 +76,7 @@ class MemcachedHandler extends SaveHandler
                 Memcached::OPT_BINARY_PROTOCOL => true,
             ],
             'lock_attempts' => 60,
+            'lock_sleep' => 1_000_000,
             'lock_ttl' => 600,
             'maxlifetime' => null,
             'match_ip' => false,
@@ -254,7 +257,7 @@ class MemcachedHandler extends SaveHandler
         while ($attempt < $this->config['lock_attempts']) {
             $attempt++;
             if ($this->memcached->get($lockId)) {
-                \sleep(1);
+                \usleep($this->config['lock_sleep']);
                 continue;
             }
             if ( ! $this->memcached->set($lockId, \time(), $expiration)) {
