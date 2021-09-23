@@ -56,4 +56,41 @@ class MemcachedHandlerTest extends AbstractHandler
             throw $exception;
         }
     }
+
+    public function testRepeatedServer() : void
+    {
+        $this->session->stop();
+        $host = \getenv('MEMCACHED_HOST');
+        (new MemcachedHandler([
+            'servers' => [
+                [
+                    'host' => $host,
+                ],
+                [
+                    'host' => $host,
+                ],
+            ],
+        ], $this->logger))->open('', 'session_id');
+        self::assertSame(
+            'Session (memcached): Server pool already has ' . $host . ':11211',
+            $this->logger->getLastLog()->message
+        );
+    }
+
+    public function testInvalidOption() : void
+    {
+        $this->session->stop();
+        $this->expectWarning();
+        $this->expectWarningMessage('Memcached::setOptions(): invalid configuration option');
+        (new MemcachedHandler([
+            'servers' => [
+                [
+                    'host' => \getenv('MEMCACHED_HOST'),
+                ],
+            ],
+            'options' => [
+                'foo' => 'bar',
+            ],
+        ], $this->logger))->open('', 'session_id');
+    }
 }

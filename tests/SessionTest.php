@@ -225,4 +225,9 @@ class SessionTest extends TestCase
         $this->session->start();
         self::assertNull($this->session->get('foo'));
     }
+
+    public function testDestroyCookie() : void
+    {
+        self::assertTrue($this->session->destroyCookie());
+    }
 }
