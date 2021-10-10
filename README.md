@@ -1,3 +1,5 @@
+<a href="https://gitlab.com/aplus-framework/libraries/session"><img src="https://gitlab.com/aplus-framework/libraries/session/-/raw/master/guide/image.png" alt="Aplus Framework Session Library" align="right" width="100"></a>
+
 # Aplus Framework Session Library
 
 - [User Guide](https://docs.aplus-framework.com/guides/libraries/session/index.html)
