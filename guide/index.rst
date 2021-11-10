@@ -1,6 +1,9 @@
 Session
 =======
 
+.. image:: image.png
+    :alt: Aplus Framework Session Library
+
 Aplus Framework Session Library.
 
 - `Installation`_
