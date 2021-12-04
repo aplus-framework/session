@@ -10,7 +10,7 @@
         "redis",
         "cookie"
     ],
-    "homepage": "https://docs.aplus-framework.com/guides/libraries/session/",
+    "homepage": "https://aplus-framework.com/packages/session",
     "license": "MIT",
     "authors": [
         {
@@ -55,13 +55,13 @@
     "support": {
         "email": "support@aplus-framework.com",
         "issues": "https://gitlab.com/aplus-framework/libraries/session/issues",
-        "wiki": "https://gitlab.com/aplus-framework/libraries/session/wikis/home",
+        "forum": "https://aplus-framework.com/forum",
         "source": "https://gitlab.com/aplus-framework/libraries/session",
         "docs": "https://docs.aplus-framework.com/guides/libraries/session/"
     },
     "funding": [
         {
-            "type": "other",
+            "type": "Aplus Sponsor",
             "url": "https://aplus-framework.com/sponsor"
         }
     ]
