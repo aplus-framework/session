@@ -2,10 +2,11 @@
 
 # Aplus Framework Session Library
 
-- [Homepage](https://aplus-framework.com/packages/session)
+- [Home](https://aplus-framework.com/packages/session)
 - [User Guide](https://docs.aplus-framework.com/guides/libraries/session/index.html)
 - [API Documentation](https://docs.aplus-framework.com/packages/session.html)
 
+[![tests](https://github.com/aplus-framework/session/actions/workflows/tests.yml/badge.svg)](https://github.com/aplus-framework/session/actions/workflows/tests.yml)
 [![pipeline](https://gitlab.com/aplus-framework/libraries/session/badges/master/pipeline.svg)](https://gitlab.com/aplus-framework/libraries/session/-/pipelines?scope=branches)
 [![coverage](https://gitlab.com/aplus-framework/libraries/session/badges/master/coverage.svg?job=test:php)](https://aplus-framework.gitlab.io/libraries/session/coverage/)
 [![packagist](https://img.shields.io/packagist/v/aplus/session)](https://packagist.org/packages/aplus/session)
