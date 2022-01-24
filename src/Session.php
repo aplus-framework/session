@@ -9,6 +9,7 @@
  */
 namespace Framework\Session;
 
+use Framework\Session\Debug\SessionCollector;
 use JetBrains\PhpStorm\Deprecated;
 use JetBrains\PhpStorm\Pure;
 use LogicException;
@@ -22,9 +23,11 @@ use RuntimeException;
 class Session
 {
     /**
-     * @var array<string,int|string>
+     * @var array<string>
      */
     protected array $options = [];
+    protected SaveHandler $saveHandler;
+    protected SessionCollector $debugCollector;
 
     /**
      * Session constructor.
@@ -36,6 +39,7 @@ class Session
     {
         $this->setOptions($options);
         if ($handler) {
+            $this->saveHandler = $handler;
             \session_set_save_handler($handler);
         }
     }
@@ -573,5 +577,15 @@ class Session
     public function gc() : int | false
     {
         return @\session_gc();
+    }
+
+    public function setDebugCollector(SessionCollector $collector) : static
+    {
+        $this->debugCollector = $collector;
+        $this->debugCollector->setSession($this)->setOptions($this->options);
+        if (isset($this->saveHandler)) {
+            $this->debugCollector->setSaveHandler($this->saveHandler);
+        }
+        return $this;
     }
 }

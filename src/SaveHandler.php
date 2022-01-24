@@ -86,6 +86,14 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     }
 
     /**
+     * @return array<string,mixed>
+     */
+    public function getConfig() : array
+    {
+        return $this->config;
+    }
+
+    /**
      * Log a message if the Logger is set.
      *
      * @param string $message The message to log

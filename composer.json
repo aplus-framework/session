@@ -37,6 +37,7 @@
         "ext-memcached": "*",
         "ext-redis": "*",
         "aplus/database": "^2.8",
+        "aplus/debug": "^2.3",
         "aplus/log": "^2.2"
     },
     "require-dev": {
