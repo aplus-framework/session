@@ -10,6 +10,7 @@
 namespace Framework\Session\Debug;
 
 use Framework\Debug\Collector;
+use Framework\Debug\Debugger;
 use Framework\Helpers\ArraySimple;
 use Framework\Session\SaveHandler;
 use Framework\Session\SaveHandlers\DatabaseHandler;
@@ -100,7 +101,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities((string) $key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities($this->makeDebugValue($value))
+                                \htmlentities(Debugger::makeDebugValue($value))
                                 ?></code></pre>
                     </td>
                 </tr>
@@ -142,7 +143,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities($this->makeDebugValue($value))
+                                \htmlentities(Debugger::makeDebugValue($value))
                                 ?></code></pre>
                     </td>
                 </tr>
@@ -174,7 +175,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities($this->makeDebugValue($value))
+                                \htmlentities(Debugger::makeDebugValue($value))
                                 ?></code></pre>
                     </td>
                 </tr>
@@ -205,7 +206,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities($this->makeDebugValue($value))
+                                \htmlentities(Debugger::makeDebugValue($value))
                                 ?></code></pre>
                     </td>
                     <td><?= \date('Y-m-d H:i:s', $value['ttl']) ?></td>
@@ -346,19 +347,6 @@ class SessionCollector extends Collector
         </table>
         <?php
         return \ob_get_clean(); // @phpstan-ignore-line
-    }
-
-    protected function makeDebugValue(mixed $value) : string
-    {
-        $type = \get_debug_type($value);
-        return (string) match ($type) {
-            'array' => 'array',
-            'bool' => $value ? 'true' : 'false',
-            'float', 'int' => $value,
-            'null' => 'null',
-            'string' => "'" . \strtr($value, ["'" => "\\'"]) . "'",
-            default => 'instanceof ' . $type,
-        };
     }
 
     /**
