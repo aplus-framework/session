@@ -326,9 +326,7 @@ class SessionCollector extends Collector
         }
         $maxlifetime = (int) $this->options['auto_regenerate_maxlifetime'];
         $regeneratedAt = ArraySimple::value('$[regenerated_at]', $this->session->getAll());
-        $nextRegeneration = $regeneratedAt
-            ? $regeneratedAt + $maxlifetime
-            : \time() + $maxlifetime;
+        $nextRegeneration = $regeneratedAt + $maxlifetime;
         \ob_start(); ?>
         <table>
             <thead>
