@@ -61,6 +61,9 @@ class SessionCollector extends Collector
         if ( ! isset($this->session)) {
             return '<p>No Session instance has been set on this collector.</p>';
         }
+        if ( ! $this->session->isActive()) {
+            return '<p>Session is inactive.</p>';
+        }
         \ob_start(); ?>
         <p><strong>Name:</strong> <?= \ini_get('session.name') ?></p>
         <p><strong>Id:</strong> <?= $this->session->id() ?></p>
