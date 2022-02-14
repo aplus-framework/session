@@ -281,6 +281,19 @@ class Session
     }
 
     /**
+     * Discard session data changes and end session.
+     *
+     * @return bool returns true on success or false on failure
+     */
+    public function abort() : bool
+    {
+        if ($this->isActive()) {
+            $aborted = \session_abort();
+        }
+        return $aborted ?? true;
+    }
+
+    /**
      * Tells if the session has an item.
      *
      * @param string $key The item key name

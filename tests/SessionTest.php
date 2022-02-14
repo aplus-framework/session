@@ -88,6 +88,22 @@ class SessionTest extends TestCase
         self::assertFalse($this->session->isActive());
     }
 
+    public function testAbort() : void
+    {
+        self::assertTrue($this->session->isActive());
+        $this->session->foo = 1;
+        self::assertSame(1, $this->session->foo);
+        $this->session->stop();
+        $this->session->start();
+        self::assertSame(1, $this->session->foo);
+        $this->session->foo = 3;
+        self::assertSame(3, $this->session->foo);
+        self::assertTrue($this->session->abort());
+        self::assertFalse($this->session->isActive());
+        $this->session->start();
+        self::assertSame(1, $this->session->foo);
+    }
+
     public function testRemove() : void
     {
         $this->session->foo = 'foo';
