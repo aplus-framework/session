@@ -9,7 +9,7 @@
  */
 namespace Framework\Session\SaveHandlers;
 
-use Framework\Log\Logger;
+use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 use Memcached;
 use OutOfBoundsException;
@@ -141,7 +141,7 @@ class MemcachedHandler extends SaveHandler
             if (\in_array($host, $pool, true)) {
                 $this->log(
                     'Session (memcached): Server pool already has ' . $host,
-                    Logger::DEBUG
+                    LogLevel::DEBUG
                 );
                 continue;
             }

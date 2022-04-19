@@ -9,7 +9,7 @@
  */
 namespace Framework\Session\SaveHandlers;
 
-use Framework\Log\Logger;
+use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 use LogicException;
 use RuntimeException;
@@ -198,7 +198,7 @@ class FilesHandler extends SaveHandler
         if ($dirHandle === false) {
             $this->log(
                 "Session (files): Garbage Collector could not open directory '{$this->config['directory']}'",
-                Logger::DEBUG
+                LogLevel::DEBUG
             );
             return false;
         }

@@ -10,6 +10,7 @@
 namespace Framework\Session;
 
 use Framework\Log\Logger;
+use Framework\Log\LogLevel;
 
 /**
  * Class SaveHandler.
@@ -97,13 +98,11 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * Log a message if the Logger is set.
      *
      * @param string $message The message to log
-     * @param int $level The log level
+     * @param LogLevel $level The log level
      */
-    protected function log(string $message, int $level = Logger::ERROR) : void
+    protected function log(string $message, LogLevel $level = LogLevel::ERROR) : void
     {
-        if ($this->logger) {
-            $this->logger->log($level, $message);
-        }
+        $this->logger?->log($level, $message);
     }
 
     /**

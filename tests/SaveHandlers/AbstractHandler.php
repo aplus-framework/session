@@ -10,6 +10,7 @@
 namespace Tests\Session\SaveHandlers;
 
 use Framework\Log\Logger;
+use Framework\Log\Loggers\MultiFileLogger;
 use Tests\Session\SessionTest;
 
 /**
@@ -30,8 +31,8 @@ abstract class AbstractHandler extends SessionTest
     {
         $_SERVER['REMOTE_ADDR'] = '192.168.1.2';
         $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0';
-        $this->logger = new Logger('/tmp');
-        $this->handler = new $this->handlerClass($this->config, $this->logger);
+        $this->logger = new MultiFileLogger('/tmp');
+        $this->handler = new $this->handlerClass($this->config, $this->logger); // @phpstan-ignore-line
         parent::setUp();
     }
 

@@ -9,7 +9,7 @@
  */
 namespace Framework\Session\SaveHandlers;
 
-use Framework\Log\Logger;
+use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 use Redis;
 
@@ -207,7 +207,7 @@ class RedisHandler extends SaveHandler
         if ($result !== 1) {
             $this->log(
                 'Session (redis): Expected to delete 1 key, deleted ' . $result,
-                Logger::DEBUG
+                LogLevel::DEBUG
             );
         }
         return true;
@@ -249,7 +249,7 @@ class RedisHandler extends SaveHandler
         if (isset($oldTtl) && $oldTtl === -1) {
             $this->log(
                 'Session (redis): Lock for ' . $this->getKey($id) . ' had not TTL',
-                Logger::DEBUG
+                LogLevel::DEBUG
             );
         }
         return true;

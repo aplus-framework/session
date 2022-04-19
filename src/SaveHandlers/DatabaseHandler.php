@@ -14,7 +14,7 @@ use Framework\Database\Database;
 use Framework\Database\Manipulation\Delete;
 use Framework\Database\Manipulation\Select;
 use Framework\Database\Manipulation\Update;
-use Framework\Log\Logger;
+use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 
 /**
@@ -281,7 +281,7 @@ class DatabaseHandler extends SaveHandler
         if ($result !== 1) {
             $this->log(
                 'Session (database): Expected to delete 1 row, deleted ' . $result,
-                Logger::DEBUG
+                LogLevel::DEBUG
             );
         }
         return true;
@@ -298,6 +298,7 @@ class DatabaseHandler extends SaveHandler
             );
             return false;
         }
+        // @phpstan-ignore-next-line
         return $this->database
             ->delete()
             ->from($this->getTable())
