@@ -10,7 +10,6 @@
 namespace Framework\Session;
 
 use Framework\Session\Debug\SessionCollector;
-use JetBrains\PhpStorm\Deprecated;
 use JetBrains\PhpStorm\Pure;
 use LogicException;
 use RuntimeException;
@@ -197,25 +196,6 @@ class Session
         if (empty($_SESSION['$']['temp'])) {
             unset($_SESSION['$']['temp']);
         }
-    }
-
-    /**
-     * @return bool
-     *
-     * @deprecated Use {@see Session::isActive}
-     * @codeCoverageIgnore
-     */
-    #[Deprecated(
-        reason: 'since Session Library version 2.1, use isActive() instead',
-        replacement: '%class%->isActive()'
-    )]
-    public function isStarted() : bool
-    {
-        \trigger_error(
-            'Method ' . __METHOD__ . ' is deprecated',
-            \E_USER_DEPRECATED
-        );
-        return $this->isActive();
     }
 
     /**
@@ -432,28 +412,6 @@ class Session
             $_SESSION['$']['regenerated_at'] = \time();
         }
         return $regenerated;
-    }
-
-    /**
-     * @param bool $deleteOldSession
-     *
-     * @return bool
-     *
-     * @deprecated Use {@see Session::regenerateId}
-     * @codeCoverageIgnore
-     */
-    #[Deprecated(
-        reason: 'since Session Library version 2.1, use regenerateId() instead',
-        replacement: '%class%->regenerateId(%parameter0%)'
-    )]
-    public function regenerate(
-        bool $deleteOldSession = false
-    ) : bool {
-        \trigger_error(
-            'Method ' . __METHOD__ . ' is deprecated',
-            \E_USER_DEPRECATED
-        );
-        return $this->regenerateId($deleteOldSession);
     }
 
     /**
