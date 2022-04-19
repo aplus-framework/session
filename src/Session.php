@@ -23,7 +23,7 @@ use RuntimeException;
 class Session
 {
     /**
-     * @var array<string>
+     * @var array<string,mixed>
      */
     protected array $options = [];
     protected SaveHandler $saveHandler;
