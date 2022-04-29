@@ -88,13 +88,7 @@ class FilesHandler extends SaveHandler
     protected function getFilename(string $id) : string
     {
         $filename = $this->config['directory'] . $id[0] . $id[1] . \DIRECTORY_SEPARATOR . $id;
-        if ($this->config['match_ip']) {
-            $filename .= ':' . $this->getIP();
-        }
-        if ($this->config['match_ua']) {
-            $filename .= ':' . \md5($this->getUA());
-        }
-        return $filename;
+        return $filename . $this->getKeySuffix();
     }
 
     public function open($path, $name) : bool

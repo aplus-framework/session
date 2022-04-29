@@ -170,6 +170,21 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
         return $_SERVER['HTTP_USER_AGENT'] ?? '';
     }
 
+    protected function getKeySuffix() : string
+    {
+        $suffix = '';
+        if ($this->config['match_ip']) {
+            $suffix .= ':' . $this->getIP();
+        }
+        if ($this->config['match_ua']) {
+            $suffix .= ':' . $this->getUA();
+        }
+        if ($suffix) {
+            $suffix = \hash('xxh3', $suffix);
+        }
+        return $suffix;
+    }
+
     /**
      * Validate session id.
      *

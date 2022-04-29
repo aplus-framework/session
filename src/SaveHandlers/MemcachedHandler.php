@@ -119,14 +119,7 @@ class MemcachedHandler extends SaveHandler
      */
     protected function getKey(string $id) : string
     {
-        $key = $this->config['prefix'] . $id;
-        if ($this->config['match_ip']) {
-            $key .= ':' . $this->getIP();
-        }
-        if ($this->config['match_ua']) {
-            $key .= ':' . \md5($this->getUA());
-        }
-        return $key;
+        return $this->config['prefix'] . $id . $this->getKeySuffix();
     }
 
     public function open($path, $name) : bool
