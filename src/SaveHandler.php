@@ -32,8 +32,6 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     /**
      * The current data fingerprint.
      *
-     * Normally the md5 hash of the data.
-     *
      * @var string
      */
     protected string $fingerprint;
@@ -124,7 +122,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     private function makeFingerprint(string $data) : string
     {
-        return \md5($data);
+        return \hash('xxh3', $data);
     }
 
     /**
