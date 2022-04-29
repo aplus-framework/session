@@ -273,7 +273,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     /**
      * Cleanup old sessions.
      *
-     * @param int $maxLifetime Sessions that have not updated for
+     * @param int $max_lifetime Sessions that have not updated for
      * the last $maxLifetime seconds will be removed
      *
      * @see https://www.php.net/manual/en/sessionhandlerinterface.gc.php
@@ -281,7 +281,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * @return false|int Returns the number of deleted session data for success,
      * false for failure
      */
-    abstract public function gc($maxLifetime) : int | false;
+    abstract public function gc($max_lifetime) : int | false;
 
     /**
      * Acquire a lock for a session id.

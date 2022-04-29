@@ -241,7 +241,7 @@ class MemcachedHandler extends SaveHandler
             && $this->memcached->getResultCode() !== Memcached::RES_NOTFOUND);
     }
 
-    public function gc($maxLifetime) : int | false
+    public function gc($max_lifetime) : int | false
     {
         return 0;
     }

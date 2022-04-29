@@ -192,7 +192,7 @@ class FilesHandler extends SaveHandler
         return ! \is_file($filename) || \unlink($filename);
     }
 
-    public function gc($maxLifetime) : int | false
+    public function gc($max_lifetime) : int | false
     {
         $dirHandle = \opendir($this->config['directory']);
         if ($dirHandle === false) {
@@ -203,7 +203,7 @@ class FilesHandler extends SaveHandler
             return false;
         }
         $gcCount = 0;
-        $maxLifetime = \time() - $maxLifetime;
+        $max_lifetime = \time() - $max_lifetime;
         while (($filename = \readdir($dirHandle)) !== false) {
             if ($filename !== '.'
                 && $filename !== '..'
@@ -211,7 +211,7 @@ class FilesHandler extends SaveHandler
             ) {
                 $gcCount += $this->gcSubdir(
                     $this->config['directory'] . $filename,
-                    $maxLifetime
+                    $max_lifetime
                 );
             }
         }

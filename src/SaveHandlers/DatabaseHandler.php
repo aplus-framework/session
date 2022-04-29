@@ -287,7 +287,7 @@ class DatabaseHandler extends SaveHandler
         return true;
     }
 
-    public function gc($maxLifetime) : int | false
+    public function gc($max_lifetime) : int | false
     {
         try {
             $this->database ??= new Database($this->config);
@@ -304,8 +304,8 @@ class DatabaseHandler extends SaveHandler
             ->from($this->getTable())
             ->whereLessThan(
                 $this->getColumn('timestamp'),
-                static function () use ($maxLifetime) : string {
-                    return 'NOW() - INTERVAL ' . $maxLifetime . ' second';
+                static function () use ($max_lifetime) : string {
+                    return 'NOW() - INTERVAL ' . $max_lifetime . ' second';
                 }
             )->run();
     }
