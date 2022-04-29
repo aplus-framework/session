@@ -175,7 +175,7 @@ class DatabaseHandler extends SaveHandler
         $this->addWhereMatchs($statement);
         $row = $statement->limit(1)->run()->fetch();
         $this->sessionExists = (bool) $row;
-        $data = $row->data ?? ''; // @phpstan-ignore-line
+        $data = $row->data ?? '';
         $this->setFingerprint($data);
         return $data;
     }

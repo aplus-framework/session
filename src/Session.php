@@ -105,9 +105,9 @@ class Session
     }
 
     /**
-     * @param array<string,int|string> $custom
+     * @param array<string,mixed> $custom
      *
-     * @return array<string,int|string>
+     * @return array<string,mixed>
      */
     protected function getOptions(array $custom = []) : array
     {
@@ -225,7 +225,7 @@ class Session
     /**
      * Sets a Cookie with the session name to be destroyed in the user-agent.
      *
-     * @throws RuntimeException If could not get the session name
+     * @throws RuntimeException If it could not get the session name
      *
      * @return bool True if the Set-Cookie header was set to invalidate the
      * session cookie, false if output exists
@@ -278,7 +278,7 @@ class Session
      *
      * @param string $key The item key name
      *
-     * @return bool True if has, otherwise false
+     * @return bool True if it has, otherwise false
      */
     #[Pure]
     public function has(string $key) : bool

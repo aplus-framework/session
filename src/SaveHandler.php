@@ -214,7 +214,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * @see https://www.php.net/manual/en/sessionhandlerinterface.read.php
      *
      * @return string Returns an encoded string of the read data.
-     * If nothing was read, it return an empty string
+     * If nothing was read, it returns an empty string
      */
     abstract public function read($id) : string;
 

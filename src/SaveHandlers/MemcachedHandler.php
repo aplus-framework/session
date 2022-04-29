@@ -94,7 +94,7 @@ class MemcachedHandler extends SaveHandler
     /**
      * Get expiration as a timestamp.
      *
-     * Useful for Time To Lives greater than a month (`60*60*24*30`).
+     * Useful for Time To Live greater than a month (`60*60*24*30`).
      *
      * @param int $seconds
      *
