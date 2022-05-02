@@ -12,6 +12,7 @@ namespace Framework\Session\SaveHandlers;
 use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 use Redis;
+use RedisException;
 
 /**
  * Class RedisHandler.
@@ -95,26 +96,30 @@ class RedisHandler extends SaveHandler
             return true;
         }
         $this->redis = new Redis();
-        $connected = $this->redis->connect(
-            $this->config['host'],
-            $this->config['port'],
-            $this->config['timeout']
-        );
-        if ( ! $connected) {
+        try {
+            $this->redis->connect(
+                $this->config['host'],
+                $this->config['port'],
+                $this->config['timeout']
+            );
+        } catch (RedisException) {
             $this->log(
                 'Session (redis): Could not connect to server '
                 . $this->config['host'] . ':' . $this->config['port']
             );
             return false;
         }
-        if (isset($this->config['password'])
-            && ! $this->redis->auth($this->config['password'])
-        ) {
-            $this->log('Session (redis): Authentication failed');
-            return false;
+        if (isset($this->config['password'])) {
+            try {
+                $this->redis->auth($this->config['password']);
+            } catch (RedisException) {
+                $this->log('Session (redis): Authentication failed');
+                return false;
+            }
         }
         if (isset($this->config['database'])
-            && ! $this->redis->select($this->config['database'])) {
+            && ! $this->redis->select($this->config['database'])
+        ) {
             $this->log(
                 "Session (redis): Could not select the database '{$this->config['database']}'"
             );
@@ -184,7 +189,7 @@ class RedisHandler extends SaveHandler
                     return false;
                 }
             }
-        } catch (\RedisException $e) {
+        } catch (RedisException $e) {
             $this->log('Session (redis): Got RedisException on close: ' . $e->getMessage());
         }
         $this->redis = null;
