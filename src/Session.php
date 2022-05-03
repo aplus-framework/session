@@ -302,7 +302,7 @@ class Session
     /**
      * Get all session items.
      *
-     * @return array<int|string,mixed> The value of the $_SESSION global
+     * @return array<mixed> The value of the $_SESSION global
      */
     #[Pure]
     public function getAll() : array
@@ -313,7 +313,7 @@ class Session
     /**
      * Get multiple session items.
      *
-     * @param array<int,string> $keys An array of key item names
+     * @param array<string> $keys An array of key item names
      *
      * @return array<string,mixed> An associative array with items keys and
      * values. Item not set will return as null.
@@ -374,7 +374,7 @@ class Session
     /**
      * Remove (unset) multiple session items.
      *
-     * @param array<int,string> $keys A list of items keys names
+     * @param array<string> $keys A list of items keys names
      *
      * @rerun static
      */
