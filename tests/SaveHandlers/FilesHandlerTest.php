@@ -31,4 +31,61 @@ class FilesHandlerTest extends AbstractHandler
         ]);
         parent::setUp();
     }
+
+    public function testNoDirectory() : void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Session config has not a directory');
+        new FilesHandler();
+    }
+
+    public function testInvalidDirectory() : void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Session config directory does not exist: foo');
+        new FilesHandler([
+            'directory' => 'foo',
+        ]);
+    }
+
+    public function testPrefix() : void
+    {
+        $config = [
+            'prefix' => 'foo',
+            'directory' => \getenv('FILES_DIR'),
+        ];
+        $handler = new class($config) extends FilesHandler {
+            public function getFilename(string $id) : string
+            {
+                return parent::getFilename($id);
+            }
+        };
+        self::assertSame(
+            \getenv('FILES_DIR') . '/foo/ab/abc123',
+            $handler->getFilename('abc123')
+        );
+    }
+
+    public function testFailToWrite() : void
+    {
+        $handler = new class($this->config) extends FilesHandler {
+            public $stream;
+        };
+        $handler->stream = null;
+        self::assertFalse($handler->write('foo', 'bar'));
+    }
+
+    public function testUnlockWithoutStream() : void
+    {
+        $handler = new class($this->config) extends FilesHandler {
+            public $stream;
+
+            public function unlock() : bool
+            {
+                return parent::unlock();
+            }
+        };
+        $handler->stream = null;
+        self::assertTrue($handler->unlock());
+    }
 }

@@ -14,7 +14,7 @@ namespace Tests\Session\SaveHandlers;
  *
  * @runTestsInSeparateProcesses
  */
-class MemcachedHandlerMatchTest extends MemcachedHandlerTest
+final class MemcachedHandlerMatchTest extends MemcachedHandlerTest
 {
     protected array $config = [
         'match_ip' => true,

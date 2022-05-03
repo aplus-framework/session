@@ -14,7 +14,7 @@ namespace Tests\Session\SaveHandlers;
  *
  * @runTestsInSeparateProcesses
  */
-class DatabaseHandlerMatchTest extends DatabaseHandlerTest
+final class DatabaseHandlerMatchTest extends DatabaseHandlerTest
 {
     protected array $config = [
         'match_ip' => true,

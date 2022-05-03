@@ -11,6 +11,7 @@ namespace Tests\Session\SaveHandlers;
 
 use Framework\Session\SaveHandlers\MemcachedHandler;
 use Framework\Session\Session;
+use Memcached;
 
 /**
  * Class MemcachedHandlerTest.
@@ -33,7 +34,24 @@ class MemcachedHandlerTest extends AbstractHandler
         parent::setUp();
     }
 
-    public function testNoServers() : void
+    public function testNoHost() : void
+    {
+        $this->session->stop();
+        $this->expectException(\OutOfBoundsException::class);
+        $this->expectExceptionMessage("Memcached host not set on server config '1'");
+        new MemcachedHandler([
+            'servers' => [
+                [
+                    'host' => 'localhost',
+                ],
+                [
+                    'foo' => 'bar',
+                ],
+            ],
+        ]);
+    }
+
+    public function testInvalidServers() : void
     {
         $this->session->stop();
         $handler = new MemcachedHandler([
@@ -92,5 +110,73 @@ class MemcachedHandlerTest extends AbstractHandler
                 'foo' => 'bar',
             ],
         ], $this->logger))->open('', 'session_id');
+    }
+
+    public function testFailToRead() : void
+    {
+        $handler = new class($this->config) extends MemcachedHandler {
+            public ?Memcached $memcached;
+        };
+        $handler->memcached = null;
+        self::assertSame('', $handler->read('foo'));
+    }
+
+    public function testFailToWrite() : void
+    {
+        $handler = new class($this->config) extends MemcachedHandler {
+            public ?Memcached $memcached;
+            public false | string $lockId;
+            public ?string $sessionId;
+        };
+        $handler->memcached = null;
+        self::assertFalse($handler->write('foo', 'data'));
+        $handler->open('', '');
+        $handler->sessionId = null;
+        $handler->lockId = '';
+        self::assertFalse($handler->write('foo', 'data'));
+        $handler->sessionId = 'foo';
+        $handler->lockId = false;
+        self::assertFalse($handler->write('foo', 'data'));
+    }
+
+    public function testUnlocked() : void
+    {
+        $handler = new class($this->config) extends MemcachedHandler {
+            public string | false $lockId;
+
+            public function unlock() : bool
+            {
+                return parent::unlock();
+            }
+        };
+        $handler->open('', '');
+        $handler->lockId = false;
+        self::assertTrue($handler->unlock());
+    }
+
+    public function testReplaceLock() : void
+    {
+        $handler = new class($this->config, $this->logger) extends MemcachedHandler {
+            public ?Memcached $memcached;
+            public string | false $lockId;
+
+            public function lock(string $id) : bool
+            {
+                return parent::lock($id);
+            }
+        };
+        $handler->open('', '');
+        $handler->lockId = 'foo';
+        $handler->memcached->set('foo', 'bar', 15);
+        self::assertTrue($handler->lock('x'));
+    }
+
+    public function testFailToDestroy() : void
+    {
+        $handler = new class($this->config) extends MemcachedHandler {
+            public string | false $lockId;
+        };
+        $handler->lockId = false;
+        self::assertFalse($handler->destroy('foo'));
     }
 }

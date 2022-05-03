@@ -14,7 +14,7 @@ namespace Tests\Session\SaveHandlers;
  *
  * @runTestsInSeparateProcesses
  */
-class FilesHandlerMatchTest extends FilesHandlerTest
+final class FilesHandlerMatchTest extends FilesHandlerTest
 {
     protected array $config = [
         'match_ip' => true,

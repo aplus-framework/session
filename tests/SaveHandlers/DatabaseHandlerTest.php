@@ -48,10 +48,35 @@ class DatabaseHandlerTest extends AbstractHandler
                 $definition->column('data')->blob();
                 $definition->column('ip')->varchar(45)->default('');
                 $definition->column('ua')->varchar(255)->default('');
+                $definition->column('user_id')->int(11)->null()->default(null);
                 $definition->index('timestamp')->key('timestamp');
                 $definition->index('ip')->key('ip');
                 $definition->index('ua')->key('ua');
+                $definition->index('user_id')->key('user_id');
             })->run();
+    }
+
+    public function testUserId() : void
+    {
+        $this->session->stop();
+        $this->replaceConfig([
+            'save_user_id' => true,
+        ]);
+        $handler = new class($this->config, $this->logger) extends DatabaseHandler {
+            public ?Database $database;
+        };
+        $session = new Session(handler: $handler);
+        $session->start();
+        $database = $handler->database;
+        $session->set('user_id', 123);
+        $id = $session->id();
+        $session->stop();
+        $result = $database->select('user_id') // @phpstan-ignore-line
+            ->from($this->config['table'])
+            ->whereEqual('id', $id) // @phpstan-ignore-line
+            ->run()
+            ->fetch()->user_id;
+        self::assertSame(123, $result);
     }
 
     public function testOpenError() : void
@@ -75,5 +100,79 @@ class DatabaseHandlerTest extends AbstractHandler
             );
             throw $exception;
         }
+    }
+
+    public function testFailToRead() : void
+    {
+        $handler = new class($this->config) extends DatabaseHandler {
+            public ?Database $database;
+        };
+        $handler->database = null;
+        self::assertSame('', $handler->read('foo'));
+    }
+
+    public function testFailToWrite() : void
+    {
+        $handler = new class($this->config) extends DatabaseHandler {
+            public ?Database $database;
+            public false | string $lockId;
+        };
+        $handler->database = null;
+        self::assertFalse($handler->write('foo', 'data'));
+        $handler->database = new Database($this->config);
+        $handler->lockId = false;
+        self::assertFalse($handler->write('foo', 'data'));
+    }
+
+    public function testFailToGC() : void
+    {
+        $handler = new DatabaseHandler([], $this->logger);
+        self::assertFalse(@$handler->gc(3600));
+        self::assertStringStartsWith(
+            'Session (database): Thrown a mysqli_sql_exception',
+            $this->logger->getLastLog()->message
+        );
+    }
+
+    public function testUnlockWithoutLockId() : void
+    {
+        $handler = new class() extends DatabaseHandler {
+            public function unlock() : bool
+            {
+                return parent::unlock();
+            }
+        };
+        self::assertTrue($handler->unlock());
+    }
+
+    public function testFailToUnlock() : void
+    {
+        $handler = new class($this->config) extends DatabaseHandler {
+            public string | false $lockId;
+
+            public function unlock() : bool
+            {
+                return parent::unlock();
+            }
+        };
+        $handler->open('', '');
+        $handler->lockId = 'foo';
+        self::assertFalse($handler->unlock());
+    }
+
+    public function testFailToLock() : void
+    {
+        $handler = new class($this->config, $this->logger) extends DatabaseHandler {
+            public function lock(string $id) : bool
+            {
+                return parent::lock($id);
+            }
+        };
+        $handler->open('', '');
+        self::assertFalse($handler->lock(''));
+        self::assertSame(
+            'Session (database): Error while trying to lock',
+            $this->logger->getLastLog()->message
+        );
     }
 }
