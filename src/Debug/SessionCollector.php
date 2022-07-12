@@ -105,7 +105,7 @@ class SessionCollector extends Collector
                     <td><?= \htmlentities((string) $key) ?></td>
                     <td><pre><code class="language-php"><?=
                                 \htmlentities(Debugger::makeDebugValue($value))
-                                ?></code></pre>
+                ?></code></pre>
                     </td>
                 </tr>
             <?php endforeach ?>
@@ -147,7 +147,7 @@ class SessionCollector extends Collector
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
                                 \htmlentities(Debugger::makeDebugValue($value))
-                                ?></code></pre>
+                ?></code></pre>
                     </td>
                 </tr>
             <?php endforeach ?>
@@ -179,7 +179,7 @@ class SessionCollector extends Collector
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
                                 \htmlentities(Debugger::makeDebugValue($value))
-                                ?></code></pre>
+                ?></code></pre>
                     </td>
                 </tr>
             <?php endforeach ?>
@@ -210,7 +210,7 @@ class SessionCollector extends Collector
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
                                 \htmlentities(Debugger::makeDebugValue($value))
-                                ?></code></pre>
+                ?></code></pre>
                     </td>
                     <td><?= \date('Y-m-d H:i:s', $value['ttl']) ?></td>
                 </tr>
@@ -279,7 +279,7 @@ class SessionCollector extends Collector
                 </tr>
             <?php
             endfor;
-        return \ob_get_clean(); // @phpstan-ignore-line
+            return \ob_get_clean(); // @phpstan-ignore-line
         endif; ?>
         <tr>
             <th><?= \htmlentities($key) ?></th>
