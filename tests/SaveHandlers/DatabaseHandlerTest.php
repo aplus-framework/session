@@ -175,4 +175,18 @@ class DatabaseHandlerTest extends AbstractHandler
             $this->logger->getLastLog()->message
         );
     }
+
+    public function testDatabaseSetterAndGetter() : void
+    {
+        $handler = new DatabaseHandler($this->config);
+        $database = new Database([
+            'username' => \getenv('DB_USERNAME'),
+            'password' => \getenv('DB_PASSWORD'),
+            'host' => \getenv('DB_HOST'),
+        ]);
+        self::assertNull($handler->getDatabase());
+        $handler->setDatabase($database);
+        self::assertTrue($handler->open('', ''));
+        self::assertSame($database, $handler->getDatabase());
+    }
 }

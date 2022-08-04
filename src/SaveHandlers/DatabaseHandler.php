@@ -95,6 +95,17 @@ class DatabaseHandler extends SaveHandler
         ], $config);
     }
 
+    public function setDatabase(Database $database) : static
+    {
+        $this->database = $database;
+        return $this;
+    }
+
+    public function getDatabase() : ?Database
+    {
+        return $this->database ?? null;
+    }
+
     /**
      * Get the table name based on custom/default configs.
      *
