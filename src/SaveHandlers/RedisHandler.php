@@ -77,6 +77,17 @@ class RedisHandler extends SaveHandler
         ], $config);
     }
 
+    public function setRedis(Redis $redis) : static
+    {
+        $this->redis = $redis;
+        return $this;
+    }
+
+    public function getRedis() : ?Redis
+    {
+        return $this->redis ?? null;
+    }
+
     /**
      * Get a key for Redis, using the optional
      * prefix, match IP and match User-Agent configs.

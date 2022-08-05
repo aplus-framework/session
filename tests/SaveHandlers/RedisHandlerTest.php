@@ -136,4 +136,14 @@ class RedisHandlerTest extends AbstractHandler
             $this->logger->getLastLog()->message
         );
     }
+
+    public function testRedisSetterAndGetter() : void
+    {
+        $handler = new RedisHandler($this->config);
+        $redis = new Redis();
+        self::assertNull($handler->getRedis());
+        $handler->setRedis($redis);
+        self::assertTrue($handler->open('', ''));
+        self::assertSame($redis, $handler->getRedis());
+    }
 }
