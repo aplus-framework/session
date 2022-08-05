@@ -91,6 +91,17 @@ class MemcachedHandler extends SaveHandler
         }
     }
 
+    public function setMemcached(Memcached $memcached) : static
+    {
+        $this->memcached = $memcached;
+        return $this;
+    }
+
+    public function getMemcached() : ?Memcached
+    {
+        return $this->memcached ?? null;
+    }
+
     /**
      * Get expiration as a timestamp.
      *

@@ -179,4 +179,14 @@ class MemcachedHandlerTest extends AbstractHandler
         $handler->lockId = false;
         self::assertFalse($handler->destroy('foo'));
     }
+
+    public function testMemcachedSetterAndGetter() : void
+    {
+        $handler = new MemcachedHandler($this->config);
+        $memcached = new Memcached();
+        self::assertNull($handler->getMemcached());
+        $handler->setMemcached($memcached);
+        self::assertTrue($handler->open('', ''));
+        self::assertSame($memcached, $handler->getMemcached());
+    }
 }
