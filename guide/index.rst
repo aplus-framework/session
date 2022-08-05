@@ -12,6 +12,7 @@ Aplus Framework Session Library.
 - `Temporary Data`_
 - `Flash Data`_
 - `Save Handlers`_
+- `Conclusion`_
 
 Installation
 ------------
@@ -269,6 +270,21 @@ These are the DatabaseHandler configs:
 
 Note that the database connection configs must also be set.
 
+Database Instance
+#################
+
+It is also possible to pass an instance of the Database class directly, as in
+the example below:
+
+.. code-block:: php
+
+    use Framework\Database\Database;
+    use Framework\Session\SaveHandlers\DatabaseHandler;
+
+    $database = new Database('root', 'pass', 'app');
+    $saveHandler = new DatabaseHandler();
+    $saveHandler->setDatabase($database);
+
 Files Handler
 ^^^^^^^^^^^^^
 
@@ -339,6 +355,20 @@ These are the MemcachedHandler configs:
         'match_ua' => false,
     ];
 
+Memcached Instance
+##################
+
+It is also possible to pass an instance of the Memcached class directly, as in
+the example below:
+
+.. code-block:: php
+
+    use Framework\Session\SaveHandlers\MemcachedHandler;
+
+    $memcached = new Memcached();
+    $saveHandler = new MemcachedHandler();
+    $saveHandler->setMemcached($memcached);
+
 Redis Handler
 ^^^^^^^^^^^^^
 
@@ -380,3 +410,30 @@ These are the RedisHandler configs:
         // Match User-Agent?
         'match_ua' => false,
     ];
+
+Redis Instance
+##############
+
+It is also possible to pass an instance of the Redis class directly, as in the
+example below:
+
+.. code-block:: php
+
+    use Framework\Session\SaveHandlers\RedisHandler;
+
+    $redis = new Redis();
+    $saveHandler = new RedisHandler();
+    $saveHandler->setRedis($redis);
+
+Conclusion
+----------
+
+Aplus Session Library is an easy-to-use tool for, beginners and experienced, PHP developers. 
+It is perfect for saving user sessions that can be easily scalable. 
+The more you use it, the more you will learn.
+
+.. note::
+    Did you find something wrong? 
+    Be sure to let us know about it with an
+    `issue <https://gitlab.com/aplus-framework/libraries/session/issues>`_. 
+    Thank you!
