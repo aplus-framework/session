@@ -50,6 +50,12 @@ The Session class has methods that facilitate session management.
     // Stop the session, write and close
     $session->stop();
 
+To make sure the session is active you can use the ``activate`` method:
+
+.. code-block:: php
+
+    $session->activate();
+
 Options
 ^^^^^^^
 
