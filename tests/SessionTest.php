@@ -40,6 +40,16 @@ class SessionTest extends TestCase
         self::assertSame('SessionName', \session_name());
     }
 
+    public function testActivate() : void
+    {
+        self::assertTrue($this->session->isActive());
+        self::assertTrue($this->session->activate());
+        $this->session->stop();
+        self::assertFalse($this->session->isActive());
+        self::assertTrue($this->session->activate());
+        self::assertTrue($this->session->isActive());
+    }
+
     public function testSetAndGet() : void
     {
         self::assertNull($this->session->get('foo'));

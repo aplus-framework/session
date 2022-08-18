@@ -145,6 +145,23 @@ class Session
     }
 
     /**
+     * Make sure the session is active.
+     *
+     * If it is not active, it will start it.
+     *
+     * @throws RuntimeException if session could not be started
+     *
+     * @return bool
+     */
+    public function activate() : bool
+    {
+        if ($this->isActive()) {
+            return true;
+        }
+        return $this->start();
+    }
+
+    /**
      * Auto regenerate the session id.
      *
      * @param int $time
