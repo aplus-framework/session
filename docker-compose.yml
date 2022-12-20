@@ -11,6 +11,17 @@ services:
       - memcached
       - redis
     tty: true
+  package-last:
+    image: registry.gitlab.com/aplus-framework/images/package:3
+    container_name: package-session-last
+    working_dir: /package
+    volumes:
+      - .:/package
+    depends_on:
+      - mariadb
+      - memcached
+      - redis
+    tty: true
   mariadb:
     image: mariadb
     restart: always
