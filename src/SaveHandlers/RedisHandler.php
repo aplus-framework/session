@@ -13,6 +13,7 @@ use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 use Redis;
 use RedisException;
+use SensitiveParameter;
 
 /**
  * Class RedisHandler.
@@ -59,7 +60,7 @@ class RedisHandler extends SaveHandler
      * ];
      * ```
      */
-    protected function prepareConfig(array $config) : void
+    protected function prepareConfig(#[SensitiveParameter] array $config) : void
     {
         $this->config = \array_replace([
             'prefix' => '',

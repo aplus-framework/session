@@ -13,6 +13,7 @@ use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 use LogicException;
 use RuntimeException;
+use SensitiveParameter;
 
 /**
  * Class FilesHandler.
@@ -46,7 +47,7 @@ class FilesHandler extends SaveHandler
      * ];
      * ```
      */
-    protected function prepareConfig(array $config) : void
+    protected function prepareConfig(#[SensitiveParameter] array $config) : void
     {
         $this->config = \array_replace([
             'prefix' => '',

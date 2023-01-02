@@ -16,6 +16,7 @@ use Framework\Database\Manipulation\Select;
 use Framework\Database\Manipulation\Update;
 use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
+use SensitiveParameter;
 
 /**
  * Class DatabaseHandler.
@@ -74,7 +75,7 @@ class DatabaseHandler extends SaveHandler
      *
      * NOTE: The Database::connect configs was not shown.
      */
-    protected function prepareConfig(array $config) : void
+    protected function prepareConfig(#[SensitiveParameter] array $config) : void
     {
         $this->config = \array_replace_recursive([
             'table' => 'Sessions',

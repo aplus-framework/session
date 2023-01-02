@@ -13,6 +13,7 @@ use Framework\Log\LogLevel;
 use Framework\Session\SaveHandler;
 use Memcached;
 use OutOfBoundsException;
+use SensitiveParameter;
 
 /**
  * Class MemcachedHandler.
@@ -61,7 +62,7 @@ class MemcachedHandler extends SaveHandler
      * ];
      * ```
      */
-    protected function prepareConfig(array $config) : void
+    protected function prepareConfig(#[SensitiveParameter] array $config) : void
     {
         $this->config = \array_replace_recursive([
             'prefix' => '',

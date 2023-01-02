@@ -11,6 +11,7 @@ namespace Framework\Session;
 
 use Framework\Log\Logger;
 use Framework\Log\LogLevel;
+use SensitiveParameter;
 
 /**
  * Class SaveHandler.
@@ -66,8 +67,10 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * @param array<string,mixed> $config
      * @param Logger|null $logger
      */
-    public function __construct(array $config = [], Logger $logger = null)
-    {
+    public function __construct(
+        #[SensitiveParameter] array $config = [],
+        Logger $logger = null
+    ) {
         $this->prepareConfig($config);
         $this->logger = $logger;
     }
@@ -79,7 +82,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      *
      * @codeCoverageIgnore
      */
-    protected function prepareConfig(array $config) : void
+    protected function prepareConfig(#[SensitiveParameter] array $config) : void
     {
         $this->config = $config;
     }
