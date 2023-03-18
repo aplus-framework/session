@@ -135,7 +135,9 @@ class Session
             throw new LogicException('Session was already active');
         }
         if ( ! @\session_start($this->getOptions($customOptions))) {
-            throw new RuntimeException('Session could not be started');
+            throw new RuntimeException(
+                'Session could not be started: ' . \error_get_last()['message']
+            );
         }
         $time = \time();
         $this->autoRegenerate($time);
