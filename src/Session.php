@@ -561,6 +561,8 @@ class Session
     /**
      * Perform session data garbage collection.
      *
+     * If return false, use {@see error_get_last()} to get error details.
+     *
      * @return false|int Returns the number of deleted session data for success,
      * false for failure
      */
