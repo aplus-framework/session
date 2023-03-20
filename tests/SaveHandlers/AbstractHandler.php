@@ -11,14 +11,14 @@ namespace Tests\Session\SaveHandlers;
 
 use Framework\Log\Logger;
 use Framework\Log\Loggers\MultiFileLogger;
-use Tests\Session\SessionTest;
+use Tests\Session\TestCase;
 
 /**
  * Class AbstractHandler.
  *
  * @runTestsInSeparateProcesses
  */
-abstract class AbstractHandler extends SessionTest
+abstract class AbstractHandler extends TestCase
 {
     /**
      * @var array<string, mixed>
