@@ -40,7 +40,7 @@ final class SessionTest extends TestCase
     public function testStartFail() : void
     {
         $this->session->stop();
-        \exec('chmod 644 ' . $this->getSavePath());
+        \exec('rm -rf ' . $this->getSavePath());
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
             'Session could not be started:'
