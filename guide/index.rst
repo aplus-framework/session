@@ -35,26 +35,26 @@ The Session class has methods that facilitate session management.
     $session = new Session();
 
     // Start the session
-    $session->start();
+    $session->start(); // bool
 
     // Check if the session is active
-    $active = $session->isActive();
+    $active = $session->isActive(); // bool
 
     // Regenerate the session id
-    $session->regenerateId();
+    $session->regenerateId(); // bool
 
     // Destroy the session
-    $session->destroy();
-    $session->destroyCookie();
+    $session->destroy(); // bool
+    $session->destroyCookie(); // bool
 
     // Stop the session, write and close
-    $session->stop();
+    $session->stop(); // bool
 
 To make sure the session is active you can use the ``activate`` method:
 
 .. code-block:: php
 
-    $session->activate();
+    $session->activate(); // bool
 
 Options
 ^^^^^^^
@@ -74,7 +74,7 @@ or by the ``start`` method:
     $session = new Session();
     $session->start([
         'name' => 'session_id'
-    ]);
+    ]); // bool
 
 Auto Regenerate ID
 ##################
@@ -101,7 +101,7 @@ calling the properties directly using the magic methods:
 .. code-block:: php
 
     // Set user_id as 1
-    $session->set('user_id', 1);
+    $session->set('user_id', 1); // static
 
     // Set user_id as 1 using magic setter
     $session->user_id = 1;
@@ -122,13 +122,13 @@ Multiple items can be handled at once:
     $session->setMulti([
         'user_id' => 1,
         'active' => true,
-    ]);
+    ]); // static
 
     // Get an array with the two keys
     $data = $session->getMulti([
         'user_id',
         'active',
-    ]);
+    ]); // array
 
 Abort
 ^^^^^
@@ -138,7 +138,7 @@ the previous one using the ``abort`` method:
 
 .. code-block:: php
 
-    $session->abort();
+    $session->abort(); // bool
 
 Session ID
 ^^^^^^^^^^
@@ -147,13 +147,13 @@ The session id can be obtained through the ``id`` method:
 
 .. code-block:: php
 
-    $id = $session->id();
+    $id = $session->id(); // string or false
 
 and also set as follows:
 
 .. code-block:: php
 
-    $oldId = $session->id('foo');
+    $oldId = $session->id('foo'); // string or false
 
 Getting All Items
 ^^^^^^^^^^^^^^^^^
@@ -162,7 +162,7 @@ Using the ``getAll`` method, you can get all the items in the session:
 
 .. code-block:: php
 
-    $data = $session->getAll();
+    $data = $session->getAll(); // array
 
 With the ``has`` method, you can check if there is an item with a certain key:
 
@@ -179,13 +179,13 @@ Item removal can be performed individually or multiple at once:
 .. code-block:: php
 
     // Remove user_id
-    $session->remove('user_id'); 
+    $session->remove('user_id'); // static
 
     // Remove 'active' and 'foo'
     $session->removeMulti([ 
         'active',
         'foo',
-    ]);
+    ]); // static
 
 Temporary Data
 --------------
@@ -196,10 +196,10 @@ the item will be in the session.
 .. code-block:: php
 
     // Set 'message' for 15 seconds
-    $session->setTemp('message', 'Hello!', 15); 
+    $session->setTemp('message', 'Hello!', 15); // static
 
     // Get 'message' value or null if expired
-    $msg = $session->getTemp('message');
+    $msg = $session->getTemp('message'); // mixed
 
 Flash Data
 ----------
@@ -209,10 +209,10 @@ Flash data are items to be used only for the next request.
 .. code-block:: php
 
     // Set 'message' for the next request
-    $session->setFlash('message', 'Hi, John!');
+    $session->setFlash('message', 'Hi, John!'); // static
 
     // Get 'message' value or null if expired
-    $session->getFlash('message');
+    $session->getFlash('message'); // mixed
 
 Expired Flash and Temp data are automatically removed when the session starts.
 
@@ -289,7 +289,7 @@ the example below:
 
     $database = new Database('root', 'pass', 'app');
     $saveHandler = new DatabaseHandler();
-    $saveHandler->setDatabase($database);
+    $saveHandler->setDatabase($database); // static
 
 Files Handler
 ^^^^^^^^^^^^^
@@ -373,7 +373,7 @@ the example below:
 
     $memcached = new Memcached();
     $saveHandler = new MemcachedHandler();
-    $saveHandler->setMemcached($memcached);
+    $saveHandler->setMemcached($memcached); // static
 
 Redis Handler
 ^^^^^^^^^^^^^
@@ -429,7 +429,7 @@ example below:
 
     $redis = new Redis();
     $saveHandler = new RedisHandler();
-    $saveHandler->setRedis($redis);
+    $saveHandler->setRedis($redis); // static
 
 Conclusion
 ----------
