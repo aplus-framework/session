@@ -21,9 +21,9 @@
     "homepage": "https://aplus-framework.com/packages/session",
     "support": {
         "email": "support@aplus-framework.com",
-        "issues": "https://gitlab.com/aplus-framework/libraries/session/issues",
+        "issues": "https://github.com/aplus-framework/session/issues",
         "forum": "https://aplus-framework.com/forum",
-        "source": "https://gitlab.com/aplus-framework/libraries/session",
+        "source": "https://github.com/aplus-framework/session",
         "docs": "https://docs.aplus-framework.com/guides/libraries/session/"
     },
     "funding": [
