@@ -365,12 +365,13 @@ class SessionCollector extends Collector
             ];
         }
         if ($this->saveHandler instanceof MemcachedHandler) {
+            $serverList = $this->saveHandler->getMemcached()?->getServerList();
+            $config['servers'] = $serverList ?: [];
             $servers = [];
             foreach ($config['servers'] as $server) {
                 $servers[] = [
                     'Host' => $server['host'],
                     'Port' => $server['port'] ?? 11211,
-                    'Weight' => $server['weight'] ?? 0,
                 ];
             }
             return [
@@ -385,10 +386,11 @@ class SessionCollector extends Collector
             ];
         }
         if ($this->saveHandler instanceof RedisHandler) {
+            $redis = $this->saveHandler->getRedis();
             return [
-                'Host' => $config['host'],
-                'Port' => $config['port'],
-                'Timeout' => $config['timeout'],
+                'Host' => $redis?->getHost() ?: $config['host'],
+                'Port' => $redis?->getPort() ?: $config['port'],
+                'Timeout' => $redis?->getTimeout() ?: $config['timeout'],
                 'Database' => $config['database'],
                 'Prefix' => $config['prefix'],
                 'Lock Attempts' => $config['lock_attempts'],
@@ -400,9 +402,10 @@ class SessionCollector extends Collector
             ];
         }
         if ($this->saveHandler instanceof DatabaseHandler) {
+            $databaseConfig = $this->saveHandler->getDatabase()?->getConfig();
             return [
-                'Host' => $config['host'],
-                'Schema' => $config['schema'],
+                'Host' => $databaseConfig['host'] ?? '',
+                'Schema' => $databaseConfig['schema'] ?? '',
                 'Table' => $config['table'],
                 'Columns' => [
                     [

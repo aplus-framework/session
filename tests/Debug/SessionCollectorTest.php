@@ -182,7 +182,8 @@ final class SessionCollectorTest extends TestCase
                         'host' => \getenv('MEMCACHED_HOST'),
                     ],
                     [
-                        'host' => \getenv('MEMCACHED_HOST'),
+                        // @phpstan-ignore-next-line
+                        'host' => \gethostbyname(\getenv('MEMCACHED_HOST')),
                     ],
                 ],
             ]),
