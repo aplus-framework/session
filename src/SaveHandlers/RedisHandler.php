@@ -239,7 +239,7 @@ class RedisHandler extends SaveHandler
         while ($attempt < $this->config['lock_attempts']) {
             $attempt++;
             $oldTtl = $this->redis->ttl($lockId);
-            if ($oldTtl > 0) {
+            if (\is_int($oldTtl) && $oldTtl > 0) {
                 \usleep($this->config['lock_sleep']);
                 continue;
             }
