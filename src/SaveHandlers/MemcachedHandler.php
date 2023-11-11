@@ -84,7 +84,7 @@ class MemcachedHandler extends SaveHandler
             'match_ua' => false,
         ], $config);
         foreach ($this->config['servers'] as $index => $server) {
-            if ( ! isset($server['host'])) {
+            if (!isset($server['host'])) {
                 throw new OutOfBoundsException(
                     "Memcached host not set on server config '{$index}'"
                 );
@@ -165,7 +165,7 @@ class MemcachedHandler extends SaveHandler
         if ($result === false) {
             $this->log('Session (memcached): ' . $this->memcached->getLastErrorMessage());
         }
-        if ( ! $this->memcached->getStats()) {
+        if (!$this->memcached->getStats()) {
             $this->log('Session (memcached): Could not connect to any server');
             return false;
         }
@@ -174,10 +174,10 @@ class MemcachedHandler extends SaveHandler
 
     public function read($id) : string
     {
-        if ( ! isset($this->memcached) || ! $this->lock($id)) {
+        if (!isset($this->memcached) || !$this->lock($id)) {
             return '';
         }
-        if ( ! isset($this->sessionId)) {
+        if (!isset($this->sessionId)) {
             $this->sessionId = $id;
         }
         $data = (string) $this->memcached->get($this->getKey($id));
@@ -187,11 +187,11 @@ class MemcachedHandler extends SaveHandler
 
     public function write($id, $data) : bool
     {
-        if ( ! isset($this->memcached)) {
+        if (!isset($this->memcached)) {
             return false;
         }
         if ($id !== $this->sessionId) {
-            if ( ! $this->unlock() || ! $this->lock($id)) {
+            if (!$this->unlock() || !$this->lock($id)) {
                 return false;
             }
             $this->setFingerprint('');
@@ -229,7 +229,7 @@ class MemcachedHandler extends SaveHandler
         if ($this->lockId) {
             $this->memcached->delete($this->lockId);
         }
-        if ( ! $this->memcached->quit()) {
+        if (!$this->memcached->quit()) {
             return false;
         }
         $this->memcached = null;
@@ -238,11 +238,11 @@ class MemcachedHandler extends SaveHandler
 
     public function destroy($id) : bool
     {
-        if ( ! $this->lockId) {
+        if (!$this->lockId) {
             return false;
         }
         $destroyed = $this->memcached->delete($this->getKey($id));
-        return ! ($destroyed === false
+        return !($destroyed === false
             && $this->memcached->getResultCode() !== Memcached::RES_NOTFOUND);
     }
 
@@ -265,7 +265,7 @@ class MemcachedHandler extends SaveHandler
                 \usleep($this->config['lock_sleep']);
                 continue;
             }
-            if ( ! $this->memcached->set($lockId, \time(), $expiration)) {
+            if (!$this->memcached->set($lockId, \time(), $expiration)) {
                 $this->log('Session (memcached): Error while trying to lock ' . $lockId);
                 return false;
             }
@@ -286,7 +286,7 @@ class MemcachedHandler extends SaveHandler
         if ($this->lockId === false) {
             return true;
         }
-        if ( ! $this->memcached->delete($this->lockId) &&
+        if (!$this->memcached->delete($this->lockId) &&
             $this->memcached->getResultCode() !== Memcached::RES_NOTFOUND
         ) {
             $this->log('Session (memcached): Error while trying to unlock ' . $this->lockId);

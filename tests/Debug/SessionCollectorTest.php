@@ -167,7 +167,7 @@ final class SessionCollectorTest extends TestCase
     public function saveHandlerProvider() : Generator
     {
         $directory = \sys_get_temp_dir() . '/sessions';
-        if ( ! \is_dir($directory)) {
+        if (!\is_dir($directory)) {
             \mkdir($directory);
         }
         yield [

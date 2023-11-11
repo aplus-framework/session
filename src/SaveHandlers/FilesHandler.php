@@ -62,14 +62,14 @@ class FilesHandler extends SaveHandler
             $this->config['directory'],
             \DIRECTORY_SEPARATOR
         ) . \DIRECTORY_SEPARATOR;
-        if ( ! \is_dir($this->config['directory'])) {
+        if (!\is_dir($this->config['directory'])) {
             throw new LogicException(
                 'Session config directory does not exist: ' . $this->config['directory']
             );
         }
         if ($this->config['prefix']) {
             $dirname = $this->config['directory'] . $this->config['prefix'] . \DIRECTORY_SEPARATOR;
-            if ( ! \is_dir($dirname) && ! \mkdir($dirname, 0700) && ! \is_dir($dirname)) {
+            if (!\is_dir($dirname) && !\mkdir($dirname, 0700) && !\is_dir($dirname)) {
                 throw new RuntimeException(
                     "Session prefix directory '{$dirname}' was not created",
                 );
@@ -105,19 +105,19 @@ class FilesHandler extends SaveHandler
         }
         $filename = $this->getFilename($id);
         $dirname = \dirname($filename);
-        if ( ! \is_dir($dirname) && ! \mkdir($dirname, 0700) && ! \is_dir($dirname)) {
+        if (!\is_dir($dirname) && !\mkdir($dirname, 0700) && !\is_dir($dirname)) {
             throw new RuntimeException(
                 "Session subdirectory '{$dirname}' was not created",
             );
         }
         $this->sessionExists = \is_file($filename);
-        if ( ! $this->lock($filename)) {
+        if (!$this->lock($filename)) {
             return '';
         }
-        if ( ! isset($this->sessionId)) {
+        if (!isset($this->sessionId)) {
             $this->sessionId = $id;
         }
-        if ( ! $this->sessionExists) {
+        if (!$this->sessionExists) {
             \chmod($filename, 0600);
             $this->setFingerprint('');
             return '';
@@ -128,7 +128,7 @@ class FilesHandler extends SaveHandler
     protected function readData() : string
     {
         $data = '';
-        while ( ! \feof($this->stream)) {
+        while (!\feof($this->stream)) {
             $data .= \fread($this->stream, 1024);
         }
         $this->setFingerprint($data);
@@ -137,14 +137,14 @@ class FilesHandler extends SaveHandler
 
     public function write($id, $data) : bool
     {
-        if ( ! isset($this->stream)) {
+        if (!isset($this->stream)) {
             return false;
         }
         if ($id !== $this->sessionId) {
             $this->sessionId = $id;
         }
         if ($this->hasSameFingerprint($data)) {
-            return ! $this->sessionExists || \touch($this->getFilename($id));
+            return !$this->sessionExists || \touch($this->getFilename($id));
         }
         if ($this->sessionExists) {
             \ftruncate($this->stream, 0);
@@ -171,7 +171,7 @@ class FilesHandler extends SaveHandler
 
     public function close() : bool
     {
-        if ( ! \is_resource($this->stream)) {
+        if (!\is_resource($this->stream)) {
             return true;
         }
         $this->unlock();
@@ -184,7 +184,7 @@ class FilesHandler extends SaveHandler
         $this->close();
         \clearstatcache();
         $filename = $this->getFilename($id);
-        return ! \is_file($filename) || \unlink($filename);
+        return !\is_file($filename) || \unlink($filename);
     }
 
     public function gc($max_lifetime) : int | false

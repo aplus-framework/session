@@ -58,10 +58,10 @@ class SessionCollector extends Collector
 
     public function getContents() : string
     {
-        if ( ! isset($this->session)) {
+        if (!isset($this->session)) {
             return '<p>No Session instance has been set on this collector.</p>';
         }
-        if ( ! $this->session->isActive()) {
+        if (!$this->session->isActive()) {
             return '<p>Session is inactive.</p>';
         }
         \ob_start(); ?>

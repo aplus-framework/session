@@ -23,7 +23,7 @@ class FilesHandlerTest extends AbstractHandler
     public function setUp() : void
     {
         $directory = \getenv('FILES_DIR');
-        if ($directory && ! \is_dir($directory)) {
+        if ($directory && !\is_dir($directory)) {
             \mkdir($directory, 0700, true);
         }
         $this->replaceConfig([

@@ -173,11 +173,11 @@ class DatabaseHandler extends SaveHandler
 
     public function read($id) : string
     {
-        if ( ! isset($this->database) || $this->lock($id) === false) {
+        if (!isset($this->database) || $this->lock($id) === false) {
             $this->setFingerprint('');
             return '';
         }
-        if ( ! isset($this->sessionId)) {
+        if (!isset($this->sessionId)) {
             $this->sessionId = $id;
         }
         $statement = $this->database
@@ -194,7 +194,7 @@ class DatabaseHandler extends SaveHandler
 
     public function write($id, $data) : bool
     {
-        if ( ! isset($this->database)) {
+        if (!isset($this->database)) {
             return false;
         }
         if ($this->lockId === false) {
@@ -245,7 +245,7 @@ class DatabaseHandler extends SaveHandler
                 return 'NOW()';
             },
         ];
-        if ( ! $this->hasSameFingerprint($data)) {
+        if (!$this->hasSameFingerprint($data)) {
             $columns[$this->getColumn('data')] = $data;
         }
         $this->addUserIdColumn($columns);
@@ -277,7 +277,7 @@ class DatabaseHandler extends SaveHandler
 
     public function close() : bool
     {
-        $closed = ! ($this->lockId && ! $this->unlock());
+        $closed = !($this->lockId && !$this->unlock());
         $this->database = null;
         return $closed;
     }

@@ -68,7 +68,8 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * @param Logger|null $logger
      */
     public function __construct(
-        #[SensitiveParameter] array $config = [],
+        #[SensitiveParameter]
+        array $config = [],
         Logger $logger = null
     ) {
         $this->prepareConfig($config);

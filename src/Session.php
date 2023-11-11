@@ -134,7 +134,7 @@ class Session
         if ($this->isActive()) {
             throw new LogicException('Session was already active');
         }
-        if ( ! @\session_start($this->getOptions($customOptions))) {
+        if (!@\session_start($this->getOptions($customOptions))) {
             $message = '';
             if (\error_get_last()) {
                 $message = ': ' . \error_get_last()['message'];

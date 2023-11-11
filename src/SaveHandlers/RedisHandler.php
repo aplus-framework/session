@@ -130,7 +130,7 @@ class RedisHandler extends SaveHandler
             }
         }
         if (isset($this->config['database'])
-            && ! $this->redis->select($this->config['database'])
+            && !$this->redis->select($this->config['database'])
         ) {
             $this->log(
                 "Session (redis): Could not select the database '{$this->config['database']}'"
@@ -142,10 +142,10 @@ class RedisHandler extends SaveHandler
 
     public function read($id) : string
     {
-        if ( ! isset($this->redis) || ! $this->lock($id)) {
+        if (!isset($this->redis) || !$this->lock($id)) {
             return '';
         }
-        if ( ! isset($this->sessionId)) {
+        if (!isset($this->sessionId)) {
             $this->sessionId = $id;
         }
         $data = $this->redis->get($this->getKey($id));
@@ -156,11 +156,11 @@ class RedisHandler extends SaveHandler
 
     public function write($id, $data) : bool
     {
-        if ( ! isset($this->redis)) {
+        if (!isset($this->redis)) {
             return false;
         }
         if ($id !== $this->sessionId) {
-            if ( ! $this->unlock() || ! $this->lock($id)) {
+            if (!$this->unlock() || !$this->lock($id)) {
                 return false;
             }
             $this->sessionExists = false;
@@ -171,7 +171,7 @@ class RedisHandler extends SaveHandler
         }
         $maxlifetime = $this->getMaxlifetime();
         $this->redis->expire($this->lockId, $this->config['lock_ttl']);
-        if ($this->sessionExists === false || ! $this->hasSameFingerprint($data)) {
+        if ($this->sessionExists === false || !$this->hasSameFingerprint($data)) {
             if ($this->redis->set($this->getKey($id), $data, $maxlifetime)) {
                 $this->setFingerprint($data);
                 $this->sessionExists = true;
@@ -189,7 +189,7 @@ class RedisHandler extends SaveHandler
 
     public function close() : bool
     {
-        if ( ! isset($this->redis)) {
+        if (!isset($this->redis)) {
             return true;
         }
         try {
@@ -197,7 +197,7 @@ class RedisHandler extends SaveHandler
                 if ($this->lockId) {
                     $this->redis->del($this->lockId);
                 }
-                if ( ! $this->redis->close()) {
+                if (!$this->redis->close()) {
                     return false;
                 }
             }
@@ -210,7 +210,7 @@ class RedisHandler extends SaveHandler
 
     public function destroy($id) : bool
     {
-        if ( ! $this->lockId) {
+        if (!$this->lockId) {
             return false;
         }
         $result = $this->redis->del($this->getKey($id));
@@ -243,7 +243,7 @@ class RedisHandler extends SaveHandler
                 \usleep($this->config['lock_sleep']);
                 continue;
             }
-            if ( ! $this->redis->setex($lockId, $ttl, (string) \time())) {
+            if (!$this->redis->setex($lockId, $ttl, (string) \time())) {
                 $this->log('Session (redis): Error while trying to lock ' . $lockId);
                 return false;
             }
@@ -270,7 +270,7 @@ class RedisHandler extends SaveHandler
         if ($this->lockId === false) {
             return true;
         }
-        if ( ! $this->redis->del($this->lockId)) {
+        if (!$this->redis->del($this->lockId)) {
             $this->log('Session (redis): Error while trying to unlock ' . $this->lockId);
             return false;
         }
