@@ -260,6 +260,7 @@ class Session
             throw new RuntimeException('Could not get the session name');
         }
         $params = \session_get_cookie_params();
+        // @phpstan-ignore-next-line
         return \setcookie($name, '', [
             'expires' => 0,
             'path' => $params['path'],
