@@ -98,9 +98,7 @@ class MemcachedHandlerTest extends AbstractHandler
     public function testInvalidOption() : void
     {
         $this->session->stop();
-        $this->expectWarning();
-        $this->expectWarningMessage('Memcached::setOptions(): invalid configuration option');
-        (new MemcachedHandler([
+        @(new MemcachedHandler([
             'servers' => [
                 [
                     'host' => \getenv('MEMCACHED_HOST'),
@@ -110,6 +108,10 @@ class MemcachedHandlerTest extends AbstractHandler
                 'foo' => 'bar',
             ],
         ], $this->logger))->open('', 'session_id');
+        self::assertSame(
+            'Memcached::setOptions(): invalid configuration option',
+            \error_get_last()['message']
+        );
     }
 
     public function testFailToRead() : void
