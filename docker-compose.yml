@@ -11,9 +11,9 @@ services:
       - memcached
       - redis
     tty: true
-  package-last:
-    image: registry.gitlab.com/aplus-framework/images/package:3
-    container_name: package-session-last
+  package-latest:
+    image: registry.gitlab.com/aplus-framework/images/package:latest
+    container_name: package-session-latest
     working_dir: /package
     volumes:
       - .:/package
