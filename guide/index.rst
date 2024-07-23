@@ -291,6 +291,25 @@ the example below:
     $saveHandler = new DatabaseHandler();
     $saveHandler->setDatabase($database); // static
 
+Database Table
+##############
+
+A basic example of a table for sessions is below:
+
+.. code-block:: sql
+    
+    CREATE TABLE `Sessions` (
+        `id` varchar(128) NOT NULL,
+        `timestamp` timestamp NOT NULL,
+        `data` blob NOT NULL,
+        `ip` varchar(45) NOT NULL, -- optional
+        `ua` varchar(255) NOT NULL, -- optional
+        PRIMARY KEY (`id`),
+        KEY `timestamp` (`timestamp`),
+        KEY `ip` (`ip`), -- optional
+        KEY `ua` (`ua`) -- optional
+    );
+
 Files Handler
 ^^^^^^^^^^^^^
 
