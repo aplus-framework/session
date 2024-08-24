@@ -119,7 +119,7 @@ class RedisHandlerTest extends AbstractHandler
     public function testUnlock() : void
     {
         $handler = new class($this->config, $this->logger) extends RedisHandler {
-            public string | false $lockId;
+            public false | string $lockId;
 
             public function unlock() : bool
             {

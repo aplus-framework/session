@@ -144,7 +144,7 @@ class MemcachedHandlerTest extends AbstractHandler
     public function testUnlocked() : void
     {
         $handler = new class($this->config) extends MemcachedHandler {
-            public string | false $lockId;
+            public false | string $lockId;
 
             public function unlock() : bool
             {
@@ -160,7 +160,7 @@ class MemcachedHandlerTest extends AbstractHandler
     {
         $handler = new class($this->config, $this->logger) extends MemcachedHandler {
             public ?Memcached $memcached;
-            public string | false $lockId;
+            public false | string $lockId;
 
             public function lock(string $id) : bool
             {
@@ -176,7 +176,7 @@ class MemcachedHandlerTest extends AbstractHandler
     public function testFailToDestroy() : void
     {
         $handler = new class($this->config) extends MemcachedHandler {
-            public string | false $lockId;
+            public false | string $lockId;
         };
         $handler->lockId = false;
         self::assertFalse($handler->destroy('foo'));

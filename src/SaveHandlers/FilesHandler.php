@@ -187,7 +187,7 @@ class FilesHandler extends SaveHandler
         return !\is_file($filename) || \unlink($filename);
     }
 
-    public function gc($max_lifetime) : int | false
+    public function gc($max_lifetime) : false | int
     {
         $dirHandle = \opendir($this->config['directory']);
         if ($dirHandle === false) {

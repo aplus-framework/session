@@ -148,7 +148,7 @@ class DatabaseHandlerTest extends AbstractHandler
     public function testFailToUnlock() : void
     {
         $handler = new class($this->config) extends DatabaseHandler {
-            public string | false $lockId;
+            public false | string $lockId;
 
             public function unlock() : bool
             {

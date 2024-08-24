@@ -223,7 +223,7 @@ class RedisHandler extends SaveHandler
         return true;
     }
 
-    public function gc($max_lifetime) : int | false
+    public function gc($max_lifetime) : false | int
     {
         return 0;
     }

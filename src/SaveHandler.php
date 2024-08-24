@@ -41,7 +41,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      *
      * @var false|string
      */
-    protected string | false $lockId = false;
+    protected false | string $lockId = false;
     /**
      * Tells if the session exists (if was read).
      *
@@ -70,7 +70,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     public function __construct(
         #[SensitiveParameter]
         array $config = [],
-        Logger $logger = null
+        ?Logger $logger = null
     ) {
         $this->prepareConfig($config);
         $this->logger = $logger;
@@ -298,7 +298,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * @return false|int Returns the number of deleted session data for success,
      * false for failure
      */
-    abstract public function gc($max_lifetime) : int | false;
+    abstract public function gc($max_lifetime) : false | int;
 
     /**
      * Acquire a lock for a session id.

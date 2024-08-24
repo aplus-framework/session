@@ -39,7 +39,7 @@ final class SessionCollectorTest extends TestCase
      *
      * @return Session
      */
-    protected function makeSession(array $options = [], SaveHandler $handler = null) : Session
+    protected function makeSession(array $options = [], ?SaveHandler $handler = null) : Session
     {
         $session = new Session($options, $handler);
         $session->setDebugCollector($this->collector);
@@ -208,7 +208,7 @@ final class SessionCollectorTest extends TestCase
                 return true;
             }
 
-            public function gc($maxLifetime) : int | false
+            public function gc($maxLifetime) : false | int
             {
                 return 0;
             }

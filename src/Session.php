@@ -34,7 +34,7 @@ class Session
      * @param array<string,int|string> $options
      * @param SaveHandler|null $handler
      */
-    public function __construct(array $options = [], SaveHandler $handler = null)
+    public function __construct(array $options = [], ?SaveHandler $handler = null)
     {
         $this->setOptions($options);
         if ($handler) {
@@ -553,7 +553,7 @@ class Session
      * $newId is set, it is accepted but not validated. When session_start is
      * called, the id is only used if it is valid
      */
-    public function id(string $newId = null) : string | false
+    public function id(?string $newId = null) : false | string
     {
         if ($newId !== null && $this->isActive()) {
             throw new LogicException(
@@ -571,7 +571,7 @@ class Session
      * @return false|int Returns the number of deleted session data for success,
      * false for failure
      */
-    public function gc() : int | false
+    public function gc() : false | int
     {
         return @\session_gc();
     }
