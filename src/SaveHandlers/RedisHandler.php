@@ -109,7 +109,7 @@ class RedisHandler extends SaveHandler
         }
         $this->redis = new Redis();
         try {
-            $this->redis->connect(
+            @$this->redis->connect(
                 $this->config['host'],
                 $this->config['port'],
                 $this->config['timeout']
