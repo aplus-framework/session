@@ -35,6 +35,8 @@ use SensitiveParameter;
  * );
  * ```
  *
+ * NOTE: As of PHP 8.4 the id column can be `char(32)`.
+ *
  * @package session
  */
 class DatabaseHandler extends SaveHandler
