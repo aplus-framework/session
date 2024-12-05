@@ -82,8 +82,6 @@ class Session
         $default = [
             'name' => 'session_id',
             'serialize_handler' => $serializer,
-            'sid_bits_per_character' => 6,
-            'sid_length' => 48,
             'cookie_domain' => '',
             'cookie_httponly' => 1,
             'cookie_lifetime' => 7200,
@@ -99,6 +97,10 @@ class Session
             'auto_regenerate_maxlifetime' => 0,
             'auto_regenerate_destroy' => true,
         ];
+        if (\PHP_VERSION_ID < 80400) {
+            $default['sid_bits_per_character'] = 6;
+            $default['sid_length'] = 48;
+        }
         $this->options = $custom
             ? \array_replace($default, $custom)
             : $default;
