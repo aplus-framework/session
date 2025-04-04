@@ -80,6 +80,7 @@ class RedisHandler extends SaveHandler
 
     public function setRedis(Redis $redis) : static
     {
+        $this->setByExternal = true;
         $this->redis = $redis;
         return $this;
     }
@@ -192,19 +193,21 @@ class RedisHandler extends SaveHandler
         if (!isset($this->redis)) {
             return true;
         }
-        try {
-            if ($this->redis->ping()) {
-                if ($this->lockId) {
-                    $this->redis->del($this->lockId);
+        if ($this->setByExternal === false) {
+            try {
+                if ($this->redis->ping()) {
+                    if ($this->lockId) {
+                        $this->redis->del($this->lockId);
+                    }
+                    if (!$this->redis->close()) {
+                        return false;
+                    }
                 }
-                if (!$this->redis->close()) {
-                    return false;
-                }
+            } catch (RedisException $e) {
+                $this->log('Session (redis): Got RedisException on close: ' . $e->getMessage());
             }
-        } catch (RedisException $e) {
-            $this->log('Session (redis): Got RedisException on close: ' . $e->getMessage());
+            $this->redis = null;
         }
-        $this->redis = null;
         return true;
     }
 

@@ -145,5 +145,7 @@ class RedisHandlerTest extends AbstractHandler
         $handler->setRedis($redis);
         self::assertTrue($handler->open('', ''));
         self::assertSame($redis, $handler->getRedis());
+        self::assertTrue($handler->close());
+        self::assertSame($redis, $handler->getRedis());
     }
 }

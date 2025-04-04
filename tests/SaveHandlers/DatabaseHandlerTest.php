@@ -188,5 +188,7 @@ class DatabaseHandlerTest extends AbstractHandler
         $handler->setDatabase($database);
         self::assertTrue($handler->open('', ''));
         self::assertSame($database, $handler->getDatabase());
+        self::assertTrue($handler->close());
+        self::assertSame($database, $handler->getDatabase());
     }
 }

@@ -94,6 +94,7 @@ class MemcachedHandler extends SaveHandler
 
     public function setMemcached(Memcached $memcached) : static
     {
+        $this->setByExternal = true;
         $this->memcached = $memcached;
         return $this;
     }
@@ -229,10 +230,12 @@ class MemcachedHandler extends SaveHandler
         if ($this->lockId) {
             $this->memcached->delete($this->lockId);
         }
-        if (!$this->memcached->quit()) {
-            return false;
+        if ($this->setByExternal === false) {
+            if (!$this->memcached->quit()) {
+                return false;
+            }
+            $this->memcached = null;
         }
-        $this->memcached = null;
         return true;
     }
 

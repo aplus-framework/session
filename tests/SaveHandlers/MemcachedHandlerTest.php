@@ -190,5 +190,7 @@ class MemcachedHandlerTest extends AbstractHandler
         $handler->setMemcached($memcached);
         self::assertTrue($handler->open('', ''));
         self::assertSame($memcached, $handler->getMemcached());
+        self::assertTrue($handler->close());
+        self::assertSame($memcached, $handler->getMemcached());
     }
 }

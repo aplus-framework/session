@@ -60,6 +60,16 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * @var Logger|null
      */
     protected ?Logger $logger;
+    /**
+     * It says that the handler object was set with an externally created object.
+     *
+     * If this is true, the handler object should not be changed or removed (in the close method).
+     *
+     * Some functions, such as `session_regenerate_id`, call the close method and then open again!
+     *
+     * @var bool
+     */
+    protected bool $setByExternal = false;
 
     /**
      * SessionSaveHandler constructor.

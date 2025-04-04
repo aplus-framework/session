@@ -100,6 +100,7 @@ class DatabaseHandler extends SaveHandler
 
     public function setDatabase(Database $database) : static
     {
+        $this->setByExternal = true;
         $this->database = $database;
         return $this;
     }
@@ -280,7 +281,9 @@ class DatabaseHandler extends SaveHandler
     public function close() : bool
     {
         $closed = !($this->lockId && !$this->unlock());
-        $this->database = null;
+        if ($this->setByExternal === false) {
+            $this->database = null;
+        }
         return $closed;
     }
 
