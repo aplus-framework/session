@@ -76,6 +76,14 @@ or by the ``start`` method:
         'name' => 'session_id'
     ]); // bool
 
+Custom Options
+^^^^^^^^^^^^^^
+
+Custom options only work if they are passed through the Session constructor.
+
+- `Auto Regenerate ID`_
+- `Set-Cookie Permanent`_
+
 Auto Regenerate ID
 ##################
 
@@ -91,6 +99,24 @@ options:
         'auto_regenerate_maxlifetime' => 7200,
         'auto_regenerate_destroy' => true,
     ]));
+
+This will help avoid
+`Session Fixation <https://owasp.org/www-community/attacks/Session_fixation>`_.
+
+Set-Cookie Permanent
+####################
+
+It is possible to send the section's Set-Cookie header in all HTTP responses by
+setting the ``set_cookie_permanent`` option:
+
+.. code-block:: php
+
+    $session = new Session([
+        'set_cookie_permanent' => true,
+    ]));
+
+This will cause the session cookie expiration date to be updated in the browser
+on every response.
 
 Managing Data
 -------------
