@@ -255,4 +255,50 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     {
         self::assertTrue($this->session->destroyCookie());
     }
+
+    /**
+     * By default, a Set-Cookie header is set when the session starts.
+     *
+     * @see TestCase::testSetCookiePermanent()
+     */
+    public function testSetOneCookie() : void
+    {
+        $this->session->stop();
+        $headers = xdebug_get_headers();
+        $count = 0;
+        foreach ($headers as $header) {
+            if (\str_starts_with($header, 'Set-Cookie: SessionName=')) {
+                $count++;
+            }
+        }
+        self::assertSame(1, $count);
+    }
+
+    /**
+     * The first time the session is started with the set_cookie_permanent
+     * option, two identical Set-Cookie headers are set.
+     *
+     * In future requests the Set-Cookie header is set only once if the request
+     * contains the Cookie header with the session name and a valid value (but
+     * this could not be tested).
+     *
+     * @see TestCase::testSetOneCookie()
+     */
+    public function testSetCookiePermanent() : void
+    {
+        $this->session->stop();
+        $this->session = new Session([
+            'name' => 'sess_id',
+            'set_cookie_permanent' => 1,
+        ], $this->handler);
+        $this->session->start();
+        $headers = xdebug_get_headers();
+        $count = 0;
+        foreach ($headers as $header) {
+            if (\str_starts_with($header, 'Set-Cookie: sess_id=')) {
+                $count++;
+            }
+        }
+        self::assertSame(2, $count);
+    }
 }

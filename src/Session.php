@@ -96,6 +96,7 @@ class Session
             // used to auto-regenerate the session id:
             'auto_regenerate_maxlifetime' => 0,
             'auto_regenerate_destroy' => true,
+            'set_cookie_permanent' => false,
         ];
         if (\PHP_VERSION_ID < 80400) {
             $default['sid_bits_per_character'] = 6;
@@ -118,7 +119,8 @@ class Session
             : $this->options;
         unset(
             $options['auto_regenerate_maxlifetime'],
-            $options['auto_regenerate_destroy']
+            $options['auto_regenerate_destroy'],
+            $options['set_cookie_permanent'],
         );
         return $options;
     }
@@ -146,6 +148,7 @@ class Session
             );
         }
         $time = \time();
+        $this->setPermanentCookie($time);
         $this->autoRegenerate($time);
         $this->clearTemp($time);
         $this->clearFlash();
@@ -167,6 +170,33 @@ class Session
             return true;
         }
         return $this->start();
+    }
+
+    /**
+     * @param int $time
+     *
+     * @see https://www.php.net/manual/en/function.session-set-cookie-params.php#100657
+     * @see https://stackoverflow.com/a/34252812/6027968
+     */
+    protected function setPermanentCookie(int $time) : void
+    {
+        $setCookie = (bool) $this->options['set_cookie_permanent'];
+        if ($setCookie === false) {
+            return;
+        }
+        $params = \session_get_cookie_params();
+        \setcookie(
+            \session_name(), // @phpstan-ignore-line
+            \session_id(), // @phpstan-ignore-line
+            [ // @phpstan-ignore-line
+                'expires' => $time + $this->options['cookie_lifetime'],
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => $params['secure'],
+                'httponly' => $params['httponly'],
+                'samesite' => $params['samesite'],
+            ]
+        );
     }
 
     /**
