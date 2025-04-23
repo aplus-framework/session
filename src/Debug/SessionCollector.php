@@ -315,6 +315,10 @@ class SessionCollector extends Collector
             </tr>
             </tbody>
         </table>
+        <p>
+            <strong>Set-Cookie:</strong> <?=
+            $this->options['set_cookie_permanent'] ? 'Permanent' : 'Normal' ?>
+        </p>
         <?php
         return \ob_get_clean(); // @phpstan-ignore-line
     }
