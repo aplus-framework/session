@@ -106,7 +106,7 @@ This will help avoid
 Set-Cookie Permanent
 ####################
 
-It is possible to send the section's Set-Cookie header in all HTTP responses by
+It is possible to send the session's Set-Cookie header in all HTTP responses by
 setting the ``set_cookie_permanent`` option:
 
 .. code-block:: php
