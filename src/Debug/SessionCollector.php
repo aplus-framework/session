@@ -10,7 +10,6 @@
 namespace Framework\Session\Debug;
 
 use Framework\Debug\Collector;
-use Framework\Debug\Debugger;
 use Framework\Helpers\ArraySimple;
 use Framework\Session\SaveHandler;
 use Framework\Session\SaveHandlers\DatabaseHandler;
@@ -96,7 +95,7 @@ class SessionCollector extends Collector
             <thead>
             <tr>
                 <th>Key</th>
-                <th>Value</th>
+                <th>Value Type</th>
             </tr>
             </thead>
             <tbody>
@@ -104,7 +103,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities((string) $key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(Debugger::makeDebugValue($value))
+                                \htmlentities(\get_debug_type($value))
                 ?></code></pre>
                     </td>
                 </tr>
@@ -138,7 +137,7 @@ class SessionCollector extends Collector
             <thead>
             <tr>
                 <th>Key</th>
-                <th>Value</th>
+                <th>Value Type</th>
             </tr>
             </thead>
             <tbody>
@@ -146,7 +145,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(Debugger::makeDebugValue($value))
+                                \htmlentities(\get_debug_type($value))
                 ?></code></pre>
                     </td>
                 </tr>
@@ -170,7 +169,7 @@ class SessionCollector extends Collector
             <thead>
             <tr>
                 <th>Key</th>
-                <th>Value</th>
+                <th>Value Type</th>
             </tr>
             </thead>
             <tbody>
@@ -178,7 +177,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(Debugger::makeDebugValue($value))
+                                \htmlentities(\get_debug_type($value))
                 ?></code></pre>
                     </td>
                 </tr>
@@ -200,7 +199,7 @@ class SessionCollector extends Collector
             <thead>
             <tr>
                 <th>Key</th>
-                <th>Value</th>
+                <th>Value Type</th>
                 <th>TTL</th>
             </tr>
             </thead>
@@ -209,7 +208,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(Debugger::makeDebugValue($value))
+                                \htmlentities(\get_debug_type($value))
                 ?></code></pre>
                     </td>
                     <td><?= \date('Y-m-d H:i:s', $value['ttl']) ?></td>
