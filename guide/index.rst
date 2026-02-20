@@ -325,7 +325,7 @@ A basic example of a table for sessions is below:
 .. code-block:: sql
     
     CREATE TABLE `Sessions` (
-        `id` varchar(128) NOT NULL,
+        `id` char(32) NOT NULL,
         `timestamp` timestamp NOT NULL,
         `data` blob NOT NULL,
         `ip` varchar(45) NOT NULL, -- optional

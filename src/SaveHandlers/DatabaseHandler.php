@@ -23,7 +23,7 @@ use SensitiveParameter;
  *
  * ```sql
  * CREATE TABLE `Sessions` (
- *     `id` varchar(128) NOT NULL,
+ *     `id` char(32) NOT NULL,
  *     `timestamp` timestamp NOT NULL,
  *     `data` blob NOT NULL,
  *     `ip` varchar(45) NOT NULL, -- optional
@@ -34,8 +34,6 @@ use SensitiveParameter;
  *     KEY `ua` (`ua`) -- optional
  * );
  * ```
- *
- * NOTE: As of PHP 8.4 the id column can be `char(32)`.
  *
  * @package session
  */
