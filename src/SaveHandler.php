@@ -211,18 +211,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     public function validateId($id) : bool
     {
-        if (\PHP_VERSION_ID >= 80400) {
-            return (bool) \preg_match('#\A[0-9a-f]{32}\z#', $id);
-        }
-        $bits = \ini_get('session.sid_bits_per_character') ?: 5;
-        $length = \ini_get('session.sid_length') ?: 40;
-        $bitsRegex = [
-            4 => '[0-9a-f]',
-            5 => '[0-9a-v]',
-            6 => '[0-9a-zA-Z,-]',
-        ];
-        return isset($bitsRegex[$bits])
-            && \preg_match('#\A' . $bitsRegex[$bits] . '{' . $length . '}\z#', $id);
+        return (bool) \preg_match('#\A[0-9a-f]{32}\z#', $id);
     }
 
     /**
