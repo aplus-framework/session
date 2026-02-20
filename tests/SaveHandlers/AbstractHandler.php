@@ -54,34 +54,11 @@ abstract class AbstractHandler extends TestCase
         $id5 = 'iimuf8lvdectatt5jtkve15831funl8rg5cg6okp';
         $id4 = '96aa2c863140e0e714a603cf44b0afc9a0632592';
         $this->session->stop();
-        /*
-         * Since PHP 8.4 session.sid_bits_per_character and session.sid_length
-         * are deprecated.
-         *
-         * - The default value for session.sid_bits_per_character is 4 (0-9, a-f).
-         * - The default value for session.sid_length is 32 character.
-         */
-        if (\PHP_VERSION_ID >= 80400) {
-            self::assertFalse($this->handler->validateId($id6));
-            self::assertFalse($this->handler->validateId($id5));
-            self::assertFalse($this->handler->validateId($id4));
-            $idPhp84 = '96aa2c863140e0e714a603cf44b0afc9';
-            self::assertTrue($this->handler->validateId($idPhp84));
-            return;
-        }
-        \ini_set('session.sid_bits_per_character', '6');
-        \ini_set('session.sid_length', '40');
-        self::assertTrue($this->handler->validateId($id6));
-        self::assertTrue($this->handler->validateId($id5));
-        self::assertTrue($this->handler->validateId($id4));
-        \ini_set('session.sid_bits_per_character', '5');
-        self::assertFalse($this->handler->validateId($id6));
-        self::assertTrue($this->handler->validateId($id5));
-        self::assertTrue($this->handler->validateId($id4));
-        \ini_set('session.sid_bits_per_character', '4');
         self::assertFalse($this->handler->validateId($id6));
         self::assertFalse($this->handler->validateId($id5));
-        self::assertTrue($this->handler->validateId($id4));
+        self::assertFalse($this->handler->validateId($id4));
+        $idPhp84 = '96aa2c863140e0e714a603cf44b0afc9';
+        self::assertTrue($this->handler->validateId($idPhp84));
     }
 
     public function testGC() : void
