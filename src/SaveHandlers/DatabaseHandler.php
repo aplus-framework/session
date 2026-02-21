@@ -44,7 +44,7 @@ class DatabaseHandler extends SaveHandler
     /**
      * Prepare configurations to be used by the DatabaseHandler.
      *
-     * @param array<string,mixed> $config Custom configs
+     * @param array<string,mixed> $configs Custom configs
      *
      * The custom configs are:
      *
@@ -75,9 +75,10 @@ class DatabaseHandler extends SaveHandler
      *
      * NOTE: The Database::connect configs was not shown.
      */
-    protected function prepareConfig(#[SensitiveParameter] array $config) : void
+    protected function prepareConfigs(#[SensitiveParameter] array $configs) : void
     {
-        $this->config = \array_replace_recursive([
+        $this->configs = \array_replace_recursive([
+            'handler' => [],
             'table' => 'Sessions',
             'maxlifetime' => null,
             'columns' => [
@@ -93,7 +94,7 @@ class DatabaseHandler extends SaveHandler
             'save_ip' => false,
             'save_ua' => false,
             'save_user_id' => false,
-        ], $config);
+        ], $configs);
     }
 
     public function setDatabase(Database $database) : static
@@ -115,7 +116,7 @@ class DatabaseHandler extends SaveHandler
      */
     protected function getTable() : string
     {
-        return $this->config['table'];
+        return $this->configs['table'];
     }
 
     /**
@@ -127,7 +128,7 @@ class DatabaseHandler extends SaveHandler
      */
     protected function getColumn(string $key) : string
     {
-        return $this->config['columns'][$key];
+        return $this->configs['columns'][$key];
     }
 
     /**
@@ -137,10 +138,10 @@ class DatabaseHandler extends SaveHandler
      */
     protected function addWhereMatchs(Delete | Select | Update $statement) : void
     {
-        if ($this->config['match_ip']) {
+        if ($this->configs['match_ip']) {
             $statement->whereEqual($this->getColumn('ip'), $this->getIP());
         }
-        if ($this->config['match_ua']) {
+        if ($this->configs['match_ua']) {
             $statement->whereEqual($this->getColumn('ua'), $this->getUA());
         }
     }
@@ -152,7 +153,7 @@ class DatabaseHandler extends SaveHandler
      */
     protected function addUserIdColumn(array &$columns) : void
     {
-        if ($this->config['save_user_id']) {
+        if ($this->configs['save_user_id']) {
             $key = $this->getColumn('user_id');
             $columns[$key] = $_SESSION[$key] ?? null;
         }
@@ -161,7 +162,7 @@ class DatabaseHandler extends SaveHandler
     public function open($path, $name) : bool
     {
         try {
-            $this->database ??= new Database($this->config);
+            $this->database ??= new Database($this->configs);
             return true;
         } catch (\Exception $exception) {
             $this->log(
@@ -221,10 +222,10 @@ class DatabaseHandler extends SaveHandler
             },
             $this->getColumn('data') => $data,
         ];
-        if ($this->config['match_ip'] || $this->config['save_ip']) {
+        if ($this->configs['match_ip'] || $this->configs['save_ip']) {
             $columns[$this->getColumn('ip')] = $this->getIP();
         }
-        if ($this->config['match_ua'] || $this->config['save_ua']) {
+        if ($this->configs['match_ua'] || $this->configs['save_ua']) {
             $columns[$this->getColumn('ua')] = $this->getUA();
         }
         $this->addUserIdColumn($columns);
@@ -306,7 +307,7 @@ class DatabaseHandler extends SaveHandler
     public function gc($max_lifetime) : false | int
     {
         try {
-            $this->database ??= new Database($this->config);
+            $this->database ??= new Database($this->configs);
         } catch (\Exception $exception) {
             $this->log(
                 'Session (database): Thrown a ' . \get_class($exception)

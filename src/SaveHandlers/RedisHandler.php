@@ -27,7 +27,7 @@ class RedisHandler extends SaveHandler
     /**
      * Prepare configurations to be used by the RedisHandler.
      *
-     * @param array<string,mixed> $config Custom configs
+     * @param array<string,mixed> $configs Custom configs
      *
      * The custom configs are:
      *
@@ -60,9 +60,9 @@ class RedisHandler extends SaveHandler
      * ];
      * ```
      */
-    protected function prepareConfig(#[SensitiveParameter] array $config) : void
+    protected function prepareConfigs(#[SensitiveParameter] array $configs) : void
     {
-        $this->config = \array_replace([
+        $this->configs = \array_replace([
             'prefix' => '',
             'host' => '127.0.0.1',
             'port' => 6379,
@@ -75,7 +75,7 @@ class RedisHandler extends SaveHandler
             'maxlifetime' => null,
             'match_ip' => false,
             'match_ua' => false,
-        ], $config);
+        ], $configs);
     }
 
     public function setRedis(Redis $redis) : static
@@ -100,7 +100,7 @@ class RedisHandler extends SaveHandler
      */
     protected function getKey(string $id) : string
     {
-        return $this->config['prefix'] . $id . $this->getKeySuffix();
+        return $this->configs['prefix'] . $id . $this->getKeySuffix();
     }
 
     public function open($path, $name) : bool
@@ -111,30 +111,30 @@ class RedisHandler extends SaveHandler
         $this->redis = new Redis();
         try {
             @$this->redis->connect(
-                $this->config['host'],
-                $this->config['port'],
-                $this->config['timeout']
+                $this->configs['host'],
+                $this->configs['port'],
+                $this->configs['timeout']
             );
         } catch (RedisException) {
             $this->log(
                 'Session (redis): Could not connect to server '
-                . $this->config['host'] . ':' . $this->config['port']
+                . $this->configs['host'] . ':' . $this->configs['port']
             );
             return false;
         }
-        if (isset($this->config['password'])) {
+        if (isset($this->configs['password'])) {
             try {
-                $this->redis->auth($this->config['password']);
+                $this->redis->auth($this->configs['password']);
             } catch (RedisException) {
                 $this->log('Session (redis): Authentication failed');
                 return false;
             }
         }
-        if (isset($this->config['database'])
-            && !$this->redis->select($this->config['database'])
+        if (isset($this->configs['database'])
+            && !$this->redis->select($this->configs['database'])
         ) {
             $this->log(
-                "Session (redis): Could not select the database '{$this->config['database']}'"
+                "Session (redis): Could not select the database '{$this->configs['database']}'"
             );
             return false;
         }
@@ -171,7 +171,7 @@ class RedisHandler extends SaveHandler
             return false;
         }
         $maxlifetime = $this->getMaxlifetime();
-        $this->redis->expire($this->lockId, $this->config['lock_ttl']);
+        $this->redis->expire($this->lockId, $this->configs['lock_ttl']);
         if ($this->sessionExists === false || !$this->hasSameFingerprint($data)) {
             if ($this->redis->set($this->getKey($id), $data, $maxlifetime)) {
                 $this->setFingerprint($data);
@@ -233,17 +233,17 @@ class RedisHandler extends SaveHandler
 
     protected function lock(string $id) : bool
     {
-        $ttl = $this->config['lock_ttl'];
+        $ttl = $this->configs['lock_ttl'];
         if ($this->lockId && $this->redis->get($this->lockId)) {
             return $this->redis->expire($this->lockId, $ttl);
         }
         $lockId = $this->getKey($id) . ':lock';
         $attempt = 0;
-        while ($attempt < $this->config['lock_attempts']) {
+        while ($attempt < $this->configs['lock_attempts']) {
             $attempt++;
             $oldTtl = $this->redis->ttl($lockId);
             if (\is_int($oldTtl) && $oldTtl > 0) {
-                \usleep($this->config['lock_sleep']);
+                \usleep($this->configs['lock_sleep']);
                 continue;
             }
             if (!$this->redis->setex($lockId, $ttl, (string) \time())) {
@@ -253,7 +253,7 @@ class RedisHandler extends SaveHandler
             $this->lockId = $lockId;
             break;
         }
-        if ($attempt === $this->config['lock_attempts']) {
+        if ($attempt === $this->configs['lock_attempts']) {
             $this->log(
                 "Session (redis): Unable to lock {$lockId} after {$attempt} attempts"
             );

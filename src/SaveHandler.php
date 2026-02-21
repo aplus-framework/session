@@ -29,7 +29,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      *
      * @var array<string,mixed>
      */
-    protected array $config;
+    protected array $configs;
     /**
      * The current data fingerprint.
      *
@@ -74,36 +74,36 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     /**
      * SessionSaveHandler constructor.
      *
-     * @param array<string,mixed> $config
+     * @param array<string,mixed> $configs
      * @param Logger|null $logger
      */
     public function __construct(
         #[SensitiveParameter]
-        array $config = [],
+        array $configs = [],
         ?Logger $logger = null
     ) {
-        $this->prepareConfig($config);
+        $this->prepareConfigs($configs);
         $this->logger = $logger;
     }
 
     /**
      * Prepare configurations to be used by the save handler.
      *
-     * @param array<string,mixed> $config Custom configs
+     * @param array<string,mixed> $configs Custom configs
      *
      * @codeCoverageIgnore
      */
-    protected function prepareConfig(#[SensitiveParameter] array $config) : void
+    protected function prepareConfigs(#[SensitiveParameter] array $configs) : void
     {
-        $this->config = $config;
+        $this->configs = $configs;
     }
 
     /**
      * @return array<string,mixed>
      */
-    public function getConfig() : array
+    public function getConfigs() : array
     {
-        return $this->config;
+        return $this->configs;
     }
 
     /**
@@ -161,7 +161,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     protected function getMaxlifetime() : int
     {
-        return (int) ($this->config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
+        return (int) ($this->configs['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
     }
 
     /**
@@ -171,7 +171,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     protected function getIP() : string
     {
-        $key = $this->config['ip_key'] ?? 'REMOTE_ADDR';
+        $key = $this->configs['ip_key'] ?? 'REMOTE_ADDR';
         return $_SERVER[$key] ?? '';
     }
 
@@ -188,10 +188,10 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     protected function getKeySuffix() : string
     {
         $suffix = '';
-        if ($this->config['match_ip']) {
+        if ($this->configs['match_ip']) {
             $suffix .= ':' . $this->getIP();
         }
-        if ($this->config['match_ua']) {
+        if ($this->configs['match_ua']) {
             $suffix .= ':' . $this->getUA();
         }
         if ($suffix) {

@@ -358,7 +358,7 @@ class SessionCollector extends Collector
      */
     protected function getSaveHandlerConfigs() : array
     {
-        $config = $this->saveHandler->getConfig();
+        $config = $this->saveHandler->getConfigs();
         if ($this->saveHandler instanceof FilesHandler) {
             return [
                 'Directory' => $config['directory'],
