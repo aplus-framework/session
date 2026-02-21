@@ -188,7 +188,8 @@ class DatabaseHandler extends SaveHandler
         $this->addWhereMatchs($statement);
         $row = $statement->limit(1)->run()->fetch();
         $this->sessionExists = (bool) $row;
-        $data = $row->data ?? '';
+        $column = $this->getColumn('data');
+        $data = $row->{$column} ?? '';
         $this->setFingerprint($data);
         return $data;
     }
