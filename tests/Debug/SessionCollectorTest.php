@@ -177,7 +177,8 @@ final class SessionCollectorTest extends TestCase
 
     public function testCustomSaveHandlers() : void
     {
-        $handler = new class() extends SaveHandler {
+        $handler = new class() extends SaveHandler
+        {
             public function open($path, $name) : bool
             {
                 return true;

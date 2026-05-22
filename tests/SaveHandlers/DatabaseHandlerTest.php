@@ -62,7 +62,8 @@ class DatabaseHandlerTest extends AbstractHandler
         $this->replaceConfig([
             'save_user_id' => true,
         ]);
-        $handler = new class($this->config, $this->logger) extends DatabaseHandler {
+        $handler = new class($this->config, $this->logger) extends DatabaseHandler
+        {
             public ?Database $database;
         };
         $session = new Session(handler: $handler);
@@ -104,7 +105,8 @@ class DatabaseHandlerTest extends AbstractHandler
 
     public function testFailToRead() : void
     {
-        $handler = new class($this->config) extends DatabaseHandler {
+        $handler = new class($this->config) extends DatabaseHandler
+        {
             public ?Database $database;
         };
         $handler->database = null;
@@ -113,7 +115,8 @@ class DatabaseHandlerTest extends AbstractHandler
 
     public function testFailToWrite() : void
     {
-        $handler = new class($this->config) extends DatabaseHandler {
+        $handler = new class($this->config) extends DatabaseHandler
+        {
             public ?Database $database;
             public false | string $lockId;
         };
@@ -136,7 +139,8 @@ class DatabaseHandlerTest extends AbstractHandler
 
     public function testUnlockWithoutLockId() : void
     {
-        $handler = new class() extends DatabaseHandler {
+        $handler = new class() extends DatabaseHandler
+        {
             public function unlock() : bool
             {
                 return parent::unlock();
@@ -147,7 +151,8 @@ class DatabaseHandlerTest extends AbstractHandler
 
     public function testFailToUnlock() : void
     {
-        $handler = new class($this->config) extends DatabaseHandler {
+        $handler = new class($this->config) extends DatabaseHandler
+        {
             public false | string $lockId;
 
             public function unlock() : bool
@@ -162,7 +167,8 @@ class DatabaseHandlerTest extends AbstractHandler
 
     public function testFailToLock() : void
     {
-        $handler = new class($this->config, $this->logger) extends DatabaseHandler {
+        $handler = new class($this->config, $this->logger) extends DatabaseHandler
+        {
             public function lock(string $id) : bool
             {
                 return parent::lock($id);

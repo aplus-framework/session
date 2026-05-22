@@ -54,7 +54,8 @@ class FilesHandlerTest extends AbstractHandler
             'prefix' => 'foo',
             'directory' => \getenv('FILES_DIR'),
         ];
-        $handler = new class($config) extends FilesHandler {
+        $handler = new class($config) extends FilesHandler
+        {
             public function getFilename(string $id) : string
             {
                 return parent::getFilename($id);
@@ -68,7 +69,8 @@ class FilesHandlerTest extends AbstractHandler
 
     public function testFailToWrite() : void
     {
-        $handler = new class($this->config) extends FilesHandler {
+        $handler = new class($this->config) extends FilesHandler
+        {
             public $stream;
         };
         $handler->stream = null;
@@ -77,7 +79,8 @@ class FilesHandlerTest extends AbstractHandler
 
     public function testUnlockWithoutStream() : void
     {
-        $handler = new class($this->config) extends FilesHandler {
+        $handler = new class($this->config) extends FilesHandler
+        {
             public $stream;
 
             public function unlock() : bool

@@ -116,7 +116,8 @@ class MemcachedHandlerTest extends AbstractHandler
 
     public function testFailToRead() : void
     {
-        $handler = new class($this->config) extends MemcachedHandler {
+        $handler = new class($this->config) extends MemcachedHandler
+        {
             public ?Memcached $memcached;
         };
         $handler->memcached = null;
@@ -125,7 +126,8 @@ class MemcachedHandlerTest extends AbstractHandler
 
     public function testFailToWrite() : void
     {
-        $handler = new class($this->config) extends MemcachedHandler {
+        $handler = new class($this->config) extends MemcachedHandler
+        {
             public ?Memcached $memcached;
             public false | string $lockId;
             public ?string $sessionId;
@@ -143,7 +145,8 @@ class MemcachedHandlerTest extends AbstractHandler
 
     public function testUnlocked() : void
     {
-        $handler = new class($this->config) extends MemcachedHandler {
+        $handler = new class($this->config) extends MemcachedHandler
+        {
             public false | string $lockId;
 
             public function unlock() : bool
@@ -158,7 +161,8 @@ class MemcachedHandlerTest extends AbstractHandler
 
     public function testReplaceLock() : void
     {
-        $handler = new class($this->config, $this->logger) extends MemcachedHandler {
+        $handler = new class($this->config, $this->logger) extends MemcachedHandler
+        {
             public ?Memcached $memcached;
             public false | string $lockId;
 
@@ -175,7 +179,8 @@ class MemcachedHandlerTest extends AbstractHandler
 
     public function testFailToDestroy() : void
     {
-        $handler = new class($this->config) extends MemcachedHandler {
+        $handler = new class($this->config) extends MemcachedHandler
+        {
             public false | string $lockId;
         };
         $handler->lockId = false;

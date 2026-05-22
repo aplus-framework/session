@@ -70,7 +70,8 @@ class RedisHandlerTest extends AbstractHandler
 
     public function testFailToRead() : void
     {
-        $handler = new class($this->config) extends RedisHandler {
+        $handler = new class($this->config) extends RedisHandler
+        {
             public ?Redis $redis;
         };
         $handler->redis = null;
@@ -79,7 +80,8 @@ class RedisHandlerTest extends AbstractHandler
 
     public function testFailToWrite() : void
     {
-        $handler = new class($this->config) extends RedisHandler {
+        $handler = new class($this->config) extends RedisHandler
+        {
             public ?Redis $redis;
             public ?string $sessionId;
 
@@ -103,7 +105,8 @@ class RedisHandlerTest extends AbstractHandler
 
     public function testFailToClose() : void
     {
-        $handler = new class($this->config) extends RedisHandler {
+        $handler = new class($this->config) extends RedisHandler
+        {
             public ?Redis $redis;
         };
         $handler->open('', '');
@@ -118,7 +121,8 @@ class RedisHandlerTest extends AbstractHandler
 
     public function testUnlock() : void
     {
-        $handler = new class($this->config, $this->logger) extends RedisHandler {
+        $handler = new class($this->config, $this->logger) extends RedisHandler
+        {
             public false | string $lockId;
 
             public function unlock() : bool
