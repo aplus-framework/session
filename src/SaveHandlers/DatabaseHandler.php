@@ -63,6 +63,7 @@ class DatabaseHandler extends SaveHandler
      *         'timestamp' => 'timestamp',
      *         'ip' => 'ip',
      *         'ua' => 'ua',
+     *         'user_id' => 'user_id',
      *     ],
      *     // Match IP?
      *     'match_ip' => false,
@@ -72,6 +73,8 @@ class DatabaseHandler extends SaveHandler
      *     'save_ip' => false,
      *     // Independent of match_ua, save the initial User-Agent in the ua column?
      *     'save_ua' => false,
+     *     // Save the user_id?
+     *     'save_user_id' => false,
      * ];
      * ```
      *
