@@ -50,6 +50,8 @@ class DatabaseHandler extends SaveHandler
      *
      * ```php
      * $configs = [
+     *     // The Database configs
+     *     'database' => [],
      *     // The name of the table used for sessions
      *     'table' => 'Sessions',
      *     // The maxlifetime used for locking
@@ -78,7 +80,7 @@ class DatabaseHandler extends SaveHandler
     protected function prepareConfigs(#[SensitiveParameter] array $configs) : void
     {
         $this->configs = \array_replace_recursive([
-            'handler' => [],
+            'database' => [],
             'table' => 'Sessions',
             'maxlifetime' => null,
             'columns' => [
@@ -162,7 +164,7 @@ class DatabaseHandler extends SaveHandler
     public function open($path, $name) : bool
     {
         try {
-            $this->database ??= new Database($this->configs);
+            $this->database ??= new Database($this->getConfig('database'));
             return true;
         } catch (\Exception $exception) {
             $this->log(
@@ -307,7 +309,7 @@ class DatabaseHandler extends SaveHandler
     public function gc($max_lifetime) : false | int
     {
         try {
-            $this->database ??= new Database($this->configs);
+            $this->database ??= new Database($this->getConfig('database'));
         } catch (\Exception $exception) {
             $this->log(
                 'Session (database): Thrown a ' . \get_class($exception)

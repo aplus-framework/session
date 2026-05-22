@@ -26,11 +26,13 @@ class DatabaseHandlerTest extends AbstractHandler
     public function setUp() : void
     {
         $this->replaceConfig([
-            'username' => \getenv('DB_USERNAME'),
-            'password' => \getenv('DB_PASSWORD'),
-            'schema' => \getenv('DB_SCHEMA'),
-            'host' => \getenv('DB_HOST'),
-            'port' => \getenv('DB_PORT'),
+            'database' => [
+                'username' => \getenv('DB_USERNAME'),
+                'password' => \getenv('DB_PASSWORD'),
+                'schema' => \getenv('DB_SCHEMA'),
+                'host' => \getenv('DB_HOST'),
+                'port' => \getenv('DB_PORT'),
+            ],
             'table' => \getenv('DB_TABLE'),
         ]);
         $this->createDummyData();
@@ -39,7 +41,7 @@ class DatabaseHandlerTest extends AbstractHandler
 
     protected function createDummyData() : void
     {
-        $database = new Database($this->config);
+        $database = new Database($this->config['database']);
         $database->dropTable($this->config['table'])->ifExists()->run();
         $database->createTable($this->config['table'])
             ->definition(static function (TableDefinition $definition) : void {
@@ -84,9 +86,11 @@ class DatabaseHandlerTest extends AbstractHandler
     {
         $this->session->stop();
         $handler = new DatabaseHandler([
-            'username' => 'user-error',
-            'password' => \getenv('DB_PASSWORD'),
-            'host' => \getenv('DB_HOST'),
+            'database' => [
+                'username' => 'user-error',
+                'password' => \getenv('DB_PASSWORD'),
+                'host' => \getenv('DB_HOST'),
+            ],
         ], $this->logger);
         $session = new Session([], $handler);
         $this->expectException(\RuntimeException::class);
@@ -122,7 +126,7 @@ class DatabaseHandlerTest extends AbstractHandler
         };
         $handler->database = null;
         self::assertFalse($handler->write('foo', 'data'));
-        $handler->database = new Database($this->config);
+        $handler->database = new Database($this->config['database']);
         $handler->lockId = false;
         self::assertFalse($handler->write('foo', 'data'));
     }

@@ -274,6 +274,8 @@ These are the DatabaseHandler configs:
 .. code-block:: php
 
     $configs = [
+        // The Database configs
+        'database' => [],
         // The name of the table used for sessions
         'table' => 'Sessions',
         // The maxlifetime used for locking

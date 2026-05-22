@@ -264,14 +264,16 @@ final class SessionCollectorTest extends TestCase
             ]),
         ];
         $config = [
-            'username' => \getenv('DB_USERNAME'),
-            'password' => \getenv('DB_PASSWORD'),
-            'schema' => \getenv('DB_SCHEMA'),
-            'host' => \getenv('DB_HOST'),
-            'port' => \getenv('DB_PORT'),
+            'database' => [
+                'username' => \getenv('DB_USERNAME'),
+                'password' => \getenv('DB_PASSWORD'),
+                'schema' => \getenv('DB_SCHEMA'),
+                'host' => \getenv('DB_HOST'),
+                'port' => \getenv('DB_PORT'),
+            ],
             'table' => \getenv('DB_TABLE'),
         ];
-        $database = new Database($config);
+        $database = new Database($config['database']);
         $database->dropTable($config['table'])->ifExists()->run(); // @phpstan-ignore-line
         // @phpstan-ignore-next-line
         $database->createTable($config['table'])
