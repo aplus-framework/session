@@ -11,6 +11,7 @@ namespace Framework\Session;
 
 use Framework\Log\Logger;
 use Framework\Log\LogLevel;
+use OutOfBoundsException;
 use SensitiveParameter;
 
 /**
@@ -107,6 +108,25 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     }
 
     /**
+     * Get a config item by key.
+     *
+     * @param string $key
+     * @param bool $nullable
+     *
+     * @return mixed
+     */
+    public function getConfig(string $key, bool $nullable = false) : mixed
+    {
+        if (!\array_key_exists($key, $this->configs)) {
+            if($nullable) {
+                return null;
+            }
+            throw new OutOfBoundsException('Invalid config key: ' . $key);
+        }
+        return $this->configs[$key];
+    }
+
+    /**
      * Log a message if the Logger is set.
      *
      * @param string $message The message to log
@@ -161,7 +181,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     protected function getMaxlifetime() : int
     {
-        return (int) ($this->configs['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'));
+        return (int) ($this->getConfig('maxlifetime', true) ?? \ini_get('session.gc_maxlifetime'));
     }
 
     /**
@@ -171,7 +191,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     protected function getIP() : string
     {
-        $key = $this->configs['ip_key'] ?? 'REMOTE_ADDR';
+        $key = $this->getConfig('ip_key', true) ?? 'REMOTE_ADDR';
         return $_SERVER[$key] ?? '';
     }
 
@@ -188,10 +208,10 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     protected function getKeySuffix() : string
     {
         $suffix = '';
-        if ($this->configs['match_ip']) {
+        if ($this->getConfig('match_ip')) {
             $suffix .= ':' . $this->getIP();
         }
-        if ($this->configs['match_ua']) {
+        if ($this->getConfig('match_ua')) {
             $suffix .= ':' . $this->getUA();
         }
         if ($suffix) {

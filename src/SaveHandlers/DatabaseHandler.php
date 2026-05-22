@@ -116,7 +116,7 @@ class DatabaseHandler extends SaveHandler
      */
     protected function getTable() : string
     {
-        return $this->configs['table'];
+        return $this->getConfig('table');
     }
 
     /**
@@ -128,7 +128,7 @@ class DatabaseHandler extends SaveHandler
      */
     protected function getColumn(string $key) : string
     {
-        return $this->configs['columns'][$key];
+        return $this->getConfig('columns')[$key];
     }
 
     /**
@@ -138,10 +138,10 @@ class DatabaseHandler extends SaveHandler
      */
     protected function addWhereMatchs(Delete | Select | Update $statement) : void
     {
-        if ($this->configs['match_ip']) {
+        if ($this->getConfig('match_ip')) {
             $statement->whereEqual($this->getColumn('ip'), $this->getIP());
         }
-        if ($this->configs['match_ua']) {
+        if ($this->getConfig('match_ua')) {
             $statement->whereEqual($this->getColumn('ua'), $this->getUA());
         }
     }
@@ -153,7 +153,7 @@ class DatabaseHandler extends SaveHandler
      */
     protected function addUserIdColumn(array &$columns) : void
     {
-        if ($this->configs['save_user_id']) {
+        if ($this->getConfig('save_user_id')) {
             $key = $this->getColumn('user_id');
             $columns[$key] = $_SESSION[$key] ?? null;
         }
@@ -222,10 +222,10 @@ class DatabaseHandler extends SaveHandler
             },
             $this->getColumn('data') => $data,
         ];
-        if ($this->configs['match_ip'] || $this->configs['save_ip']) {
+        if ($this->getConfig('match_ip') || $this->getConfig('save_ip')) {
             $columns[$this->getColumn('ip')] = $this->getIP();
         }
-        if ($this->configs['match_ua'] || $this->configs['save_ua']) {
+        if ($this->getConfig('match_ua') || $this->getConfig('save_ua')) {
             $columns[$this->getColumn('ua')] = $this->getUA();
         }
         $this->addUserIdColumn($columns);

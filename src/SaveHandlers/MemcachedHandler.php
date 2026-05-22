@@ -83,7 +83,7 @@ class MemcachedHandler extends SaveHandler
             'match_ip' => false,
             'match_ua' => false,
         ], $configs);
-        foreach ($this->configs['servers'] as $index => $server) {
+        foreach ($this->getConfig('servers') as $index => $server) {
             if (!isset($server['host'])) {
                 throw new OutOfBoundsException(
                     "Memcached host not set on server config '{$index}'"
@@ -132,7 +132,7 @@ class MemcachedHandler extends SaveHandler
      */
     protected function getKey(string $id) : string
     {
-        return $this->configs['prefix'] . $id . $this->getKeySuffix();
+        return $this->getConfig('prefix') . $id . $this->getKeySuffix();
     }
 
     public function open($path, $name) : bool
@@ -142,7 +142,7 @@ class MemcachedHandler extends SaveHandler
         }
         $this->memcached = new Memcached();
         $pool = [];
-        foreach ($this->configs['servers'] as $server) {
+        foreach ($this->getConfig('servers') as $server) {
             $host = $server['host'] . ':' . ($server['port'] ?? 11211);
             if (\in_array($host, $pool, true)) {
                 $this->log(
@@ -162,7 +162,7 @@ class MemcachedHandler extends SaveHandler
             }
             $pool[] = $host;
         }
-        $result = $this->memcached->setOptions($this->configs['options']);
+        $result = $this->memcached->setOptions($this->getConfig('options'));
         if ($result === false) {
             $this->log('Session (memcached): ' . $this->memcached->getLastErrorMessage());
         }
@@ -204,7 +204,7 @@ class MemcachedHandler extends SaveHandler
         $this->memcached->replace(
             $this->lockId,
             \time(),
-            $this->getExpiration($this->configs['lock_ttl'])
+            $this->getExpiration($this->getConfig('lock_ttl'))
         );
         $maxlifetime = $this->getExpiration($this->getMaxlifetime());
         if ($this->hasSameFingerprint($data)) {
@@ -256,16 +256,16 @@ class MemcachedHandler extends SaveHandler
 
     protected function lock(string $id) : bool
     {
-        $expiration = $this->getExpiration($this->configs['lock_ttl']);
+        $expiration = $this->getExpiration($this->getConfig('lock_ttl'));
         if ($this->lockId && $this->memcached->get($this->lockId)) {
             return $this->memcached->replace($this->lockId, \time(), $expiration);
         }
         $lockId = $this->getKey($id) . ':lock';
         $attempt = 0;
-        while ($attempt < $this->configs['lock_attempts']) {
+        while ($attempt < $this->getConfig('lock_attempts')) {
             $attempt++;
             if ($this->memcached->get($lockId)) {
-                \usleep($this->configs['lock_sleep']);
+                \usleep($this->getConfig('lock_sleep'));
                 continue;
             }
             if (!$this->memcached->set($lockId, \time(), $expiration)) {
@@ -275,7 +275,7 @@ class MemcachedHandler extends SaveHandler
             $this->lockId = $lockId;
             break;
         }
-        if ($attempt === $this->configs['lock_attempts']) {
+        if ($attempt === $this->getConfig('lock_attempts')) {
             $this->log(
                 "Session (memcached): Unable to lock {$lockId} after {$attempt} attempts"
             );

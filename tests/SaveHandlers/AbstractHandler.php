@@ -86,4 +86,18 @@ abstract class AbstractHandler extends TestCase
     {
         self::assertTrue($this->session->reset());
     }
+
+    public function testGetConfig() : void
+    {
+        if (isset($this->config['match_ip'])) {
+            self::assertSame(
+                $this->config['match_ip'],
+                $this->handler->getConfig('match_ip')
+            );
+        }
+        self::assertNull($this->handler->getConfig('foo', true));
+        $this->expectException(\OutOfBoundsException::class);
+        $this->expectExceptionMessage('Invalid config key: foo');
+        $this->handler->getConfig('foo');
+    }
 }

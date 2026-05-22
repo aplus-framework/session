@@ -55,20 +55,20 @@ class FilesHandler extends SaveHandler
             'match_ip' => false,
             'match_ua' => false,
         ], $configs);
-        if (empty($this->configs['directory'])) {
+        if (empty($this->getConfig('directory'))) {
             throw new LogicException('Session config has not a directory');
         }
         $this->configs['directory'] = \rtrim(
-            $this->configs['directory'],
+            $this->getConfig('directory'),
             \DIRECTORY_SEPARATOR
         ) . \DIRECTORY_SEPARATOR;
-        if (!\is_dir($this->configs['directory'])) {
+        if (!\is_dir($this->getConfig('directory'))) {
             throw new LogicException(
-                'Session config directory does not exist: ' . $this->configs['directory']
+                'Session config directory does not exist: ' . $this->getConfig('directory')
             );
         }
-        if ($this->configs['prefix']) {
-            $dirname = $this->configs['directory'] . $this->configs['prefix'] . \DIRECTORY_SEPARATOR;
+        if ($this->getConfig('prefix')) {
+            $dirname = $this->getConfig('directory') . $this->getConfig('prefix') . \DIRECTORY_SEPARATOR;
             if (!\is_dir($dirname) && !\mkdir($dirname, 0700) && !\is_dir($dirname)) {
                 throw new RuntimeException(
                     "Session prefix directory '{$dirname}' was not created",
@@ -88,7 +88,7 @@ class FilesHandler extends SaveHandler
      */
     protected function getFilename(string $id) : string
     {
-        $filename = $this->configs['directory'] . $id[0] . $id[1] . \DIRECTORY_SEPARATOR . $id;
+        $filename = $this->getConfig('directory') . $id[0] . $id[1] . \DIRECTORY_SEPARATOR . $id;
         return $filename . $this->getKeySuffix();
     }
 
@@ -189,10 +189,10 @@ class FilesHandler extends SaveHandler
 
     public function gc($max_lifetime) : false | int
     {
-        $dirHandle = \opendir($this->configs['directory']);
+        $dirHandle = \opendir($this->getConfig('directory'));
         if ($dirHandle === false) {
             $this->log(
-                "Session (files): Garbage Collector could not open directory '{$this->configs['directory']}'",
+                "Session (files): Garbage Collector could not open directory '{$this->getConfig('directory')}'",
                 LogLevel::DEBUG
             );
             return false;
@@ -202,10 +202,10 @@ class FilesHandler extends SaveHandler
         while (($filename = \readdir($dirHandle)) !== false) {
             if ($filename !== '.'
                 && $filename !== '..'
-                && \is_dir($this->configs['directory'] . $filename)
+                && \is_dir($this->getConfig('directory') . $filename)
             ) {
                 $gcCount += $this->gcSubdir(
-                    $this->configs['directory'] . $filename,
+                    $this->getConfig('directory') . $filename,
                     $max_lifetime
                 );
             }
