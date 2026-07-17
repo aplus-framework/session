@@ -192,7 +192,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     protected function getIP() : string
     {
         $key = $this->getConfig('ip_key', true) ?? 'REMOTE_ADDR';
-        return $_SERVER[$key] ?? '';
+        return $_SERVER[$key];
     }
 
     /**
@@ -202,7 +202,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     protected function getUA() : string
     {
-        return $_SERVER['HTTP_USER_AGENT'] ?? '';
+        return $_SERVER['HTTP_USER_AGENT'];
     }
 
     protected function getKeySuffix() : string
