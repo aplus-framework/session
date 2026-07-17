@@ -187,6 +187,8 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     /**
      * Get the remote IP address.
      *
+     * - The IP address is present in all HTTP requests.
+     *
      * @return string
      */
     protected function getIP() : string
@@ -197,6 +199,9 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
 
     /**
      * Get the HTTP User-Agent.
+     *
+     * - Allows falling back to an empty string because the User-Agent header
+     * can be omitted.
      *
      * @return string
      */
