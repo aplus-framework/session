@@ -11,7 +11,6 @@ namespace Framework\Session\Debug;
 
 use Closure;
 use Framework\Debug\Collector;
-use Framework\Helpers\ArraySimple;
 use Framework\Session\SaveHandler;
 use Framework\Session\SaveHandlers\DatabaseHandler;
 use Framework\Session\SaveHandlers\FilesHandler;
@@ -127,7 +126,7 @@ class SessionCollector extends Collector
 
     protected function renderFlashOld() : string
     {
-        $data = ArraySimple::value('$[flash][old]', $this->session->getAll());
+        $data = $this->session->getAll()['$']['flash']['old'] ?? [];
         if (empty($data)) {
             return '';
         }
@@ -159,7 +158,7 @@ class SessionCollector extends Collector
 
     protected function renderFlashNew() : string
     {
-        $data = ArraySimple::value('$[flash][new]', $this->session->getAll());
+        $data = $this->session->getAll()['$']['flash']['new'] ?? [];
         if (empty($data)) {
             return '';
         }
@@ -191,7 +190,7 @@ class SessionCollector extends Collector
 
     protected function renderTemp() : string
     {
-        $data = ArraySimple::value('$[temp]', $this->session->getAll());
+        $data = $this->session->getAll()['$']['temp'] ?? [];
         if (empty($data)) {
             return '<p>No temp data.</p>';
         }
@@ -329,7 +328,7 @@ class SessionCollector extends Collector
             return '<p>Auto regenerate id is inactive.</p>';
         }
         $maxlifetime = (int) $this->options['auto_regenerate_maxlifetime'];
-        $regeneratedAt = ArraySimple::value('$[regenerated_at]', $this->session->getAll());
+        $regeneratedAt = $this->session->getAll()['$']['regenerated_at'] ?? null;
         $nextRegeneration = $regeneratedAt + $maxlifetime;
         \ob_start(); ?>
         <table>
