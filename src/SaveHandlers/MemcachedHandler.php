@@ -82,6 +82,7 @@ class MemcachedHandler extends SaveHandler
             'maxlifetime' => null,
             'match_ip' => false,
             'match_ua' => false,
+            'ip_key' => 'REMOTE_ADDR',
         ], $configs);
         foreach ($this->getConfig('servers') as $index => $server) {
             if (!isset($server['host'])) {

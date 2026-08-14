@@ -99,6 +99,7 @@ class DatabaseHandler extends SaveHandler
             'save_ip' => false,
             'save_ua' => false,
             'save_user_id' => false,
+            'ip_key' => 'REMOTE_ADDR',
         ], $configs);
     }
 

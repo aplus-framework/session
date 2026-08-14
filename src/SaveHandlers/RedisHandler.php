@@ -75,6 +75,7 @@ class RedisHandler extends SaveHandler
             'maxlifetime' => null,
             'match_ip' => false,
             'match_ua' => false,
+            'ip_key' => 'REMOTE_ADDR',
         ], $configs);
     }
 

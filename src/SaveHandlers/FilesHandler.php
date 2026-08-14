@@ -54,6 +54,7 @@ class FilesHandler extends SaveHandler
             'directory' => '',
             'match_ip' => false,
             'match_ua' => false,
+            'ip_key' => 'REMOTE_ADDR',
         ], $configs);
         if (empty($this->getConfig('directory'))) {
             throw new LogicException('Session config has not a directory');
