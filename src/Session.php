@@ -86,7 +86,7 @@ class Session
             'cookie_httponly' => 1,
             'cookie_lifetime' => 7200,
             'cookie_path' => '/',
-            'cookie_samesite' => 'Strict',
+            'cookie_samesite' => 'Lax',
             'cookie_secure' => $secure,
             'referer_check' => '',
             'use_cookies' => 1,
