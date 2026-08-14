@@ -335,7 +335,7 @@ class SessionCollector extends Collector
         <table>
             <thead>
             <tr>
-                <th>Maxlifetime</th>
+                <th>Max Lifetime</th>
                 <th>Destroy</th>
                 <th>Regenerated At</th>
                 <th>Next Regeneration</th>
@@ -387,7 +387,7 @@ class SessionCollector extends Collector
                 'Lock Attempts' => $config['lock_attempts'],
                 'Lock Sleep' => $config['lock_sleep'],
                 'Lock TTL' => $config['lock_ttl'],
-                'Maxlifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
+                'Max Lifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
@@ -406,7 +406,7 @@ class SessionCollector extends Collector
                 'Lock Attempts' => $config['lock_attempts'],
                 'Lock Sleep' => $config['lock_sleep'],
                 'Lock TTL' => $config['lock_ttl'],
-                'Maxlifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
+                'Max Lifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
@@ -430,7 +430,7 @@ class SessionCollector extends Collector
                         'user_id' => $config['columns']['user_id'],
                     ],
                 ],
-                'Maxlifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
+                'Max Lifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'Save IP' => $config['save_ip'] ? 'Yes' : 'No',
