@@ -368,6 +368,7 @@ class SessionCollector extends Collector
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
                 'IP' => $this->saveHandler->getIP(),
+                'User-Agent' => $this->saveHandler->getUA(),
             ];
         }
         if ($this->saveHandler instanceof MemcachedHandler) {
@@ -391,6 +392,7 @@ class SessionCollector extends Collector
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
                 'IP' => $this->saveHandler->getIP(),
+                'User-Agent' => $this->saveHandler->getUA(),
             ];
         }
         if ($this->saveHandler instanceof RedisHandler) {
@@ -409,6 +411,7 @@ class SessionCollector extends Collector
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
                 'IP' => $this->saveHandler->getIP(),
+                'User-Agent' => $this->saveHandler->getUA(),
             ];
         }
         if ($this->saveHandler instanceof DatabaseHandler) {
@@ -434,6 +437,7 @@ class SessionCollector extends Collector
                 'Save User-Agent' => $config['save_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
                 'IP' => $this->saveHandler->getIP(),
+                'User-Agent' => $this->saveHandler->getUA(),
                 'Save User Id' => $config['save_user_id'] ? 'Yes' : 'No',
             ];
         }
