@@ -171,7 +171,7 @@ class RedisHandler extends SaveHandler
         if ($this->lockId === false) {
             return false;
         }
-        $maxlifetime = $this->getMaxlifetime();
+        $maxlifetime = $this->getMaxLifetime();
         $this->redis->expire($this->lockId, $this->getConfig('lock_ttl'));
         if ($this->sessionExists === false || !$this->hasSameFingerprint($data)) {
             if ($this->redis->set($this->getKey($id), $data, $maxlifetime)) {
@@ -186,7 +186,7 @@ class RedisHandler extends SaveHandler
 
     public function updateTimestamp($id, $data) : bool
     {
-        return $this->redis->setex($this->getKey($id), $this->getMaxlifetime(), $data);
+        return $this->redis->setex($this->getKey($id), $this->getMaxLifetime(), $data);
     }
 
     public function close() : bool

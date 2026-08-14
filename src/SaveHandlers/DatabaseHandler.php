@@ -340,7 +340,7 @@ class DatabaseHandler extends SaveHandler
             ->expressions([
                 'locked' => function (Database $database) use ($id) : string {
                     $id = $database->quote($id);
-                    $maxlifetime = $database->quote($this->getMaxlifetime());
+                    $maxlifetime = $database->quote($this->getMaxLifetime());
                     return "GET_LOCK({$id}, {$maxlifetime})";
                 },
             ])->run()

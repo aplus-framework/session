@@ -207,7 +207,7 @@ class MemcachedHandler extends SaveHandler
             \time(),
             $this->getExpiration($this->getConfig('lock_ttl'))
         );
-        $maxlifetime = $this->getExpiration($this->getMaxlifetime());
+        $maxlifetime = $this->getExpiration($this->getMaxLifetime());
         if ($this->hasSameFingerprint($data)) {
             return $this->memcached->touch($this->getKey($id), $maxlifetime);
         }
@@ -222,7 +222,7 @@ class MemcachedHandler extends SaveHandler
     {
         return $this->memcached->touch(
             $this->getKey($id),
-            $this->getExpiration($this->getMaxlifetime())
+            $this->getExpiration($this->getMaxLifetime())
         );
     }
 

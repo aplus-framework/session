@@ -173,14 +173,14 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     }
 
     /**
-     * Get the maxlifetime (TTL) used by cache handlers or locking.
+     * Get the max lifetime (TTL) used by cache handlers or locking.
      *
      * NOTE: It will use the `maxlifetime` config or the ini value of
      * `session.gc_maxlifetime` as fallback.
      *
      * @return int The maximum lifetime of a session in seconds
      */
-    protected function getMaxlifetime() : int
+    protected function getMaxLifetime() : int
     {
         return (int) ($this->getConfig('maxlifetime', true) ?? \ini_get('session.gc_maxlifetime'));
     }
