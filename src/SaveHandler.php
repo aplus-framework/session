@@ -9,6 +9,7 @@
  */
 namespace Framework\Session;
 
+use Closure;
 use Framework\Log\Logger;
 use Framework\Log\LogLevel;
 use OutOfBoundsException;
@@ -193,7 +194,11 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     protected function getIP() : string
     {
-        $key = $this->getConfig('ip_key', true) ?? 'REMOTE_ADDR';
+        $key = $this->getConfig('ip_key', true);
+        if ($key instanceof Closure) {
+            return $key();
+        }
+        $key ??= 'REMOTE_ADDR';
         return $_SERVER[$key];
     }
 

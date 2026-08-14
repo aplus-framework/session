@@ -20,4 +20,12 @@ final class DatabaseHandlerMatchTest extends DatabaseHandlerTest
         'match_ip' => true,
         'match_ua' => true,
     ];
+
+    public function setUp() : void
+    {
+        $this->config['ip_key'] = static function () {
+            return 'xxx';
+        };
+        parent::setUp();
+    }
 }
