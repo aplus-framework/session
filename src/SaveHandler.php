@@ -192,7 +192,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      *
      * @return string
      */
-    protected function getIP() : string
+    public function getIP() : string
     {
         $key = $this->getConfig('ip_key', true);
         if ($key instanceof Closure) {
@@ -210,7 +210,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      *
      * @return string
      */
-    protected function getUA() : string
+    public function getUA() : string
     {
         return $_SERVER['HTTP_USER_AGENT'] ?? '';
     }
