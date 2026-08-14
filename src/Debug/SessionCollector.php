@@ -439,6 +439,7 @@ class SessionCollector extends Collector
                 'IP' => $this->saveHandler->getIP(),
                 'User-Agent' => $this->saveHandler->getUA(),
                 'Save User Id' => $config['save_user_id'] ? 'Yes' : 'No',
+                'User Id' => $_SESSION[$config['columns']['user_id']] ?? '',
             ];
         }
         return [];
