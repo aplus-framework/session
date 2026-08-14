@@ -168,6 +168,7 @@ final class SessionCollectorTest extends TestCase
      */
     public function testSaveHandlers(SaveHandler $handler) : void
     {
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         $this->makeSession([], $handler)->start();
         self::assertStringContainsString(
             $handler::class,

@@ -367,6 +367,7 @@ class SessionCollector extends Collector
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
+                'IP' => $this->saveHandler->getIP(),
             ];
         }
         if ($this->saveHandler instanceof MemcachedHandler) {
@@ -389,6 +390,7 @@ class SessionCollector extends Collector
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
+                'IP' => $this->saveHandler->getIP(),
             ];
         }
         if ($this->saveHandler instanceof RedisHandler) {
@@ -406,6 +408,7 @@ class SessionCollector extends Collector
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
+                'IP' => $this->saveHandler->getIP(),
             ];
         }
         if ($this->saveHandler instanceof DatabaseHandler) {
@@ -430,6 +433,7 @@ class SessionCollector extends Collector
                 'Save IP' => $config['save_ip'] ? 'Yes' : 'No',
                 'Save User-Agent' => $config['save_ua'] ? 'Yes' : 'No',
                 'IP Key' => $this->getIpKey(),
+                'IP' => $this->saveHandler->getIP(),
                 'Save User Id' => $config['save_user_id'] ? 'Yes' : 'No',
             ];
         }
