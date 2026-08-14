@@ -175,6 +175,25 @@ final class SessionCollectorTest extends TestCase
         );
     }
 
+    public function testIpKeyWithClosure() : void
+    {
+        $directory = \sys_get_temp_dir() . '/sessions';
+        if (!\is_dir($directory)) {
+            \mkdir($directory);
+        }
+        $handler = new FilesHandler([
+            'directory' => $directory,
+            'ip_key' => static function () {
+                return '192.168.0.200';
+            },
+        ]);
+        $this->makeSession([], $handler)->start();
+        self::assertStringContainsString(
+            'Closure',
+            $this->collector->getContents()
+        );
+    }
+
     public function testCustomSaveHandlers() : void
     {
         $handler = new class() extends SaveHandler

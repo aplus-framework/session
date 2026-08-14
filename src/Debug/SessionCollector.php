@@ -9,6 +9,7 @@
  */
 namespace Framework\Session\Debug;
 
+use Closure;
 use Framework\Debug\Collector;
 use Framework\Helpers\ArraySimple;
 use Framework\Session\SaveHandler;
@@ -365,6 +366,7 @@ class SessionCollector extends Collector
                 'Prefix' => $config['prefix'],
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
+                'IP Key' => $this->getIpKey(),
             ];
         }
         if ($this->saveHandler instanceof MemcachedHandler) {
@@ -386,6 +388,7 @@ class SessionCollector extends Collector
                 'Maxlifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
+                'IP Key' => $this->getIpKey(),
             ];
         }
         if ($this->saveHandler instanceof RedisHandler) {
@@ -402,6 +405,7 @@ class SessionCollector extends Collector
                 'Maxlifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
                 'Match IP' => $config['match_ip'] ? 'Yes' : 'No',
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
+                'IP Key' => $this->getIpKey(),
             ];
         }
         if ($this->saveHandler instanceof DatabaseHandler) {
@@ -425,9 +429,23 @@ class SessionCollector extends Collector
                 'Match User-Agent' => $config['match_ua'] ? 'Yes' : 'No',
                 'Save IP' => $config['save_ip'] ? 'Yes' : 'No',
                 'Save User-Agent' => $config['save_ua'] ? 'Yes' : 'No',
+                'IP Key' => $this->getIpKey(),
                 'Save User Id' => $config['save_user_id'] ? 'Yes' : 'No',
             ];
         }
         return [];
+    }
+
+    /**
+     * Get the save handler IP key.
+     *
+     * @return string
+     */
+    protected function getIpKey() : string
+    {
+        $config = $this->saveHandler->getConfigs();
+        return $config['ip_key'] instanceof Closure
+            ? Closure::class
+            : $config['ip_key'];
     }
 }
