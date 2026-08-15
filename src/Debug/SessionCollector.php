@@ -427,6 +427,7 @@ class SessionCollector extends Collector
                         'ip' => $config['columns']['ip'],
                         'ua' => $config['columns']['ua'],
                         'user_id' => $config['columns']['user_id'],
+                        'admin_id' => $config['columns']['admin_id'],
                     ],
                 ],
                 'Max Lifetime' => $config['maxlifetime'] ?? \ini_get('session.gc_maxlifetime'),
@@ -439,6 +440,8 @@ class SessionCollector extends Collector
                 'User-Agent' => $this->saveHandler->getUA(),
                 'Save User Id' => $config['save_user_id'] ? 'Yes' : 'No',
                 'User Id' => $_SESSION[$config['columns']['user_id']] ?? '',
+                'Save Admin Id' => $config['save_admin_id'] ? 'Yes' : 'No',
+                'Admin Id' => $_SESSION[$config['columns']['admin_id']] ?? '',
             ];
         }
         return [];

@@ -51,10 +51,12 @@ class DatabaseHandlerTest extends AbstractHandler
                 $definition->column('ip')->varchar(45)->default('');
                 $definition->column('ua')->varchar(255)->default('');
                 $definition->column('user_id')->int(11)->null()->default(null);
+                $definition->column('admin_id')->int(11)->null()->default(null);
                 $definition->index('timestamp')->key('timestamp');
                 $definition->index('ip')->key('ip');
                 $definition->index('ua')->key('ua');
                 $definition->index('user_id')->key('user_id');
+                $definition->index('admin_id')->key('admin_id');
             })->run();
     }
 
@@ -80,6 +82,30 @@ class DatabaseHandlerTest extends AbstractHandler
             ->run()
             ->fetch()->user_id;
         self::assertSame(123, $result);
+    }
+
+    public function testAdminId() : void
+    {
+        $this->session->stop();
+        $this->replaceConfig([
+            'save_admin_id' => true,
+        ]);
+        $handler = new class($this->config, $this->logger) extends DatabaseHandler
+        {
+            public ?Database $database;
+        };
+        $session = new Session(handler: $handler);
+        $session->start();
+        $database = $handler->database;
+        $session->set('admin_id', 18);
+        $id = $session->id();
+        $session->stop();
+        $result = $database->select('admin_id') // @phpstan-ignore-line
+            ->from($this->config['table'])
+            ->whereEqual('id', $id) // @phpstan-ignore-line
+            ->run()
+            ->fetch()->admin_id;
+        self::assertSame(18, $result);
     }
 
     public function testOpenError() : void

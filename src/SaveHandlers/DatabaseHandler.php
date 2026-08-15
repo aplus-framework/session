@@ -93,12 +93,14 @@ class DatabaseHandler extends SaveHandler
                 'ip' => 'ip',
                 'ua' => 'ua',
                 'user_id' => 'user_id',
+                'admin_id' => 'admin_id',
             ],
             'match_ip' => false,
             'match_ua' => false,
             'save_ip' => false,
             'save_ua' => false,
             'save_user_id' => false,
+            'save_admin_id' => false,
             'ip_key' => 'REMOTE_ADDR',
         ], $configs);
     }
@@ -149,6 +151,19 @@ class DatabaseHandler extends SaveHandler
         }
         if ($this->getConfig('match_ua')) {
             $statement->whereEqual($this->getColumn('ua'), $this->getUA());
+        }
+    }
+
+    /**
+     * Adds the optional `admin_id` column.
+     *
+     * @param array<string,Closure|string> $columns The statement columns to insert/update
+     */
+    protected function addAdminIdColumn(array &$columns) : void
+    {
+        if ($this->getConfig('save_admin_id')) {
+            $key = $this->getColumn('admin_id');
+            $columns[$key] = $_SESSION[$key] ?? null;
         }
     }
 
@@ -234,6 +249,7 @@ class DatabaseHandler extends SaveHandler
         if ($this->getConfig('match_ua') || $this->getConfig('save_ua')) {
             $columns[$this->getColumn('ua')] = $this->getUA();
         }
+        $this->addAdminIdColumn($columns);
         $this->addUserIdColumn($columns);
         $inserted = $this->database
             ->insert($this->getTable())
@@ -257,6 +273,7 @@ class DatabaseHandler extends SaveHandler
         if (!$this->hasSameFingerprint($data)) {
             $columns[$this->getColumn('data')] = $data;
         }
+        $this->addAdminIdColumn($columns);
         $this->addUserIdColumn($columns);
         $statement = $this->database
             ->update()
