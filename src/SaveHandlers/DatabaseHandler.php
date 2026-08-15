@@ -142,7 +142,7 @@ class DatabaseHandler extends SaveHandler
      *
      * @param Delete|Select|Update $statement The statement to add the WHERE clause
      */
-    protected function addWhereMatchs(Delete | Select | Update $statement) : void
+    protected function addWhereMatches(Delete | Select | Update $statement) : void
     {
         if ($this->getConfig('match_ip')) {
             $statement->whereEqual($this->getColumn('ip'), $this->getIP());
@@ -192,7 +192,7 @@ class DatabaseHandler extends SaveHandler
             ->select()
             ->from($this->getTable())
             ->whereEqual($this->getColumn('id'), $id);
-        $this->addWhereMatchs($statement);
+        $this->addWhereMatches($statement);
         $row = $statement->limit(1)->run()->fetch();
         $this->sessionExists = (bool) $row;
         $column = $this->getColumn('data');
@@ -263,7 +263,7 @@ class DatabaseHandler extends SaveHandler
             ->table($this->getTable())
             ->set($columns)
             ->whereEqual($this->getColumn('id'), $id);
-        $this->addWhereMatchs($statement);
+        $this->addWhereMatches($statement);
         $statement->run();
         return true;
     }
@@ -279,7 +279,7 @@ class DatabaseHandler extends SaveHandler
                 },
             ])
             ->whereEqual($this->getColumn('id'), $id);
-        $this->addWhereMatchs($statement);
+        $this->addWhereMatches($statement);
         $statement->run();
         return true;
     }
@@ -299,7 +299,7 @@ class DatabaseHandler extends SaveHandler
             ->delete()
             ->from($this->getTable())
             ->whereEqual($this->getColumn('id'), $id);
-        $this->addWhereMatchs($statement);
+        $this->addWhereMatches($statement);
         $result = $statement->run();
         if ($result !== 1) {
             $this->log(
