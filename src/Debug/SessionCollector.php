@@ -208,7 +208,7 @@ class SessionCollector extends Collector
                 <tr>
                     <td><?= \htmlentities($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(\get_debug_type($value))
+                                \htmlentities(\get_debug_type($value['data']))
                 ?></code></pre>
                     </td>
                     <td><?= \date('Y-m-d H:i:s', $value['ttl']) ?></td>
