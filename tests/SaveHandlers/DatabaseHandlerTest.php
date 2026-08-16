@@ -45,7 +45,7 @@ class DatabaseHandlerTest extends AbstractHandler
         $database->dropTable($this->config['table'])->ifExists()->run();
         $database->createTable($this->config['table'])
             ->definition(static function (TableDefinition $definition) : void {
-                $definition->column('id')->varchar(128)->primaryKey();
+                $definition->column('id')->char(32)->primaryKey();
                 $definition->column('timestamp')->timestamp();
                 $definition->column('data')->blob();
                 $definition->column('ip')->varchar(45)->default('');
