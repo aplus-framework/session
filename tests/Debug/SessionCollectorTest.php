@@ -229,7 +229,7 @@ final class SessionCollectorTest extends TestCase
                 return true;
             }
 
-            public function gc($maxLifetime) : false | int
+            public function gc($maxLifetime) : int
             {
                 return 0;
             }

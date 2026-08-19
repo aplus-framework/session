@@ -9,7 +9,6 @@
  */
 namespace Framework\Session\SaveHandlers;
 
-use Closure;
 use Framework\Database\Database;
 use Framework\Database\Manipulation\Delete;
 use Framework\Database\Manipulation\Select;
@@ -157,7 +156,7 @@ class DatabaseHandler extends SaveHandler
     /**
      * Adds the optional `admin_id` column.
      *
-     * @param array<string,Closure|string> $columns The statement columns to insert/update
+     * @param array<string,mixed> $columns The statement columns to insert/update
      */
     protected function addAdminIdColumn(array &$columns) : void
     {
@@ -170,7 +169,7 @@ class DatabaseHandler extends SaveHandler
     /**
      * Adds the optional `user_id` column.
      *
-     * @param array<string,Closure|string> $columns The statement columns to insert/update
+     * @param array<string,mixed> $columns The statement columns to insert/update
      */
     protected function addUserIdColumn(array &$columns) : void
     {

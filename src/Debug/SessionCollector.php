@@ -111,7 +111,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean(); // @phpstan-ignore-line
+        return \ob_get_clean();
     }
 
     protected function renderFlash() : string
@@ -153,7 +153,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean(); // @phpstan-ignore-line
+        return \ob_get_clean();
     }
 
     protected function renderFlashNew() : string
@@ -185,7 +185,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean(); // @phpstan-ignore-line
+        return \ob_get_clean();
     }
 
     protected function renderTemp() : string
@@ -217,7 +217,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean(); // @phpstan-ignore-line
+        return \ob_get_clean();
     }
 
     protected function renderSaveHandler() : string
@@ -278,14 +278,14 @@ class SessionCollector extends Collector
                 </tr>
             <?php
             endfor;
-            return \ob_get_clean(); // @phpstan-ignore-line
+            return \ob_get_clean();
         endif; ?>
         <tr>
             <th><?= \htmlentities($key) ?></th>
             <td><?= \htmlentities((string) $value) ?></td>
         </tr>
         <?php
-        return \ob_get_clean(); // @phpstan-ignore-line
+        return \ob_get_clean();
     }
 
     protected function renderCookieParams() : string
@@ -319,7 +319,7 @@ class SessionCollector extends Collector
             $this->options['set_cookie_permanent'] ? 'Permanent' : 'Normal' ?>
         </p>
         <?php
-        return \ob_get_clean(); // @phpstan-ignore-line
+        return \ob_get_clean();
     }
 
     protected function renderAutoRegenerateId() : string
@@ -350,7 +350,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean(); // @phpstan-ignore-line
+        return \ob_get_clean();
     }
 
     /**

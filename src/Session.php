@@ -98,6 +98,7 @@ class Session
             'auto_regenerate_destroy' => true,
             'set_cookie_permanent' => false,
         ];
+        // @phpstan-ignore-next-line
         if (\PHP_VERSION_ID < 80400) {
             $default['sid_bits_per_character'] = 6;
             $default['sid_length'] = 48;
@@ -188,7 +189,7 @@ class Session
         \setcookie(
             \session_name(), // @phpstan-ignore-line
             \session_id(), // @phpstan-ignore-line
-            [ // @phpstan-ignore-line
+            [
                 'expires' => $time + $this->options['cookie_lifetime'],
                 'path' => $params['path'],
                 'domain' => $params['domain'],
@@ -292,7 +293,6 @@ class Session
             throw new RuntimeException('Could not get the session name');
         }
         $params = \session_get_cookie_params();
-        // @phpstan-ignore-next-line
         return \setcookie($name, '', [
             'expires' => 0,
             'path' => $params['path'],
