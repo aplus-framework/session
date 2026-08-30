@@ -11,6 +11,7 @@ namespace Framework\Session\Debug;
 
 use Closure;
 use Framework\Debug\Collector;
+use Framework\Debug\Debugger as D;
 use Framework\Session\SaveHandler;
 use Framework\Session\SaveHandlers\DatabaseHandler;
 use Framework\Session\SaveHandlers\FilesHandler;
@@ -101,9 +102,9 @@ class SessionCollector extends Collector
             <tbody>
             <?php foreach ($data as $key => $value): ?>
                 <tr>
-                    <td><?= \htmlentities((string) $key) ?></td>
+                    <td><?= D::esc($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(\get_debug_type($value))
+                                D::esc(\get_debug_type($value))
                 ?></code></pre>
                     </td>
                 </tr>
@@ -143,9 +144,9 @@ class SessionCollector extends Collector
             <tbody>
             <?php foreach ($data as $key => $value): ?>
                 <tr>
-                    <td><?= \htmlentities($key) ?></td>
+                    <td><?= D::esc($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(\get_debug_type($value))
+                                D::esc(\get_debug_type($value))
                 ?></code></pre>
                     </td>
                 </tr>
@@ -175,9 +176,9 @@ class SessionCollector extends Collector
             <tbody>
             <?php foreach ($data as $key => $value): ?>
                 <tr>
-                    <td><?= \htmlentities($key) ?></td>
+                    <td><?= D::esc($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(\get_debug_type($value))
+                                D::esc(\get_debug_type($value))
                 ?></code></pre>
                     </td>
                 </tr>
@@ -206,9 +207,9 @@ class SessionCollector extends Collector
             <tbody>
             <?php foreach ($data as $key => $value): ?>
                 <tr>
-                    <td><?= \htmlentities($key) ?></td>
+                    <td><?= D::esc($key) ?></td>
                     <td><pre><code class="language-php"><?=
-                                \htmlentities(\get_debug_type($value['data']))
+                                D::esc(\get_debug_type($value['data']))
                 ?></code></pre>
                     </td>
                     <td><?= \date('Y-m-d H:i:s', $value['ttl']) ?></td>
@@ -255,8 +256,8 @@ class SessionCollector extends Collector
                     <table>
                         <?php foreach ($value[\array_key_first($value)] as $k => $v): ?>
                             <tr>
-                                <th><?= \htmlentities($k) ?></th>
-                                <td><?= \htmlentities((string) $v) ?></td>
+                                <th><?= D::esc($k) ?></th>
+                                <td><?= D::esc($v) ?></td>
                             </tr>
                         <?php endforeach ?>
                     </table>
@@ -269,8 +270,8 @@ class SessionCollector extends Collector
                         <table>
                             <?php foreach ($value[$i] as $k => $v): ?>
                                 <tr>
-                                    <th><?= \htmlentities($k) ?></th>
-                                    <td><?= \htmlentities((string) $v) ?></td>
+                                    <th><?= D::esc($k) ?></th>
+                                    <td><?= D::esc($v) ?></td>
                                 </tr>
                             <?php endforeach ?>
                         </table>
@@ -281,8 +282,8 @@ class SessionCollector extends Collector
             return \ob_get_clean();
         endif; ?>
         <tr>
-            <th><?= \htmlentities($key) ?></th>
-            <td><?= \htmlentities((string) $value) ?></td>
+            <th><?= D::esc($key) ?></th>
+            <td><?= D::esc($value) ?></td>
         </tr>
         <?php
         return \ob_get_clean();
