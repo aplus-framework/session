@@ -112,7 +112,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean();
+        return \ob_get_clean(); // @phpstan-ignore-line
     }
 
     protected function renderFlash() : string
@@ -154,7 +154,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean();
+        return \ob_get_clean(); // @phpstan-ignore-line
     }
 
     protected function renderFlashNew() : string
@@ -186,7 +186,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean();
+        return \ob_get_clean(); // @phpstan-ignore-line
     }
 
     protected function renderTemp() : string
@@ -218,7 +218,7 @@ class SessionCollector extends Collector
             </tbody>
         </table>
         <?php
-        return \ob_get_clean();
+        return \ob_get_clean(); // @phpstan-ignore-line
     }
 
     protected function renderSaveHandler() : string
@@ -279,14 +279,14 @@ class SessionCollector extends Collector
                 </tr>
             <?php
             endfor;
-            return \ob_get_clean();
+            return \ob_get_clean(); // @phpstan-ignore-line
         endif; ?>
         <tr>
             <th><?= D::esc($key) ?></th>
             <td><?= D::esc($value) ?></td>
         </tr>
         <?php
-        return \ob_get_clean();
+        return \ob_get_clean(); // @phpstan-ignore-line
     }
 
     protected function renderCookieParams() : string
