@@ -78,7 +78,7 @@ class DatabaseHandlerTest extends AbstractHandler
         $session->stop();
         $result = $database->select('user_id') // @phpstan-ignore-line
             ->from($this->config['table'])
-            ->whereEqual('id', $id) // @phpstan-ignore-line
+            ->whereEqual('id', $id)
             ->run()
             ->fetch()->user_id;
         self::assertSame(123, $result);
@@ -102,7 +102,7 @@ class DatabaseHandlerTest extends AbstractHandler
         $session->stop();
         $result = $database->select('admin_id') // @phpstan-ignore-line
             ->from($this->config['table'])
-            ->whereEqual('id', $id) // @phpstan-ignore-line
+            ->whereEqual('id', $id)
             ->run()
             ->fetch()->admin_id;
         self::assertSame(18, $result);
@@ -216,9 +216,9 @@ class DatabaseHandlerTest extends AbstractHandler
     {
         $handler = new DatabaseHandler($this->config);
         $database = new Database([
-            'username' => \getenv('DB_USERNAME'),
-            'password' => \getenv('DB_PASSWORD'),
-            'host' => \getenv('DB_HOST'),
+            'username' => (string) \getenv('DB_USERNAME'),
+            'password' => (string) \getenv('DB_PASSWORD'),
+            'host' => (string) \getenv('DB_HOST'),
         ]);
         self::assertNull($handler->getDatabase());
         $handler->setDatabase($database);
