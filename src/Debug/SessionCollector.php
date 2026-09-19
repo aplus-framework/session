@@ -300,6 +300,7 @@ class SessionCollector extends Collector
                 <th>Path</th>
                 <th>Domain</th>
                 <th>Is Secure</th>
+                <th>Is Partitioned</th>
                 <th>Is HTTP Only</th>
                 <th>SameSite</th>
             </tr>
@@ -310,6 +311,7 @@ class SessionCollector extends Collector
                 <td><?= $params['path'] ?></td>
                 <td><?= $params['domain'] ?></td>
                 <td><?= $params['secure'] ? 'Yes' : 'No' ?></td>
+                <td><?= $params['partitioned'] ? 'Yes' : 'No' ?></td>
                 <td><?= $params['httponly'] ? 'Yes' : 'No' ?></td>
                 <td><?= $params['samesite'] ?></td>
             </tr>
