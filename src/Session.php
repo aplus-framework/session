@@ -98,11 +98,6 @@ class Session
             'auto_regenerate_destroy' => true,
             'set_cookie_permanent' => false,
         ];
-        // @phpstan-ignore-next-line
-        if (\PHP_VERSION_ID < 80400) {
-            $default['sid_bits_per_character'] = 6;
-            $default['sid_length'] = 48;
-        }
         $this->options = $custom
             ? \array_replace($default, $custom)
             : $default;
