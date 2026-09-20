@@ -92,8 +92,6 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      * Prepare configurations to be used by the save handler.
      *
      * @param array<string,mixed> $configs Custom configs
-     *
-     * @codeCoverageIgnore
      */
     protected function prepareConfigs(#[SensitiveParameter] array $configs) : void
     {
