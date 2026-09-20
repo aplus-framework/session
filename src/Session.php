@@ -191,6 +191,7 @@ class Session
                 'secure' => $params['secure'],
                 'httponly' => $params['httponly'],
                 'samesite' => $params['samesite'],
+                'partitioned' => $params['partitioned'],
             ]
         );
     }
@@ -295,6 +296,7 @@ class Session
             'secure' => $params['secure'],
             'httponly' => $params['httponly'],
             'samesite' => $params['samesite'],
+            'partitioned' => $params['partitioned'],
         ]);
     }
 
