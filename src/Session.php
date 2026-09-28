@@ -84,6 +84,8 @@ class Session
             'cookie_domain' => '',
             'cookie_httponly' => 1,
             'cookie_lifetime' => 7200,
+            'gc_maxlifetime' => 7200,
+            'gc_probability' => 1,
             'cookie_path' => '/',
             'cookie_samesite' => 'Lax',
             'cookie_secure' => $secure,
