@@ -251,6 +251,34 @@ final class SessionCollectorTest extends TestCase
         );
     }
 
+    public function testSessionIniValues() : void
+    {
+        $session = $this->makeSession();
+        $session->start();
+        self::assertStringContainsString(
+            'Session INI Values',
+            $this->collector->getContents()
+        );
+    }
+
+    public function testGetAccess() : void
+    {
+        $collector = new class() extends SessionCollector
+        {
+            public function getAccess(int $access) : string
+            {
+                return parent::getAccess($access);
+            }
+        };
+        self::assertSame('INI_ALL', $collector->getAccess(\INI_ALL));
+        self::assertSame('INI_SYSTEM', $collector->getAccess(\INI_SYSTEM));
+        self::assertSame('INI_USER', $collector->getAccess(\INI_USER));
+        self::assertSame('INI_PERDIR', $collector->getAccess(\INI_PERDIR));
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Access type does not exist: 12345');
+        $collector->getAccess(12345);
+    }
+
     /**
      * @return Generator<array<SaveHandler>>
      */

@@ -18,6 +18,7 @@ use Framework\Session\SaveHandlers\FilesHandler;
 use Framework\Session\SaveHandlers\MemcachedHandler;
 use Framework\Session\SaveHandlers\RedisHandler;
 use Framework\Session\Session;
+use InvalidArgumentException;
 
 /**
  * Class SessionCollector.
@@ -80,6 +81,7 @@ class SessionCollector extends Collector
         <h1>Auto Regenerate Id</h1>
         <?php
         echo $this->renderAutoRegenerateId();
+        echo $this->renderSessionIniValues();
         return \ob_get_clean(); // @phpstan-ignore-line
     }
 
@@ -461,5 +463,43 @@ class SessionCollector extends Collector
         return $config['ip_key'] instanceof Closure
             ? Closure::class
             : $config['ip_key'];
+    }
+
+    protected function renderSessionIniValues() : string
+    {
+        \ob_start();
+        ?>
+        <h1>Session INI Values</h1>
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Global Value</th>
+                <th>Local Value</th>
+                <th>Access</th>
+            </thead>
+            <tbody>
+                <?php foreach((array) \ini_get_all('session') as $name => $ini) : ?>
+                <tr>
+                    <td><?= D::esc($name) ?></td>
+                    <td><?= D::esc($ini['global_value']) ?></td>
+                    <td><?= D::esc($ini['local_value']) ?></td>
+                    <td><?= D::esc($this->getAccess((int) $ini['access'])) ?></td>
+                </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+        <?php
+        return \ob_get_clean(); // @phpstan-ignore-line
+    }
+
+    protected function getAccess(int $access) : string
+    {
+        return match($access) {
+            \INI_ALL => 'INI_ALL',
+            \INI_SYSTEM => 'INI_SYSTEM',
+            \INI_USER => 'INI_USER',
+            \INI_PERDIR => 'INI_PERDIR',
+            default => throw new InvalidArgumentException('Access type does not exist: ' . $access),
+        };
     }
 }
