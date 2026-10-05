@@ -254,6 +254,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     public function testDestroyCookie() : void
     {
         self::assertTrue($this->session->destroyCookie());
+        $header = 'Set-Cookie: SessionName=deleted; expires=Thu, 01 Jan 1970 00:00:01 GMT; Max-Age=0; path=/; HttpOnly; SameSite=Lax';
+        self::assertSame($header, \array_last(xdebug_get_headers()));
     }
 
     /**

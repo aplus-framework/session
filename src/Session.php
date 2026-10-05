@@ -291,7 +291,7 @@ class Session
         }
         $params = \session_get_cookie_params();
         return \setcookie($name, '', [
-            'expires' => 0,
+            'expires' => 1,
             'path' => $params['path'],
             'domain' => $params['domain'],
             'secure' => $params['secure'],
