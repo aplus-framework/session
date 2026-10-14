@@ -589,6 +589,21 @@ class Session
     }
 
     /**
+     * Remove (unset) all session items, except where the key is a dollar sign.
+     *
+     * @return static
+     */
+    public function unset() : static
+    {
+        foreach (\array_keys($_SESSION ?? []) as $key) {
+            if ($key !== '$') {
+                unset($_SESSION[$key]);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Perform session data garbage collection.
      *
      * If return false, use {@see error_get_last()} to get error details.

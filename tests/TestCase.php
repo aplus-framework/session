@@ -303,4 +303,19 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         }
         self::assertSame(2, $count);
     }
+
+    public function testUnset() : void
+    {
+        self::assertEmpty($this->session->getAll());
+        $this->session->set('$', 'foo');
+        self::assertSame(['$' => 'foo'], $this->session->getAll());
+        $this->session->set('foo', 'foo');
+        $this->session->set('bar', 'bar');
+        self::assertSame(
+            ['$' => 'foo', 'foo' => 'foo', 'bar' => 'bar'],
+            $this->session->getAll()
+        );
+        $this->session->unset();
+        self::assertSame(['$' => 'foo'], $this->session->getAll());
+    }
 }
