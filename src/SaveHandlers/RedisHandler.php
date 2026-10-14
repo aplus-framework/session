@@ -174,7 +174,7 @@ class RedisHandler extends SaveHandler
         $maxlifetime = $this->getMaxLifetime();
         $this->redis->expire($this->lockId, $this->getConfig('lock_ttl'));
         if ($this->sessionExists === false || !$this->hasSameFingerprint($data)) {
-            if ($this->redis->set($this->getKey($id), $data, $maxlifetime)) {
+            if ($this->redis->set($this->getKey($id), $data, ['EX' => $maxlifetime])) {
                 $this->setFingerprint($data);
                 $this->sessionExists = true;
                 return true;
