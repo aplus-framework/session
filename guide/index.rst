@@ -213,6 +213,26 @@ Item removal can be performed individually or multiple at once:
         'foo',
     ]); // static
 
+    // Remove (unset) all session items.
+    $session->removeAll(); // static
+
+If necessary, you can remove all items from the session, except those where the
+key is a dollar sign:
+
+.. code-block:: php
+
+    $session->unset(); // static
+
+Garbage Collector
+^^^^^^^^^^^^^^^^^
+
+This method is called automatically, but you can call it when you want to delete
+expired sessions from the server:
+
+.. code-block:: php
+
+    $session->gc(); // false or int
+
 Temporary Data
 --------------
 
