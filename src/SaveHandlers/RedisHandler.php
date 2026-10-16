@@ -41,10 +41,10 @@ class RedisHandler extends SaveHandler
      *     'port' => 6379,
      *     // The connection timeout
      *     'timeout' => 0.0,
-     *     // Optional auth password
-     *     'password' => null,
-     *     // Optional database to select
-     *     'database' => null,
+     *     // Optional auth credentials
+     *     'credentials' => null,
+     *     // Optional db to select
+     *     'db' => null,
      *     // Maximum attempts to try lock a session id
      *     'lock_attempts' => 60,
      *     // Interval between the lock attempts in microseconds
@@ -67,8 +67,8 @@ class RedisHandler extends SaveHandler
             'host' => '127.0.0.1',
             'port' => 6379,
             'timeout' => 0.0,
-            'password' => null,
-            'database' => null,
+            'credentials' => null,
+            'db' => null,
             'lock_attempts' => 60,
             'lock_sleep' => 1_000_000,
             'lock_ttl' => 600,
@@ -123,19 +123,19 @@ class RedisHandler extends SaveHandler
             );
             return false;
         }
-        if ($this->getConfig('password', true) !== null) {
+        if ($this->getConfig('credentials', true) !== null) {
             try {
-                $this->redis->auth($this->getConfig('password'));
+                $this->redis->auth($this->getConfig('credentials'));
             } catch (RedisException) {
                 $this->log('Session (redis): Authentication failed');
                 return false;
             }
         }
-        if ($this->getConfig('database', true) !== null
-            && !$this->redis->select($this->getConfig('database'))
+        if ($this->getConfig('db', true) !== null
+            && !$this->redis->select($this->getConfig('db'))
         ) {
             $this->log(
-                "Session (redis): Could not select the database '{$this->getConfig('database')}'"
+                "Session (redis): Could not select the db '{$this->getConfig('db')}'"
             );
             return false;
         }

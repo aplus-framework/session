@@ -466,10 +466,10 @@ These are the RedisHandler configs:
         'port' => 6379,
         // The connection timeout
         'timeout' => 0.0,
-        // Optional auth password
-        'password' => null,
-        // Optional database to select
-        'database' => null,
+        // Optional auth credentials
+        'credentials' => null,
+        // Optional db to select
+        'db' => null,
         // Maximum attempts to try lock a session id
         'lock_attempts' => 60,
         // Interval between the lock attempts in microseconds

@@ -405,7 +405,7 @@ class SessionCollector extends Collector
                 'Host' => $redis?->getHost() ?: $config['host'],
                 'Port' => $redis?->getPort() ?: $config['port'],
                 'Timeout' => $redis?->getTimeout() ?: $config['timeout'],
-                'Database' => $config['database'],
+                'DB' => $config['db'],
                 'Prefix' => $config['prefix'],
                 'Lock Attempts' => $config['lock_attempts'],
                 'Lock Sleep' => $config['lock_sleep'],

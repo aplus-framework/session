@@ -42,10 +42,10 @@ class RedisHandlerTest extends AbstractHandler
         );
     }
 
-    public function testFailToConnectWithPassword() : void
+    public function testFailToConnectWithCredentials() : void
     {
         $this->replaceConfig([
-            'password' => 'foo',
+            'credentials' => 'foo',
         ]);
         $handler = new RedisHandler($this->config, $this->logger);
         self::assertFalse($handler->open('', ''));
@@ -55,15 +55,15 @@ class RedisHandlerTest extends AbstractHandler
         );
     }
 
-    public function testFailToConnectWithDatabase() : void
+    public function testFailToConnectWithDb() : void
     {
         $this->replaceConfig([
-            'database' => 25,
+            'db' => 25,
         ]);
         $handler = new RedisHandler($this->config, $this->logger);
         self::assertFalse($handler->open('', ''));
         self::assertSame(
-            "Session (redis): Could not select the database '25'",
+            "Session (redis): Could not select the db '25'",
             $this->logger->getLastLog()->message
         );
     }
