@@ -53,7 +53,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Framework\\Session\\": "src/"
+            "Aplus\\Session\\": "src/"
         }
     },
     "autoload-dev": {
