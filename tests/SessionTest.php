@@ -9,7 +9,7 @@
  */
 namespace Tests\Session;
 
-use Framework\Session\Session;
+use Aplus\Session\Session;
 
 /**
  * Class SessionTest.

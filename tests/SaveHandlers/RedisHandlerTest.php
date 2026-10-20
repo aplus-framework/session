@@ -9,7 +9,7 @@
  */
 namespace Tests\Session\SaveHandlers;
 
-use Framework\Session\SaveHandlers\RedisHandler;
+use Aplus\Session\SaveHandlers\RedisHandler;
 use Redis;
 
 /**

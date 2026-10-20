@@ -7,14 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Framework\Session\SaveHandlers;
+namespace Aplus\Session\SaveHandlers;
 
-use Framework\Database\Database;
-use Framework\Database\Manipulation\Delete;
-use Framework\Database\Manipulation\Select;
-use Framework\Database\Manipulation\Update;
-use Framework\Log\LogLevel;
-use Framework\Session\SaveHandler;
+use Aplus\Database\Database;
+use Aplus\Database\Manipulation\Delete;
+use Aplus\Database\Manipulation\Select;
+use Aplus\Database\Manipulation\Update;
+use Aplus\Log\LogLevel;
+use Aplus\Session\SaveHandler;
 use SensitiveParameter;
 
 /**

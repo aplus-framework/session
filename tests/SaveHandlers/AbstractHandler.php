@@ -9,8 +9,8 @@
  */
 namespace Tests\Session\SaveHandlers;
 
-use Framework\Log\Logger;
-use Framework\Log\Loggers\MultiFileLogger;
+use Aplus\Log\Logger;
+use Aplus\Log\Loggers\MultiFileLogger;
 use Tests\Session\TestCase;
 
 /**

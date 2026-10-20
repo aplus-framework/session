@@ -9,10 +9,10 @@
  */
 namespace Tests\Session\SaveHandlers;
 
-use Framework\Database\Database;
-use Framework\Database\Definition\Table\TableDefinition;
-use Framework\Session\SaveHandlers\DatabaseHandler;
-use Framework\Session\Session;
+use Aplus\Database\Database;
+use Aplus\Database\Definition\Table\TableDefinition;
+use Aplus\Session\SaveHandlers\DatabaseHandler;
+use Aplus\Session\Session;
 
 /**
  * Class DatabaseHandlerTest.

@@ -9,15 +9,15 @@
  */
 namespace Tests\Session\Debug;
 
-use Framework\Database\Database;
-use Framework\Database\Definition\Table\TableDefinition;
-use Framework\Session\Debug\SessionCollector;
-use Framework\Session\SaveHandler;
-use Framework\Session\SaveHandlers\DatabaseHandler;
-use Framework\Session\SaveHandlers\FilesHandler;
-use Framework\Session\SaveHandlers\MemcachedHandler;
-use Framework\Session\SaveHandlers\RedisHandler;
-use Framework\Session\Session;
+use Aplus\Database\Database;
+use Aplus\Database\Definition\Table\TableDefinition;
+use Aplus\Session\Debug\SessionCollector;
+use Aplus\Session\SaveHandler;
+use Aplus\Session\SaveHandlers\DatabaseHandler;
+use Aplus\Session\SaveHandlers\FilesHandler;
+use Aplus\Session\SaveHandlers\MemcachedHandler;
+use Aplus\Session\SaveHandlers\RedisHandler;
+use Aplus\Session\Session;
 use Generator;
 use PHPUnit\Framework\TestCase;
 

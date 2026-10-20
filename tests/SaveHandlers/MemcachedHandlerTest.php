@@ -9,8 +9,8 @@
  */
 namespace Tests\Session\SaveHandlers;
 
-use Framework\Session\SaveHandlers\MemcachedHandler;
-use Framework\Session\Session;
+use Aplus\Session\SaveHandlers\MemcachedHandler;
+use Aplus\Session\Session;
 use Memcached;
 
 /**

@@ -9,8 +9,8 @@
  */
 namespace Tests\Session;
 
-use Framework\Session\SaveHandler;
-use Framework\Session\Session;
+use Aplus\Session\SaveHandler;
+use Aplus\Session\Session;
 
 /**
  * Class TestCase.

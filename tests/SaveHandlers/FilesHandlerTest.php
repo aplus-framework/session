@@ -9,7 +9,7 @@
  */
 namespace Tests\Session\SaveHandlers;
 
-use Framework\Session\SaveHandlers\FilesHandler;
+use Aplus\Session\SaveHandlers\FilesHandler;
 
 /**
  * Class FilesHandlerTest.

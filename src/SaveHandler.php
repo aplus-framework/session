@@ -7,11 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Framework\Session;
+namespace Aplus\Session;
 
+use Aplus\Log\Logger;
+use Aplus\Log\LogLevel;
 use Closure;
-use Framework\Log\Logger;
-use Framework\Log\LogLevel;
 use OutOfBoundsException;
 use SensitiveParameter;
 

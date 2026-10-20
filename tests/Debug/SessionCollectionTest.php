@@ -9,7 +9,7 @@
  */
 namespace Tests\Session\Debug;
 
-use Framework\Session\Debug\SessionCollection;
+use Aplus\Session\Debug\SessionCollection;
 use PHPUnit\Framework\TestCase;
 
 final class SessionCollectionTest extends TestCase

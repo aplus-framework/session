@@ -7,17 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Framework\Session\Debug;
+namespace Aplus\Session\Debug;
 
+use Aplus\Debug\Collector;
+use Aplus\Debug\Debugger as D;
+use Aplus\Session\SaveHandler;
+use Aplus\Session\SaveHandlers\DatabaseHandler;
+use Aplus\Session\SaveHandlers\FilesHandler;
+use Aplus\Session\SaveHandlers\MemcachedHandler;
+use Aplus\Session\SaveHandlers\RedisHandler;
+use Aplus\Session\Session;
 use Closure;
-use Framework\Debug\Collector;
-use Framework\Debug\Debugger as D;
-use Framework\Session\SaveHandler;
-use Framework\Session\SaveHandlers\DatabaseHandler;
-use Framework\Session\SaveHandlers\FilesHandler;
-use Framework\Session\SaveHandlers\MemcachedHandler;
-use Framework\Session\SaveHandlers\RedisHandler;
-use Framework\Session\Session;
 use InvalidArgumentException;
 
 /**

@@ -5,4 +5,4 @@ parameters:
         - tests
     ignoreErrors:
         - identifier: staticMethod.alreadyNarrowedType
-        - '#Access to an undefined property Framework\\Session\\Session::\$[a-zA-Z0-9_]+\.#'
+        - '#Access to an undefined property Aplus\\Session\\Session::\$[a-zA-Z0-9_]+\.#'
