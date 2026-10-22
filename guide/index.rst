@@ -30,7 +30,7 @@ The Session class has methods that facilitate session management.
 
 .. code-block:: php
 
-    use Framework\Session\Session;
+    use Aplus\Session\Session;
     
     $session = new Session();
 
@@ -272,7 +272,7 @@ class:
 
 .. code-block:: php
 
-    use Framework\Session\Session;
+    use Aplus\Session\Session;
 
     $session = new Session($options, $saveHandler);
 
@@ -285,7 +285,7 @@ Allows you to store session data in a database.
 
 .. code-block:: php
 
-    use Framework\Session\SaveHandlers\DatabaseHandler;
+    use Aplus\Session\SaveHandlers\DatabaseHandler;
 
     $saveHandler = new DatabaseHandler($configs);
 
@@ -332,8 +332,8 @@ the example below:
 
 .. code-block:: php
 
-    use Framework\Database\Database;
-    use Framework\Session\SaveHandlers\DatabaseHandler;
+    use Aplus\Database\Database;
+    use Aplus\Session\SaveHandlers\DatabaseHandler;
 
     $database = new Database('root', 'pass', 'app');
     $saveHandler = new DatabaseHandler();
@@ -365,7 +365,7 @@ Allows you to store session data as files in a directory.
 
 .. code-block:: php
 
-    use Framework\Session\SaveHandlers\FilesHandler;
+    use Aplus\Session\SaveHandlers\FilesHandler;
 
     $saveHandler = new FilesHandler($configs);
 
@@ -391,7 +391,7 @@ Allows you to store session data on Memcached servers.
 
 .. code-block:: php
 
-    use Framework\Session\SaveHandlers\MemcachedHandler;
+    use Aplus\Session\SaveHandlers\MemcachedHandler;
 
     $saveHandler = new MemcachedHandler($configs);
 
@@ -436,7 +436,7 @@ the example below:
 
 .. code-block:: php
 
-    use Framework\Session\SaveHandlers\MemcachedHandler;
+    use Aplus\Session\SaveHandlers\MemcachedHandler;
 
     $memcached = new Memcached();
     $saveHandler = new MemcachedHandler();
@@ -449,7 +449,7 @@ Allows you to store session data on a Redis server.
 
 .. code-block:: php
 
-    use Framework\Session\SaveHandlers\RedisHandler;
+    use Aplus\Session\SaveHandlers\RedisHandler;
 
     $saveHandler = new RedisHandler($configs);
 
@@ -492,7 +492,7 @@ example below:
 
 .. code-block:: php
 
-    use Framework\Session\SaveHandlers\RedisHandler;
+    use Aplus\Session\SaveHandlers\RedisHandler;
 
     $redis = new Redis();
     $saveHandler = new RedisHandler();
