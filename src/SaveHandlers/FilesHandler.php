@@ -98,6 +98,11 @@ class FilesHandler extends SaveHandler
         return true;
     }
 
+    protected function isStored(string $id) : bool
+    {
+        return \is_file($this->getFilename($id));
+    }
+
     public function read($id) : string
     {
         if ($this->stream !== null) {

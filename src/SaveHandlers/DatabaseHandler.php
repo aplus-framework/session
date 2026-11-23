@@ -193,6 +193,18 @@ class DatabaseHandler extends SaveHandler
         return false;
     }
 
+    protected function isStored(string $id) : bool
+    {
+        $statement = $this->database
+            ->select()
+            ->columns(static fn () => '1')
+            ->from($this->getTable())
+            ->whereEqual($this->getColumn('id'), $id);
+        $this->addWhereMatches($statement);
+        $row = $statement->limit(1)->run()->fetch();
+        return (bool) $row;
+    }
+
     public function read($id) : string
     {
         if (!isset($this->database) || $this->lock($id) === false) {

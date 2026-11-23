@@ -174,6 +174,12 @@ class MemcachedHandler extends SaveHandler
         return true;
     }
 
+    protected function isStored(string $id) : bool
+    {
+        $this->memcached->get($this->getKey($id));
+        return $this->memcached->getResultCode() === Memcached::RES_SUCCESS;
+    }
+
     public function read($id) : string
     {
         if (!isset($this->memcached) || !$this->lock($id)) {

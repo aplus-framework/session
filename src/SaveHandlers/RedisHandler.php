@@ -142,6 +142,11 @@ class RedisHandler extends SaveHandler
         return true;
     }
 
+    protected function isStored(string $id) : bool
+    {
+        return (bool) $this->redis->exists($this->getKey($id));
+    }
+
     public function read($id) : string
     {
         if (!isset($this->redis) || !$this->lock($id)) {
