@@ -14,6 +14,7 @@
     </rule>
     <!-- controversial -->
     <rule ref="rulesets/controversial.xml">
+        <exclude name="CamelCaseMethodName"/>
         <exclude name="CamelCaseParameterName"/>
         <exclude name="CamelCaseVariableName"/>
         <exclude name="Superglobals"/>
