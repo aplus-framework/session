@@ -235,7 +235,7 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
     }
 
     /**
-     * Validate session id.
+     * Validate session id. Used when session.use_strict_mode is enabled.
      *
      * @param string $id The session id
      *
@@ -246,8 +246,14 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
      */
     public function validateId($id) : bool
     {
-        return (bool) \preg_match('#\A[0-9a-f]{32}\z#', $id);
+        $valid = (bool) \preg_match('#\A[0-9a-f]{32}\z#', $id);
+        if ($valid) {
+            return $this->isStored($id);
+        }
+        return false;
     }
+
+    abstract protected function isStored(string $id) : bool;
 
     /**
      * Initialize the session.
