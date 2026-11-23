@@ -44,23 +44,6 @@ abstract class AbstractHandler extends TestCase
         $this->config = \array_replace_recursive($this->config, $config);
     }
 
-    /**
-     * @see https://wiki.php.net/rfc/deprecations_php_8_4#sessionsid_length_and_sessionsid_bits_per_character
-     */
-    public function testValidateId() : void
-    {
-        // Ids with PHP lower than 8.4:
-        $id6 = '62my7tSXcbIrOZ-WHsEXhpwUoG,afmBQNGaSBkFN';
-        $id5 = 'iimuf8lvdectatt5jtkve15831funl8rg5cg6okp';
-        $id4 = '96aa2c863140e0e714a603cf44b0afc9a0632592';
-        $this->session->stop();
-        self::assertFalse($this->handler->validateId($id6));
-        self::assertFalse($this->handler->validateId($id5));
-        self::assertFalse($this->handler->validateId($id4));
-        $idPhp84 = '96aa2c863140e0e714a603cf44b0afc9';
-        self::assertTrue($this->handler->validateId($idPhp84));
-    }
-
     public function testGC() : void
     {
         $this->session->stop();

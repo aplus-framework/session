@@ -204,6 +204,11 @@ final class SessionCollectorTest extends TestCase
                 return true;
             }
 
+            protected function isStored(string $id) : bool
+            {
+                return true;
+            }
+
             public function read($id) : string
             {
                 return '';
