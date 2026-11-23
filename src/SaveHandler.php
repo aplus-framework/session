@@ -11,6 +11,7 @@ namespace Framework\Session;
 
 use Framework\Log\Logger;
 use Framework\Log\LogLevel;
+use RuntimeException;
 use SensitiveParameter;
 
 /**
@@ -197,6 +198,11 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
             $suffix = \hash('xxh3', $suffix);
         }
         return $suffix;
+    }
+
+    public function create_sid() : string
+    {
+        return \session_create_id() ?: throw new RuntimeException('Unable to create a session id');
     }
 
     /**
