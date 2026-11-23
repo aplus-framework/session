@@ -13,6 +13,7 @@ use Aplus\Log\Logger;
 use Aplus\Log\LogLevel;
 use Closure;
 use OutOfBoundsException;
+use RuntimeException;
 use SensitiveParameter;
 
 /**
@@ -226,6 +227,11 @@ abstract class SaveHandler implements \SessionHandlerInterface, \SessionUpdateTi
             $suffix = \hash('xxh3', $suffix);
         }
         return $suffix;
+    }
+
+    public function create_sid() : string
+    {
+        return \session_create_id() ?: throw new RuntimeException('Unable to create a session id');
     }
 
     /**
